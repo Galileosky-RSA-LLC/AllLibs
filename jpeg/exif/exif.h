@@ -1,0 +1,13 @@
+#ifndef EXIF_H
+#define EXIF_H
+// заголовок библиотеки работы с EXIF изображениями
+
+#include "..\jpeg.h"
+
+#define EXIF_SEGMENT_ID JPEG_SEGMENT_APP1_ID
+stock const EXIF_SEGMENT_MARKER{} = {JPEG_SEGMENT_MARKER_PREFIX, EXIF_SEGMENT_ID};
+#define EXIF_SEGMENT_MARKER_SIZE JPEG_SEGMENT_MARKER_SIZE
+#define EXIF_LEN_POS JPEG_SEGMENT_APP_LEN_POS
+#define EXIF_LEN_SIZE JPEG_SEGMENT_APP_LEN_SIZE
+
+#endif
