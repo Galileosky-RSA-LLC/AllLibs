@@ -4,3 +4,6 @@
 [submodule "iso15765"]
 	path = iso15765
 	url = https://gl.7gis.ru/easylogic/libiso15765.git
+[submodule "iso14229"]
+	path = iso14229
+	url = https://gl.7gis.ru/easylogic/libiso14229.git
