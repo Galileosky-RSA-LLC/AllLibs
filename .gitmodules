@@ -1,0 +1,3 @@
+[submodule "saej1939"]
+	path = saej1939
+	url = https://gl.7gis.ru/easylogic/libsaej1939.git
