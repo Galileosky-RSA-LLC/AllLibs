@@ -1,3 +1,6 @@
 [submodule "saej1939"]
 	path = saej1939
 	url = https://gl.7gis.ru/easylogic/libsaej1939.git
+[submodule "iso15765"]
+	path = iso15765
+	url = https://gl.7gis.ru/easylogic/libiso15765.git
