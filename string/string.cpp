@@ -51,22 +51,19 @@ toUpperCase(str{}, strLength, start = 0, ignoreNull = false)
     }
 }
 
-//! Вычисление длины подстроки символов до \0 или до конца массива, если \0 не встретился
+//! Вычисление длины подстроки символов до \0 или до конца массива
 //! \param[in] str массив со строкой
-//! \param[in] strLength длина массива
+//! \param[in] strLength длина массива, если <=0, то игнорируется
 //! \param[in] start индекс начала подстроки
-strLen(const str{}, strLength, start = 0)
+strLen(const str{}, strLength = 0, start = 0)
 {
     if (start < 0)
         start = 0;
 
     new i;
-    for (i = start; i < strLength; i++)
-    {    
-        if (str{i} == 0)
-            break;
-    }
-    return i;
+    for (i = start; (strLength > 0 ? i < strLength : i >= 0) && (str{i} != 0); i++)
+    {}
+    return i - start;
 }
 
 //! Замена одной подстроки на другую
