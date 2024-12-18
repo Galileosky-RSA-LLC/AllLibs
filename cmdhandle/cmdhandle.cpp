@@ -10,9 +10,9 @@
 #include "..\string\string.cpp"
 
 //! Добавить текст к ответу
-cmdHandlerAddTextToAnswer(obj[CMDHANDLE_DATA], const text{}, textSize)
+cmdHandlerAddTextToAnswer(obj[CMDHANDLE_DATA], const text{}, textSize = 0)
 {
-    obj.answerSize += insertArrayStr(obj.answer, obj.answerSize, CMDHANDLE_ANSWER_SIZE_MAX, text, textSize);
+    obj.answerSize += insertArrayStr(obj.answer, obj.answerSize, CMDHANDLE_ANSWER_SIZE_MAX, text, textSize > 0 ? textSize : strLen(text));
 }
 
 //! Добавить текстовое представление числа к ответу
@@ -22,7 +22,7 @@ cmdHandlerAddNumToAnswer(obj[CMDHANDLE_DATA], num)
 }
 
 //! Добавить к ответу имя параметра и его числовое значение
-cmdHandlerAddParValueToAnswer(obj[CMDHANDLE_DATA], const parName{}, parNameSize, parValue)
+cmdHandlerAddParValueToAnswer(obj[CMDHANDLE_DATA], const parName{}, parValue, parNameSize = 0)
 {
     cmdHandlerAddTextToAnswer(obj, parName, parNameSize);
     cmdHandlerAddNumToAnswer(obj, parValue);
