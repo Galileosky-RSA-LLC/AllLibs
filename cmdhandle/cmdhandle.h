@@ -12,9 +12,9 @@
 ]
 
 
-cmdHandlerAddTextToAnswer(obj[CMDHANDLE_DATA], const text{}, textSize);
+cmdHandlerAddTextToAnswer(obj[CMDHANDLE_DATA], const text{}, textSize = 0);
 cmdHandlerAddNumToAnswer(obj[CMDHANDLE_DATA], num);
-cmdHandlerAddParValueToAnswer(obj[CMDHANDLE_DATA], const parName{}, parNameSize, parValue);
+cmdHandlerAddParValueToAnswer(obj[CMDHANDLE_DATA], const parName{}, parValue, parNameSize = 0);
 cmdHandlerAddHexAsciiToAnswer(obj[CMDHANDLE_DATA], const data{}, dataSize);
 cmdHandlerSendPreparedAnswer(obj[CMDHANDLE_DATA]);
 
