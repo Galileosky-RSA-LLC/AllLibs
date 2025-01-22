@@ -2,6 +2,7 @@
 #define FILE_LIB
 // Функции работы с файлами
 
+#include "file.h"
 #include "..\array\array.h"
 #include "..\array\array.cpp"
 #include "..\string\string.h"
@@ -9,26 +10,35 @@
 
 //! Переименовать файл 
 //! с использованием вызова команды FSMOVE
-//! \param[in] src исходное имя файла, должно оканчиваться \0, длина не более 123
-//! \param[in] dest требуемое имя файла, должно оканчиваться \0, длина не более 123
+//! \param[in] src исходное имя файла, не должно содержать запятых, должно оканчиваться \0
+//! \param[in] dest требуемое имя файла, не должно содержать запятых, должно оканчиваться \0
 //! \return false - ошибка, true - успешно
 fileRename(const src{}, const dest{})
 {
-    const bufLength = 255;
-    const cmdLength = 7;
-    const fileNameLengthMax = (bufLength - cmdLength - 1) / 2;
-    new buf{bufLength} = "FSMOVE "; // команда и ответ
-    new pos = cmdLength;
-    pos += insertArrayStr(buf, pos, bufLength, src, strLen(src, fileNameLengthMax));
-    buf{pos++} = ',';
-    pos += insertArrayStr(buf, pos, bufLength, dest, strLen(dest, fileNameLengthMax));
+    new srcSize = strLen(src);
+    new destSize = strLen(dest);
+    if ((srcSize > FILE_FULL_PATH_SIZE_MAX) || (destSize > FILE_FULL_PATH_SIZE_MAX))
+        return false;
+
+    new const cmd{} = "FSMOVE";
+    new cmdSize = strLen(cmd);
+    new const cmdSep{} = " ";
+    new const paramSep{} = ",";
+    const cellSize = 4;
+    const bufMaxSize = (sizeof(cmd) + sizeof(cmdSep) + sizeof(paramSep)) * cellSize + (FILE_FULL_PATH_SIZE_MAX * 2) + 1;
+    new buf{bufMaxSize};
+    new bufSize = insertArrayStr(buf, 0, bufMaxSize, cmd, cmdSize);
+    bufSize += insertArrayStr(buf, bufSize, bufMaxSize, cmdSep, strLen(cmdSep));
+    bufSize += insertArrayStr(buf, bufSize, bufMaxSize, src, srcSize);
+    bufSize += insertArrayStr(buf, bufSize, bufMaxSize, paramSep, strLen(paramSep));
+    bufSize += insertArrayStr(buf, bufSize, bufMaxSize, dest, destSize);
     ExecCommand(buf);
-    clearArrayStr(buf, bufLength);
-    GetBinaryDataFromCommand(buf, bufLength);
-    toLowerCase(buf, bufLength);
-    pos = -1;
-    pos = searchSubArBruteForceStr(buf, 0, bufLength, "success", 7);
-    return pos >= 0;
+    clearArrayStr(buf, bufMaxSize);
+    GetBinaryDataFromCommand(buf, bufMaxSize);
+    bufSize = min(strLen(buf), bufMaxSize);
+    toLowerCase(buf, bufSize);
+    new const successResult{} = "success";
+    return searchSubArBruteForceStr(buf, 0, bufSize, successResult, strLen(successResult)) >= 0;
 }
 
 //! Записать в файл буфер с произвольной позиции
