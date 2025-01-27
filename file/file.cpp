@@ -17,25 +17,24 @@ fileRename(const src{}, const dest{})
 {
     new srcSize = strLen(src);
     new destSize = strLen(dest);
-    if ((srcSize > FILE_FULL_PATH_SIZE_MAX) || (destSize > FILE_FULL_PATH_SIZE_MAX))
-        return false;
-
     new const cmd{} = "FSMOVE";
     new cmdSize = strLen(cmd);
-    new const cmdSep{} = " ";
-    new const paramSep{} = ",";
-    const cellSize = 4;
-    const bufMaxSize = (sizeof(cmd) + sizeof(cmdSep) + sizeof(paramSep)) * cellSize + (FILE_FULL_PATH_SIZE_MAX * 2) + 1;
-    new buf{bufMaxSize};
+    new const cmdTextSep{} = " ";// !!! в библиотеку cmdhandle
+    new const cmdParamSep{} = ",";// !!! в библиотеку cmdhandle
+    const cellSize = 4;// !!! в библиотеку gdefines
+    const bufMaxSize = 255;// !!! в библиотеку cmdhandle
+    const fileNamesSizeMax = bufMaxSize - (6 + 1 + 1);
+    if ((srcSize + destSize) > fileNamesSizeMax)
+        return false;
+
+    new buf{bufMaxSize + 1};
     new bufSize = insertArrayStr(buf, 0, bufMaxSize, cmd, cmdSize);
-    bufSize += insertArrayStr(buf, bufSize, bufMaxSize, cmdSep, strLen(cmdSep));
+    bufSize += insertArrayStr(buf, bufSize, bufMaxSize, cmdTextSep, strLen(cmdTextSep));
     bufSize += insertArrayStr(buf, bufSize, bufMaxSize, src, srcSize);
-    bufSize += insertArrayStr(buf, bufSize, bufMaxSize, paramSep, strLen(paramSep));
+    bufSize += insertArrayStr(buf, bufSize, bufMaxSize, cmdParamSep, strLen(cmdParamSep));
     bufSize += insertArrayStr(buf, bufSize, bufMaxSize, dest, destSize);
     ExecCommand(buf);
-    clearArrayStr(buf, bufMaxSize);
-    GetBinaryDataFromCommand(buf, bufMaxSize);
-    bufSize = min(strLen(buf), bufMaxSize);
+    bufSize = GetBinaryDataFromCommand(buf, bufMaxSize);
     toLowerCase(buf, bufSize);
     new const successResult{} = "success";
     return searchSubArBruteForceStr(buf, 0, bufSize, successResult, strLen(successResult)) >= 0;
