@@ -896,4 +896,58 @@ getSubSize(arStart, arSize)
     return arSize > arStart ? arSize - arStart : 0;
 }
 
+//! Кольцевой сдвиг элементов подмассива
+//! \param[in] ar изменяемый массив
+//! \param[in] arSize длина массива
+//! \param[in] toRight признак необходимости сдвига вправо: true - вправо, false - влево
+//! \param[in] arStart индекс начала подмассива
+//! \param[in] count величина сдвига
+arrayRingShift(ar[], arSize, toRight, arStart = 0, count = 1)
+{
+    if (arStart < 0)
+        arStart = 0;
+
+    new subSize = getSubSize(arStart, arSize);
+    if (subSize <= 1)
+        return;
+
+    count %= subSize;
+    new arLast = arSize - 1;
+    for (new i = 0; i < count; i++)
+    {
+        new t = ar[toRight ? arLast : arStart];
+        for (new j = 0; j < (subSize - 1); j++)
+            ar[toRight ? arLast - j : j] = ar[toRight ? arLast - j - 1 : j + 1];
+
+        ar[toRight ? arStart : arLast] = t;
+    }
+}
+
+//! Кольцевой сдвиг однобайтных элементов подмассива
+//! \param[in] ar изменяемый массив
+//! \param[in] arSize длина массива
+//! \param[in] toRight признак необходимости сдвига вправо: true - вправо, false - влево
+//! \param[in] arStart индекс начала подмассива
+//! \param[in] count величина сдвига
+arrayRingShiftStr(ar{}, arSize, toRight, arStart = 0, count = 1)
+{
+    if (arStart < 0)
+        arStart = 0;
+
+    new subSize = getSubSize(arStart, arSize);
+    if (subSize <= 1)
+        return;
+
+    count %= subSize;
+    new arLast = arSize - 1;
+    for (new i = 0; i < count; i++)
+    {
+        new t = ar{toRight ? arLast : arStart};
+        for (new j = 0; j < (subSize - 1); j++)
+            ar{toRight ? arLast - j : j} = ar{toRight ? arLast - j - 1 : j + 1};
+
+        ar{toRight ? arStart : arLast} = t;
+    }
+}
+
 #endif // ARRAY_LIB

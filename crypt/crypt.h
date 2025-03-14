@@ -1,0 +1,11 @@
+#ifndef CRYPT_H
+#define CRYPT_H
+// Заголовок библиотеки шифрования
+
+#define XTEA3_DELTA 0x9E3779B9
+#define XTEA3_NUM_ROUNDS_DEFAULT 64
+#define XTEA3_DATA_CELLS_AMOUNT 4
+#define XTEA3_KEY_CELLS_AMOUNT 8
+#define XTEA3_KEY_HALF_CELLS_AMOUNT (XTEA3_KEY_CELLS_AMOUNT / 2)
+
+#endif

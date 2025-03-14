@@ -3,14 +3,10 @@
 // Функции работы с массивами
 // не рассматривается работа с конкретно строками (т.е. с завершающим \0)
 
-arrayInvertBitsStr(ar{}, arSize, start = 0);
-clearArrayStr(ar{}, arSize, start = 0);
 countArrayUsedCells(currentArSizeInBytes);
 isArraysEqual(const ar1[], ar1start, ar1size, const ar2[], ar2start, ar2size);
 isArraysEqualStr(const ar1{}, ar1start, ar1size, const ar2{}, ar2start, ar2size);
 insertArrayStr(dest{}, destPos, destSize, const source{}, sourceSize, sourcePos = 0);
-invertArray(ar[], arSize, start = 0);
-invertArrayStr(ar{}, arSize, start = 0);
 replaceVal(ar[], arSize, valOld, valNew, start = 0);
 replaceValStr(ar{}, arSize, valOld, valNew, start = 0);
 countIdentical(const ar1[], ar1start, ar1size, const ar2[], ar2start, ar2size);
@@ -20,6 +16,12 @@ getSubSize(arStart, arSize);
 // Однотипные операции над элементами
 arrayPlusStr(const ar{}, arSize, start = 0);
 arrayXorStr(const ar{}, arSize, start = 0);
+arrayInvertBitsStr(ar{}, arSize, start = 0);
+clearArrayStr(ar{}, arSize, start = 0);
+invertArray(ar[], arSize, start = 0);
+invertArrayStr(ar{}, arSize, start = 0);
+arrayRingShift(ar[], arSize, toRight, arStart = 0, count = 1);
+arrayRingShiftStr(ar{}, arSize, toRight, arStart = 0, count = 1);
 
 // Преобразование массив <-> число
 array2num(const ar{}, start, arSize, bytes, littleEnd, sign, &num);
