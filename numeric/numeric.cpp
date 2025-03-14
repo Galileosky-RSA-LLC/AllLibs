@@ -186,4 +186,35 @@ countUsedCells(size, cellSize)
     return (size / cellSize) + ((size % cellSize) ? 1 : 0);
 }
 
+//! Циклический сдвиг влево
+//! \param[in] value число
+//! \param[in] bits кол-во разрядов
+rol(value, bits)
+{
+    new restBits;
+    rolr_normalizeBits(bits, restBits);
+    return (value << bits) | (value >>> restBits);
+}
+
+//! Циклический сдвиг вправо
+//! \param[in] value число
+//! \param[in] bits кол-во разрядов
+ror(value, bits)
+{
+    new restBits;
+    rolr_normalizeBits(bits, restBits);
+    return (value >>> bits) | (value << restBits);
+}
+
+// Приватные функции
+
+rolr_normalizeBits(&bits, &restBits)
+{
+    if (bits < 0)
+        bits = 0;
+        
+    bits %= BIT_DEPTH;
+    restBits = BIT_DEPTH - bits;
+}
+
 #endif // NUMERIC_LIB
