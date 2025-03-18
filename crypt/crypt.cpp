@@ -9,7 +9,7 @@
 xtea3encrypt(const dataIn[XTEA3_DATA_CELLS_AMOUNT], const key[XTEA3_KEY_CELLS_AMOUNT], dataOut[XTEA3_DATA_CELLS_AMOUNT], numRounds = XTEA3_NUM_ROUNDS_DEFAULT)
 {
 	new abcd[XTEA3_DATA_CELLS_AMOUNT];
-    for (new i = 0; i < XTEA3_DATA_CELLS_AMOUNT; i++)
+    for (new i = 0; (i < XTEA3_DATA_CELLS_AMOUNT) && (i < XTEA3_KEY_CELLS_AMOUNT); i++)
         abcd[i] = dataIn[i] + key[i];
 
     new sum;
@@ -20,14 +20,14 @@ xtea3encrypt(const dataIn[XTEA3_DATA_CELLS_AMOUNT], const key[XTEA3_KEY_CELLS_AM
 	    abcd[2] += xtea3crypt_roundCalcModC(abcd[1], abcd[3], sum, key);
         arrayRingShift(abcd, XTEA3_DATA_CELLS_AMOUNT, false);
 	}
-	for (new i = 0; i < XTEA3_DATA_CELLS_AMOUNT; i++)
+	for (new i = 0; (i < XTEA3_DATA_CELLS_AMOUNT) && (i < XTEA3_KEY_HALF_CELLS_AMOUNT); i++)
         dataOut[i] = abcd[i] ^ key[XTEA3_KEY_HALF_CELLS_AMOUNT + i];
 }
  
 xtea3decrypt(const dataIn[XTEA3_DATA_CELLS_AMOUNT], const key[XTEA3_KEY_CELLS_AMOUNT], dataOut[XTEA3_DATA_CELLS_AMOUNT], numRounds = XTEA3_NUM_ROUNDS_DEFAULT)
 {
     new abcd[XTEA3_DATA_CELLS_AMOUNT];
-    for (new i = 0; i < XTEA3_DATA_CELLS_AMOUNT; i++)
+    for (new i = 0; (i < XTEA3_DATA_CELLS_AMOUNT) && (i < XTEA3_KEY_HALF_CELLS_AMOUNT); i++)
         abcd[i] = dataIn[i] ^ key[XTEA3_KEY_HALF_CELLS_AMOUNT + i];
 
     new sum = XTEA3_DELTA * numRounds;
@@ -38,7 +38,7 @@ xtea3decrypt(const dataIn[XTEA3_DATA_CELLS_AMOUNT], const key[XTEA3_KEY_CELLS_AM
         sum -= XTEA3_DELTA;
 		abcd[0] -= xtea3crypt_roundCalcModA(abcd[1], abcd[3], sum, key);
     }
-	for (new i = 0; i < XTEA3_DATA_CELLS_AMOUNT; i++)
+	for (new i = 0; (i < XTEA3_DATA_CELLS_AMOUNT) && (i < XTEA3_KEY_CELLS_AMOUNT); i++)
         dataOut[i] = abcd[i] - key[i];
 }
 
