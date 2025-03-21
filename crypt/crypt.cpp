@@ -5,6 +5,8 @@
 #include "crypt.h"
 #include "..\numeric\numeric.h"
 #include "..\numeric\numeric.cpp"
+#include "..\array\array.h"
+#include "..\array\array.cpp"
 
 xtea3encrypt(const dataIn[XTEA3_DATA_CELLS_AMOUNT], const key[XTEA3_KEY_CELLS_AMOUNT], dataOut[XTEA3_DATA_CELLS_AMOUNT], numRounds = XTEA3_NUM_ROUNDS_DEFAULT)
 {
