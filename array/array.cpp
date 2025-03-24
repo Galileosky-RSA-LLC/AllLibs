@@ -59,7 +59,7 @@ insertArrayStr(dest{}, destPos, destSize, const source{}, sourceSize, sourcePos 
         sourcePos = 0;
 
     new i;
-	for (i = 0; ((destPos + i) < destSize) && ((sourcePos + i) < sourceSize) && (i < (sourceSize - sourcePos)); i++)
+	for (i = 0; ((destPos + i) < destSize) && ((sourcePos + i) < sourceSize); i++)
 		dest{destPos + i} = source{sourcePos + i};
 
 	return i;
@@ -948,6 +948,29 @@ arrayRingShiftStr(ar{}, arSize, toRight, arStart = 0, count = 1)
 
         ar{toRight ? arStart : arLast} = t;
     }
+}
+
+//! Вставить один подмассив в другой массив
+//! \param[out] dest целевой массив, куда копируется
+//! \param[in] destPos смещение в целевом
+//! \param[in] destSize длина целевого массива
+//! \param[in] source копируемый массив
+//! \param[in] sourceSize длина копируемого массива
+//! \param[in] sourcePos смещение в копируемом, с которого начинать копирование
+//! \return количество вставленных элементов
+insertArray(dest[], destPos, destSize, const source[], sourceSize, sourcePos = 0)
+{
+    if (destPos < 0)
+        destPos = 0;
+
+    if (sourcePos < 0)
+        sourcePos = 0;
+
+    new i;
+	for (i = 0; ((destPos + i) < destSize) && ((sourcePos + i) < sourceSize); i++)
+		dest[destPos + i] = source[sourcePos + i];
+
+	return i;
 }
 
 #endif // ARRAY_LIB
