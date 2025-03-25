@@ -400,4 +400,16 @@ getTagValue(tagId, &value)
     return true;
 }
 
+//! Проверить наличие внешнего питания прибора
+//! \param[in] useDevStatus признак необходимости использования переданного значения статуса: true - использовать переданный, false - получить актуальный
+//! \param[in] devStatus значение статуса
+//! \return true - есть внешнее питание, false - нет внешнего питания
+hasExtPower(useDevStatus = false, devStatus = 0)
+{
+    if (!useDevStatus)
+        devStatus = GetVar(STATUS);
+
+    return !(devStatus & DEVINFO_STATUS_EXTPOWERFAIL_MASK);
+}
+
 #endif // DEVINFO_LIB
