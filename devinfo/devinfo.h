@@ -47,6 +47,6 @@ isWheelTagsAvailable(devModel, softMaj, softMin);
 getFreeRam(&firmware, &zip = 0, &easyLogic = 0);
 getTagMaxSize(tagId);
 getTagValue(tagId, &value);
-hasExtPower(useDevStatus = false, devStatus = 0);
+hasExtPower(devStatus);
 
 #endif // DEVINFO_H
