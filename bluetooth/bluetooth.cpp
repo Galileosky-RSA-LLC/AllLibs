@@ -35,7 +35,7 @@ bluetoothGetAdStruct(const msg[BTMSG], pos, adStruct[BLUETOOTH_ADSTRUCT])
 //! \param[out] name полученное имя
 //! \param[out] nameSize длина полученного имени
 //! \return true - успешно, false - ошибка
-bluetoothGetLocalName(const msg[BTMSG], nameMaxSize, name{}, &nameSize)
+bluetoothGetLocalName(const msg[BTMSG], nameMaxSize, name{}, &nameSize = 0)
 {
     return bluetoothGetComplName(msg, nameMaxSize, name, nameSize) || bluetoothGetShortName(msg, nameMaxSize, name, nameSize);
 }
@@ -55,14 +55,14 @@ bluetoothGetCompanyId(const adStruct[BLUETOOTH_ADSTRUCT], &result)
     return (adStruct.type == BLUETOOTH_ADTYPE_MFRSPECDATA) && array2num16leUnSign(adStruct.data, BLUETOOTH_MFRSPECDATA_COMP_ID_POS, adStruct.dataSize, result);
 }
 
-bluetoothGetComplName(const msg[BTMSG], nameMaxSize, name{}, &nameSize)
+bluetoothGetComplName(const msg[BTMSG], nameMaxSize, name{}, &nameSize = 0)
 {
-    return bluetooth_getLocalName(msg, nameMaxSize, name, nameSize, true);
+    return bluetooth_getLocalName(msg, true, nameMaxSize, name, nameSize);
 }
 
-bluetoothGetShortName(const msg[BTMSG], nameMaxSize, name{}, &nameSize)
+bluetoothGetShortName(const msg[BTMSG], nameMaxSize, name{}, &nameSize = 0)
 {
-    return bluetooth_getLocalName(msg, nameMaxSize, name, nameSize, false);
+    return bluetooth_getLocalName(msg, false, nameMaxSize, name, nameSize);
 }
 
 //! Получить AD структуру заданного типа из рекламного сообщения
@@ -72,7 +72,8 @@ bluetoothGetShortName(const msg[BTMSG], nameMaxSize, name{}, &nameSize)
 //! \return true - найдена, false - не найдена
 bluetoothGetAdStructType(const msg[BTMSG], type, adStruct[BLUETOOTH_ADSTRUCT])
 {
-    for (new pos = 0; (pos < msg.dataSize) && ((new size = bluetoothGetAdStruct(message, pos, adStruct)) > 0); pos += size)
+    new size;
+    for (new pos = 0; (pos < msg.dataSize) && ((size = bluetoothGetAdStruct(msg, pos, adStruct)) > 0); pos += size)
     {
         if (adStruct.type == type)
             return true;
@@ -82,7 +83,7 @@ bluetoothGetAdStructType(const msg[BTMSG], type, adStruct[BLUETOOTH_ADSTRUCT])
 
 // Приватные функции
 
-bluetooth_getLocalName(const msg[BTMSG], nameMaxSize, name{}, &nameSize, isComplName)
+bluetooth_getLocalName(const msg[BTMSG], isComplName, nameMaxSize, name{}, &nameSize = 0)
 {
     new adStruct[BLUETOOTH_ADSTRUCT];
     if (!bluetoothGetAdStructType(msg, isComplName ? BLUETOOTH_ADTYPE_COMPL_LOCAL_NAME : BLUETOOTH_ADTYPE_SHORT_LOCAL_NAME, adStruct))
