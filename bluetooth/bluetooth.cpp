@@ -19,14 +19,17 @@ bluetoothGetAdStruct(const msg[BTMSG], pos, adStruct[BLUETOOTH_ADSTRUCT])
     if ((pos + BLUETOOTH_ADSTRUCT_SIZE_MIN) > msgDataSize)
         return 0;
     
-    adStruct.dataSize = msg.data{pos + BLUETOOTH_ADSTRUCT_LEN_POS} - BLUETOOTH_ADSTRUCT_LEN_SIZE;
-    if ((adStruct.dataSize < BLUETOOTH_ADSTRUCT_SIZE_MIN)
-        || (insertArrayStr(adStruct.data, 0, BLUETOOTH_ADSTRUCT_DATA_SIZE_MAX, msg.data, msgDataSize, pos + BLUETOOTH_ADSTRUCT_PAYLOAD_POS)
-            != adStruct.dataSize))
+    new len = msg.data{pos + BLUETOOTH_ADSTRUCT_LEN_POS};
+    new adStructLen = len + BLUETOOTH_ADSTRUCT_LEN_SIZE;
+    if ((len < BLUETOOTH_ADSTRUCT_LEN_MIN) || ((pos + adStructLen) > msgDataSize))
+        return 0;
+
+    adStruct.dataSize = len - BLUETOOTH_ADSTRUCT_LEN_SIZE;
+    if (insertArrayStr(adStruct.data, 0, adStruct.dataSize, msg.data, msgDataSize, pos + BLUETOOTH_ADSTRUCT_PAYLOAD_POS) != adStruct.dataSize)
         return 0;
 
     adStruct.type = msg.data{pos + BLUETOOTH_ADSTRUCT_TYPE_POS};
-    return BLUETOOTH_ADSTRUCT_SIZE_MIN + adStruct.dataSize;
+    return adStructLen;
 }
 
 //! Получить имя
