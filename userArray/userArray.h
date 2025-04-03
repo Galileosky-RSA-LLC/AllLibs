@@ -33,7 +33,5 @@ ustructMakeDescriptorNum(amount, size);
 ustructMakeDescriptorStr(strSize);
 ustructInsertEmpty(userArray{}, userArrayMaxSize, &pos, emptyCount);
 sendFileInUserArray(const fileName{}, &lastFileId);
-ustructMakeDescriptorNum(amount, size);
-ustructMakeDescriptorStr(strSize);
 
 #endif // USERARRAY_H
