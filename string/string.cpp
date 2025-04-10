@@ -77,7 +77,7 @@ replaceStr(strDest{}, strDestPos, strDestLength, const strSource{}, strSourcePos
     if (strDestPos < 0)
         strDestPos = 0;
 
-    new endPos = strDestPos + insertArrayStr(strDest, strDestPos, strDestLength, strSource, strLen(strSource), sourcePos);
+    new endPos = strDestPos + insertArrayStr(strDest, strDestPos, strDestLength, strSource, strLen(strSource), strSourcePos);
 	if ((endPos >= 0) && (endPos < strDestLength))
         strDest{endPos} = 0;
 }
