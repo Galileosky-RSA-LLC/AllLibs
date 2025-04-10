@@ -71,30 +71,15 @@ strLen(const str{}, strLength = 0, start = 0)
 //! \param[in] strDestPos позиция начала вставки в строку-приемник
 //! \param[in] strDestLength длина массива строки-приемника
 //! \param[in] strSource массив строки-источника
-//! \param[in] strSourceLength длина массива строки-источника
 //! \param[in] strSourcePos начальная позиция в строке-источнике
-//! \return число замененных символов или =1, если исходная строка пустая
-replaceStr(strDest{}, strDestPos, strDestLength, const strSource{}, strSourceLength, strSourcePos = 0)
+replaceStr(strDest{}, strDestPos, strDestLength, const strSource{}, strSourcePos = 0)
 {
     if (strDestPos < 0)
         strDestPos = 0;
 
-    if (strSourcePos < 0)
-        strSourcePos = 0;
-
-    new i;
-	for (i = 0; ((strDestPos + i) < strDestLength) && ((strSourcePos + i) < strSourceLength) && (i < (strSourceLength - strSourcePos)); i++)
-	{	
-        strDest{strDestPos + i} = strSource{strSourcePos + i};
-        if (strSource{strSourcePos + i} == 0)
-        {
-            if (i == 0)
-                i = 1;
-
-            break;
-        }
-    }
-	return i;
+    new endPos = strDestPos + insertArrayStr(strDest, strDestPos, strDestLength, strSource, strLen(strSource), sourcePos);
+	if ((endPos >= 0) && (endPos < strDestLength))
+        strDest{endPos} = 0;
 }
 
 //! Преобразовать нечитаемые символы в пробелы

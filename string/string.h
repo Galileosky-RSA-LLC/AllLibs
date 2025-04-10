@@ -35,7 +35,7 @@ numLength(num);
 toLowerCase(str{}, strLength, start = 0, ignoreNull = false);
 toUpperCase(str{}, strLength, start = 0, ignoreNull = false);
 strLen(const str{}, strLength = 0, start = 0);
-replaceStr(strDest{}, strDestPos, strDestLength, const strSource{}, strSourceLength, strSourcePos = 0);
+replaceStr(strDest{}, strDestPos, strDestLength, const strSource{}, strSourcePos = 0);
 unread2space(str{}, strLength, start = 0, ignoreNull = false);
 strSplitNums(const str{}, strSize, pos, separator, values[], valuesMaxSize, &valuesActualSize);
 

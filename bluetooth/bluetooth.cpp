@@ -101,11 +101,8 @@ bluetooth_getLocalName(const msg[BTMSG], isComplName, nameMaxSize, name{})
     if (!bluetoothGetAdStructType(msg, isComplName ? BLUETOOTH_ADTYPE_COMPL_LOCAL_NAME : BLUETOOTH_ADTYPE_SHORT_LOCAL_NAME, adStruct))
         return false;
 
-    new nameSize = insertArrayStr(name, 0, nameMaxSize, adStruct.data, adStruct.dataSize);
-    if ((nameSize >= 0) && (nameSize < nameMaxSize))
-        name{nameSize} = 0;
-        
-    return nameSize > 0;
+    replaceStr(name, 0, nameMaxSize, adStruct.data);
+    return strLen(adStruct.data, adStruct.dataSize) == strLen(name, nameMaxSize);
 }
 
 #endif
