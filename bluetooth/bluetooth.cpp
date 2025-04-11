@@ -4,6 +4,8 @@
 #include "bluetooth.h"
 #include "..\array\array.h"
 #include "..\array\array.cpp"
+#include "..\string\string.h"
+#include "..\string\string.cpp"
 
 //! Получить AD Structure из рекламного сообщения
 //! \param[in] msg принятое рекламное сообщение
@@ -39,7 +41,7 @@ bluetoothGetAdStruct(const msg[BTMSG], pos, adStruct[BLUETOOTH_ADSTRUCT])
 //! \return true - успешно, false - ошибка
 bluetoothGetLocalName(const msg[BTMSG], nameMaxSize, name{})
 {
-    return bluetoothGetComplName(msg, nameMaxSize, name, nameSize) || bluetoothGetShortName(msg, nameMaxSize, name, nameSize);
+    return bluetoothGetComplName(msg, nameMaxSize, name) || bluetoothGetShortName(msg, nameMaxSize, name);
 }
 
 //! Получить RSSI устройства, передавшего сообщение
