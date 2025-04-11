@@ -206,6 +206,12 @@ ror(value, bits)
     return (value >>> bits) | (value << restBits);
 }
 
+//! Переворачивает байты
+reverse(value)
+{
+    return ((value & 0x000000FF) << 24) | ((value & 0x0000FF00) << 8) | ((value & 0x00FF0000) >> 8) | ((value & 0xFF000000) >> 24);
+}
+
 // Приватные функции
 
 rolr_normalizeBits(&bits, &restBits)

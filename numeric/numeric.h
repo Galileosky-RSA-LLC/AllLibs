@@ -19,5 +19,6 @@ setBit(byteValue, bit, val);
 countUsedCells(size, cellSize);
 rol(value, bits);
 ror(value, bits);
+reverse(value);
 
 #endif // NUMERIC_H
