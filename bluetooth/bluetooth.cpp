@@ -4,9 +4,11 @@
 #include "bluetooth.h"
 #include "..\array\array.h"
 #include "..\array\array.cpp"
+#include "..\string\string.h"
+#include "..\string\string.cpp"
 
 //! Получить AD Structure из рекламного сообщения
-//! \param[in] msg полученное рекламное сообщение
+//! \param[in] msg принятое рекламное сообщение
 //! \param[in] pos позиция начала структуры в данных рекламного сообщения
 //! \param[out] adStruct AD структура
 //! \return общий размер AD struct (0 - ошибка)
@@ -33,14 +35,13 @@ bluetoothGetAdStruct(const msg[BTMSG], pos, adStruct[BLUETOOTH_ADSTRUCT])
 }
 
 //! Получить имя
-//! \param[in] msg полученное рекламное сообщение
+//! \param[in] msg принятое рекламное сообщение
 //! \param[in] nameMaxSize максимальная длина для имени
 //! \param[out] name полученное имя
-//! \param[out] nameSize длина полученного имени
 //! \return true - успешно, false - ошибка
-bluetoothGetLocalName(const msg[BTMSG], nameMaxSize, name{}, &nameSize = 0)
+bluetoothGetLocalName(const msg[BTMSG], nameMaxSize, name{})
 {
-    return bluetoothGetComplName(msg, nameMaxSize, name, nameSize) || bluetoothGetShortName(msg, nameMaxSize, name, nameSize);
+    return bluetoothGetComplName(msg, nameMaxSize, name) || bluetoothGetShortName(msg, nameMaxSize, name);
 }
 
 //! Получить RSSI устройства, передавшего сообщение
@@ -58,18 +59,28 @@ bluetoothGetCompanyId(const adStruct[BLUETOOTH_ADSTRUCT], &result)
     return (adStruct.type == BLUETOOTH_ADTYPE_MFRSPECDATA) && array2num16leUnSign(adStruct.data, BLUETOOTH_MFRSPECDATA_COMP_ID_POS, adStruct.dataSize, result);
 }
 
-bluetoothGetComplName(const msg[BTMSG], nameMaxSize, name{}, &nameSize = 0)
+//! Получить полное имя
+//! \param[in] msg принятое рекламное сообщение
+//! \param[in] nameMaxSize максимальная длина для имени
+//! \param[out] name полученное имя
+//! \return true - успешно, false - ошибка
+bluetoothGetComplName(const msg[BTMSG], nameMaxSize, name{})
 {
-    return bluetooth_getLocalName(msg, true, nameMaxSize, name, nameSize);
+    return bluetooth_getLocalName(msg, true, nameMaxSize, name);
 }
 
-bluetoothGetShortName(const msg[BTMSG], nameMaxSize, name{}, &nameSize = 0)
+//! Получить короткое имя
+//! \param[in] msg принятое рекламное сообщение
+//! \param[in] nameMaxSize максимальная длина для имени
+//! \param[out] name полученное имя
+//! \return true - успешно, false - ошибка
+bluetoothGetShortName(const msg[BTMSG], nameMaxSize, name{})
 {
-    return bluetooth_getLocalName(msg, false, nameMaxSize, name, nameSize);
+    return bluetooth_getLocalName(msg, false, nameMaxSize, name);
 }
 
 //! Получить AD структуру заданного типа из рекламного сообщения
-//! \param[in] msg полученное рекламное сообщение
+//! \param[in] msg принятое рекламное сообщение
 //! \param[in] type искомый тип структуры
 //! \param[out] adStruct найденная AD структура
 //! \return true - найдена, false - не найдена
@@ -86,14 +97,14 @@ bluetoothGetAdStructType(const msg[BTMSG], type, adStruct[BLUETOOTH_ADSTRUCT])
 
 // Приватные функции
 
-bluetooth_getLocalName(const msg[BTMSG], isComplName, nameMaxSize, name{}, &nameSize = 0)
+bluetooth_getLocalName(const msg[BTMSG], isComplName, nameMaxSize, name{})
 {
     new adStruct[BLUETOOTH_ADSTRUCT];
     if (!bluetoothGetAdStructType(msg, isComplName ? BLUETOOTH_ADTYPE_COMPL_LOCAL_NAME : BLUETOOTH_ADTYPE_SHORT_LOCAL_NAME, adStruct))
         return false;
 
-    nameSize = insertArrayStr(name, 0, nameMaxSize, adStruct.data, adStruct.dataSize);
-    return nameSize > 0;
+    strncpy(name, 0, nameMaxSize, adStruct.data);
+    return strLen(adStruct.data, adStruct.dataSize) == strLen(name, nameMaxSize);
 }
 
 #endif

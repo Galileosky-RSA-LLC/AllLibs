@@ -38,9 +38,9 @@
 
 bluetoothGetRssi(const msg[BTMSG]);
 bluetoothGetAdStruct(const msg[BTMSG], pos, adStruct[BLUETOOTH_ADSTRUCT]);
-bluetoothGetLocalName(const msg[BTMSG], nameMaxSize, name{}, &nameSize = 0);
-bluetoothGetComplName(const msg[BTMSG], nameMaxSize, name{}, &nameSize = 0);
-bluetoothGetShortlName(const msg[BTMSG], nameMaxSize, name{}, &nameSize = 0);
+bluetoothGetLocalName(const msg[BTMSG], nameMaxSize, name{});
+bluetoothGetComplName(const msg[BTMSG], nameMaxSize, name{});
+bluetoothGetShortlName(const msg[BTMSG], nameMaxSize, name{});
 bluetoothGetAdStructType(const msg[BTMSG], type, adStruct[BLUETOOTH_ADSTRUCT]);
 
 #endif
