@@ -10,38 +10,46 @@
 
 xtea3encrypt(const dataIn[XTEA3_DATA_CELLS_AMOUNT], const key[XTEA3_KEY_CELLS_AMOUNT], dataOut[XTEA3_DATA_CELLS_AMOUNT], numRounds = XTEA3_NUM_ROUNDS_DEFAULT)
 {
-	new abcd[XTEA3_DATA_CELLS_AMOUNT];
+    new keyMod[XTEA3_KEY_CELLS_AMOUNT];
+    for (new i = 0; i < XTEA3_KEY_CELLS_AMOUNT; i++)
+        keyMod[i] = reverse(key[i]);
+    
+    new abcd[XTEA3_DATA_CELLS_AMOUNT];
     for (new i = 0; (i < XTEA3_DATA_CELLS_AMOUNT) && (i < XTEA3_KEY_CELLS_AMOUNT); i++)
-        abcd[i] = dataIn[i] + key[i];
+        abcd[i] = reverse(dataIn[i]) + keyMod[i];
 
     new sum;
-	for (new i = 0; i < numRounds; i++)
+    for (new i = 0; i < numRounds; i++)
     {
-		abcd[0] += xtea3crypt_roundCalcModA(abcd[1], abcd[3], sum, key);
+        abcd[0] += xtea3crypt_roundCalcModA(abcd[1], abcd[3], sum, keyMod);
 		sum += XTEA3_DELTA;
-	    abcd[2] += xtea3crypt_roundCalcModC(abcd[1], abcd[3], sum, key);
+	    abcd[2] += xtea3crypt_roundCalcModC(abcd[1], abcd[3], sum, keyMod);
         arrayRingShift(abcd, XTEA3_DATA_CELLS_AMOUNT, false);
 	}
 	for (new i = 0; (i < XTEA3_DATA_CELLS_AMOUNT) && (i < XTEA3_KEY_HALF_CELLS_AMOUNT); i++)
-        dataOut[i] = abcd[i] ^ key[XTEA3_KEY_HALF_CELLS_AMOUNT + i];
+        dataOut[i] = reverse(abcd[i] ^ keyMod[XTEA3_KEY_HALF_CELLS_AMOUNT + i]);
 }
- 
+
 xtea3decrypt(const dataIn[XTEA3_DATA_CELLS_AMOUNT], const key[XTEA3_KEY_CELLS_AMOUNT], dataOut[XTEA3_DATA_CELLS_AMOUNT], numRounds = XTEA3_NUM_ROUNDS_DEFAULT)
 {
+    new keyMod[XTEA3_KEY_CELLS_AMOUNT];
+    for (new i = 0; i < XTEA3_KEY_CELLS_AMOUNT; i++)
+        keyMod[i] = reverse(key[i]);
+
     new abcd[XTEA3_DATA_CELLS_AMOUNT];
     for (new i = 0; (i < XTEA3_DATA_CELLS_AMOUNT) && (i < XTEA3_KEY_HALF_CELLS_AMOUNT); i++)
-        abcd[i] = dataIn[i] ^ key[XTEA3_KEY_HALF_CELLS_AMOUNT + i];
+        abcd[i] = reverse(dataIn[i]) ^ keyMod[XTEA3_KEY_HALF_CELLS_AMOUNT + i];
 
     new sum = XTEA3_DELTA * numRounds;
 	for (new i = 0; i < numRounds; i++)
     {
 		arrayRingShift(abcd, XTEA3_DATA_CELLS_AMOUNT, true);
-		abcd[2] -= xtea3crypt_roundCalcModC(abcd[1], abcd[3], sum, key);
+		abcd[2] -= xtea3crypt_roundCalcModC(abcd[1], abcd[3], sum, keyMod);
         sum -= XTEA3_DELTA;
-		abcd[0] -= xtea3crypt_roundCalcModA(abcd[1], abcd[3], sum, key);
+		abcd[0] -= xtea3crypt_roundCalcModA(abcd[1], abcd[3], sum, keyMod);
     }
 	for (new i = 0; (i < XTEA3_DATA_CELLS_AMOUNT) && (i < XTEA3_KEY_CELLS_AMOUNT); i++)
-        dataOut[i] = abcd[i] - key[i];
+        dataOut[i] = reverse(abcd[i] - keyMod[i]);
 }
 
 // Приватные функции

@@ -209,17 +209,15 @@ ror(value, bits)
 //! Переворачивает байты
 reverse(value)
 {
-    return ((value & 0x000000FF) << 24) | ((value & 0x0000FF00) << 8) | ((value & 0x00FF0000) >> 8) | ((value & 0xFF000000) >> 24);
+    return ((value & 0x000000FF) << 24) | ((value & 0x0000FF00) << 8) | ((value & 0x00FF0000) >>> 8) | ((value & 0xFF000000) >>> 24);
 }
 
 // Приватные функции
 
 rolr_normalizeBits(&bits, &restBits)
 {
-    if (bits < 0)
-        bits = 0;
-        
-    bits %= BIT_DEPTH;
+    const mask = BIT_DEPTH - 1;
+    bits &= mask;
     restBits = BIT_DEPTH - bits;
 }
 
