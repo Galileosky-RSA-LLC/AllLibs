@@ -408,4 +408,12 @@ hasExtPower(devStatus)
     return !(devStatus & DEVINFO_STATUS_EXTPOWERFAIL_MASK);
 }
 
+//! Проверить, что двигатель заведен (== зажигание включено)
+//! \param[in] devStatus значение статуса из глобальной переменной STATUS
+//! \return true - двигатель заведен, false - остановлен
+isEngineOn(devStatus)
+{
+    return devStatus & DEVINFO_STATUS_ENGINEON_BIT;
+}
+
 #endif // DEVINFO_LIB

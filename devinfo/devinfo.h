@@ -48,5 +48,6 @@ getFreeRam(&firmware, &zip = 0, &easyLogic = 0);
 getTagMaxSize(tagId);
 getTagValue(tagId, &value);
 hasExtPower(devStatus);
+isEngineOn(devStatus);
 
 #endif // DEVINFO_H
