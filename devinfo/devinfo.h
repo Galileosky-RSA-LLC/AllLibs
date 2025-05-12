@@ -49,5 +49,6 @@ getTagMaxSize(tagId);
 getTagValue(tagId, &value);
 hasExtPower(devStatus);
 isEngineOn(devStatus);
+getInStatus(index);
 
 #endif // DEVINFO_H
