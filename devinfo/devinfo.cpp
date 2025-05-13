@@ -405,7 +405,7 @@ getTagValue(tagId, &value)
 //! \return true - есть внешнее питание, false - нет внешнего питания
 hasExtPower(devStatus)
 {
-    return !(devStatus & DEVINFO_STATUS_EXTPOWERFAIL_MASK);
+    return !((devStatus >>> DEVINFO_STATUS_EXTPOWERFAIL_BIT) & 1);
 }
 
 //! Проверить, что двигатель заведен (== зажигание включено)
@@ -413,7 +413,7 @@ hasExtPower(devStatus)
 //! \return true - двигатель заведен, false - остановлен
 isEngineOn(devStatus)
 {
-    return devStatus & DEVINFO_STATUS_ENGINEON_BIT;
+    return (devStatus >>> DEVINFO_STATUS_ENGINEON_BIT) & 1;
 }
 
 //! Получить дискретный статус дискретно-аналогового входа
