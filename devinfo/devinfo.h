@@ -23,7 +23,6 @@
 #define DEVINFO_STATUS_GPSANTOFF_BIT 6
 #define DEVINFO_STATUS_UINTBUSFAIL_BIT 7
 #define DEVINFO_STATUS_EXTPOWERFAIL_BIT 8
-#define DEVINFO_STATUS_EXTPOWERFAIL_MASK (1 << DEVINFO_STATUS_EXTPOWERFAIL_BIT)
 #define DEVINFO_STATUS_ENGINEON_BIT 9
 #define DEVINFO_STATUS_SHOCK_BIT 10
 #define DEVINFO_STATUS_COORDS_BIT 11
@@ -48,5 +47,7 @@ getFreeRam(&firmware, &zip = 0, &easyLogic = 0);
 getTagMaxSize(tagId);
 getTagValue(tagId, &value);
 hasExtPower(devStatus);
+isEngineOn(devStatus);
+getInStatus(index);
 
 #endif // DEVINFO_H

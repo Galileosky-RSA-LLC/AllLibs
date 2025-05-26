@@ -50,7 +50,7 @@ unixTime2dateTime(time, &year, &month, &day, &hour, &minute, &second)
     {
         i++;
         time -= thisYearSeconds;
-        thisYearSeconds = NONLEAP_YEAR_SECONDS + ((i % 4 == 2) ? DAY_SECONDS : 0);
+        thisYearSeconds = NONLEAP_YEAR_SECONDS + ((i % 4 == 2) ? SECONDS_PER_DAY : 0);
     }
     year = UNIX_EPOCH_YEAR_START + i;
     new monthDays[] = [JANUARY_DAYS, FEBRUARY_NONLEAP_DAYS, MARCH_DAYS, APRIL_DAYS, MAY_DAYS, JUNE_DAYS, JULY_DAYS, AUGUST_DAYS, SEPTEMBER_DAYS, OCTOBER_DAYS,
@@ -58,7 +58,7 @@ unixTime2dateTime(time, &year, &month, &day, &hour, &minute, &second)
     if (isLeapYear(year))
         monthDays[1] = FEBRUARY_LEAP_DAYS;
 
-    new daysElapsed = time / DAY_SECONDS;
+    new daysElapsed = time / SECONDS_PER_DAY;
     new day1 = daysElapsed;
     for (new i = 0; i <= sizeof monthDays - 1; i++)
     {
@@ -70,11 +70,11 @@ unixTime2dateTime(time, &year, &month, &day, &hour, &minute, &second)
         }
         day1 -= monthDays[i];
     }
-    new secondsFromMidnight = time - daysElapsed * DAY_SECONDS;
-    hour = secondsFromMidnight / HOUR_SECONDS;
-    new secondsFromHour = secondsFromMidnight - hour * HOUR_SECONDS;
-    minute = secondsFromHour / MINUTE_SECONDS;
-    second = secondsFromHour - minute * MINUTE_SECONDS;
+    new secondsFromMidnight = time - daysElapsed * SECONDS_PER_DAY;
+    hour = secondsFromMidnight / SECONDS_PER_HOUR;
+    new secondsFromHour = secondsFromMidnight - hour * SECONDS_PER_HOUR;
+    minute = secondsFromHour / SECONDS_PER_MINUTE;
+    second = secondsFromHour - minute * SECONDS_PER_MINUTE;
 }
 
 //! Проверить, что uptime1 < uptime2
@@ -128,11 +128,11 @@ dateTime2unixTime(year, month, day, hour, minute, second, &unixtime)
         unixtime += monthDays[i];
     
     unixtime += day - 1;
-    unixtime *= DAY_HOURS;
+    unixtime *= HOURS_PER_DAY;
     unixtime += hour;
-    unixtime *= HOUR_MINUTES;
+    unixtime *= MINUTES_PER_HOUR;
     unixtime += minute;
-    unixtime *= MINUTE_SECONDS;
+    unixtime *= SECONDS_PER_MINUTE;
     unixtime += second;
     return true;
 }
