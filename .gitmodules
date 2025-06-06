@@ -7,6 +7,3 @@
 [submodule "iso14229"]
 	path = iso14229
 	url = ../libiso14229.git
-[submodule "lic"]
-	path = lic
-	url = ../lic.git
