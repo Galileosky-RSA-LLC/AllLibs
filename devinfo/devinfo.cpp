@@ -400,4 +400,39 @@ getTagValue(tagId, &value)
     return true;
 }
 
+//! Проверить наличие внешнего питания прибора
+//! \param[in] devStatus значение статуса из глобальной переменной STATUS
+//! \return true - есть внешнее питание, false - нет внешнего питания
+hasExtPower(devStatus)
+{
+    return !((devStatus >>> DEVINFO_STATUS_EXTPOWERFAIL_BIT) & 1);
+}
+
+//! Проверить, что двигатель заведен (== зажигание включено)
+//! \param[in] devStatus значение статуса из глобальной переменной STATUS
+//! \return true - двигатель заведен, false - остановлен
+isEngineOn(devStatus)
+{
+    return (devStatus >>> DEVINFO_STATUS_ENGINEON_BIT) & 1;
+}
+
+//! Получить дискретный статус дискретно-аналогового входа
+//! \param[in] index индекс входа
+getInStatus(index)
+{
+    switch (index)
+    {
+        case 0: return GetVar(STATUS_OF_IN0);
+        case 1: return GetVar(STATUS_OF_IN1);
+        case 2: return GetVar(STATUS_OF_IN2);
+        case 3: return GetVar(STATUS_OF_IN3);
+        case 4: return GetVar(STATUS_OF_IN4);
+        case 5: return GetVar(STATUS_OF_IN5);
+        case 6: return GetVar(STATUS_OF_IN6);
+        case 7: return GetVar(STATUS_OF_IN7);
+        case 8: return GetVar(STATUS_OF_IN8);
+        case 9: return GetVar(STATUS_OF_IN9);
+    }
+}
+
 #endif // DEVINFO_LIB

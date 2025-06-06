@@ -334,4 +334,9 @@
 #define TAG_REFRIGERATOR_MIN_SIZE 7
 #define TAG_REFRIGERATOR_MAX_SIZE 117
 
+// дискретно-аналоговые входы
+#define ADC_INPUTS_AMOUNT_MAX 10
+#define ADC_INPUT_IDX_MIN 0
+#define ADC_INPUT_IDX_MAX (ADC_INPUTS_AMOUNT_MAX - 1)
+
 #endif // GDEFINES_H

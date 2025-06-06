@@ -59,7 +59,7 @@ insertArrayStr(dest{}, destPos, destSize, const source{}, sourceSize, sourcePos 
         sourcePos = 0;
 
     new i;
-	for (i = 0; ((destPos + i) < destSize) && ((sourcePos + i) < sourceSize) && (i < (sourceSize - sourcePos)); i++)
+	for (i = 0; ((destPos + i) < destSize) && ((sourcePos + i) < sourceSize); i++)
 		dest{destPos + i} = source{sourcePos + i};
 
 	return i;
@@ -894,6 +894,83 @@ getSubSize(arStart, arSize)
         arSize = 0;
     
     return arSize > arStart ? arSize - arStart : 0;
+}
+
+//! Кольцевой сдвиг элементов подмассива
+//! \param[in] ar изменяемый массив
+//! \param[in] arSize длина массива
+//! \param[in] toRight признак необходимости сдвига вправо: true - вправо, false - влево
+//! \param[in] arStart индекс начала подмассива
+//! \param[in] count величина сдвига
+arrayRingShift(ar[], arSize, toRight, arStart = 0, count = 1)
+{
+    if (arStart < 0)
+        arStart = 0;
+
+    new subSize = getSubSize(arStart, arSize);
+    if (subSize <= 1)
+        return;
+
+    count %= subSize;
+    new arLast = arSize - 1;
+    for (new i = 0; i < count; i++)
+    {
+        new t = ar[toRight ? arLast : arStart];
+        for (new j = 0; j < (subSize - 1); j++)
+            ar[toRight ? arLast - j : j] = ar[toRight ? arLast - j - 1 : j + 1];
+
+        ar[toRight ? arStart : arLast] = t;
+    }
+}
+
+//! Кольцевой сдвиг однобайтных элементов подмассива
+//! \param[in] ar изменяемый массив
+//! \param[in] arSize длина массива
+//! \param[in] toRight признак необходимости сдвига вправо: true - вправо, false - влево
+//! \param[in] arStart индекс начала подмассива
+//! \param[in] count величина сдвига
+arrayRingShiftStr(ar{}, arSize, toRight, arStart = 0, count = 1)
+{
+    if (arStart < 0)
+        arStart = 0;
+
+    new subSize = getSubSize(arStart, arSize);
+    if (subSize <= 1)
+        return;
+
+    count %= subSize;
+    new arLast = arSize - 1;
+    for (new i = 0; i < count; i++)
+    {
+        new t = ar{toRight ? arLast : arStart};
+        for (new j = 0; j < (subSize - 1); j++)
+            ar{toRight ? arLast - j : j} = ar{toRight ? arLast - j - 1 : j + 1};
+
+        ar{toRight ? arStart : arLast} = t;
+    }
+}
+
+//! Вставить один подмассив в другой массив
+//! \param[out] dest целевой массив, куда копируется
+//! \param[in] destPos смещение в целевом
+//! \param[in] destSize длина целевого массива
+//! \param[in] source копируемый массив
+//! \param[in] sourceSize длина копируемого массива
+//! \param[in] sourcePos смещение в копируемом, с которого начинать копирование
+//! \return количество вставленных элементов
+insertArray(dest[], destPos, destSize, const source[], sourceSize, sourcePos = 0)
+{
+    if (destPos < 0)
+        destPos = 0;
+
+    if (sourcePos < 0)
+        sourcePos = 0;
+
+    new i;
+	for (i = 0; ((destPos + i) < destSize) && ((sourcePos + i) < sourceSize); i++)
+		dest[destPos + i] = source[sourcePos + i];
+
+	return i;
 }
 
 #endif // ARRAY_LIB

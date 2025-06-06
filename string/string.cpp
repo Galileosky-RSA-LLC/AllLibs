@@ -66,35 +66,21 @@ strLen(const str{}, strLength = 0, start = 0)
     return i - start;
 }
 
-//! Замена одной подстроки на другую
-//! \param[out] strDest массив строки-приемника
-//! \param[in] strDestPos позиция начала вставки в строку-приемник
-//! \param[in] strDestLength длина массива строки-приемника
-//! \param[in] strSource массив строки-источника
-//! \param[in] strSourceLength длина массива строки-источника
-//! \param[in] strSourcePos начальная позиция в строке-источнике
-//! \return число замененных символов или =1, если исходная строка пустая
-replaceStr(strDest{}, strDestPos, strDestLength, const strSource{}, strSourceLength, strSourcePos = 0)
+//! Копирование одной подстроки в другую с ее завершением (если позволяет длина)
+//! \param[out] dest массив строки-приемника
+//! \param[in] destPos позиция начала вставки в строку-приемник
+//! \param[in] destLength длина массива строки-приемника
+//! \param[in] source массив строки-источника
+//! \param[in] sourcePos начальная позиция в строке-источнике
+//! \param[in] sourceLength длина массива строки-источника (если <=0, то будет вычислена)
+strncpy(dest{}, destPos, destLength, const source{}, sourcePos = 0, sourceLength = 0)
 {
-    if (strDestPos < 0)
-        strDestPos = 0;
+    if (destPos < 0)
+        destPos = 0;
 
-    if (strSourcePos < 0)
-        strSourcePos = 0;
-
-    new i;
-	for (i = 0; ((strDestPos + i) < strDestLength) && ((strSourcePos + i) < strSourceLength) && (i < (strSourceLength - strSourcePos)); i++)
-	{	
-        strDest{strDestPos + i} = strSource{strSourcePos + i};
-        if (strSource{strSourcePos + i} == 0)
-        {
-            if (i == 0)
-                i = 1;
-
-            break;
-        }
-    }
-	return i;
+    new endPos = destPos + insertArrayStr(dest, destPos, destLength, source, strLen(source, sourceLength), sourcePos);
+	if ((endPos >= 0) && (endPos < destLength))
+        dest{endPos} = 0;
 }
 
 //! Преобразовать нечитаемые символы в пробелы
