@@ -110,4 +110,30 @@ ustructInsertEmpty(userArray{}, userArrayMaxSize, &pos, emptyCount)
     return groups;
 }
 
+//! Вставить данные датчика пассажиропотока в массив пользователя
+//! \param[inout] userArray массив пользователя
+//! \param[in] userArrayMaxSize предельный размер массива пользователя
+//! \param[in] sensor данные датчика
+//! \param[inout] pos позиция в массиве пользователя
+//! \return количество вставленных байт (0 - ошибка входных данных)
+userArrayAddPasCounting(userArray{}, userArrayMaxSize, const sensor[USERARRAY_PASCOUNT_SENSOR_DATA], &pos)
+{
+    if ((pos < USERARRAY_PASCOUNT_DATA_POS_MIN)
+        || ((pos + USERARRAY_PASCOUNT_SENSOR_SIZE) > USERARRAY_PASCOUNT_SIZE_MAX)
+        || ((pos - USERARRAY_PASCOUNT_DATA_POS_MIN) % USERARRAY_PASCOUNT_SENSOR_SIZE)
+        || (sensor.addr < USERARRAY_PASCOUNT_SENSOR_ADDR_MIN) || (sensor.addr > USERARRAY_PASCOUNT_SENSOR_ADDR_MAX)
+        || (sensor.incoming < USERARRAY_PASCOUNT_SENSOR_DATA_MIN) || (sensor.incoming > USERARRAY_PASCOUNT_SENSOR_DATA_MAX)
+        || (sensor.outgoing < USERARRAY_PASCOUNT_SENSOR_DATA_MIN) || (sensor.outgoing > USERARRAY_PASCOUNT_SENSOR_DATA_MAX))
+        return 0;
+
+    num24bit2arrayLe(sensor.addr, userArray, pos, userArrayMaxSize);
+    pos += USERARRAY_PASCOUNT_SENSOR_ADDR_SIZE;
+    userArray{pos++} = sensor.state;
+    num16bit2arrayLe(sensor.incoming, userArray, pos, userArrayMaxSize);
+    pos += USERARRAY_PASCOUNT_SENSOR_DATA_SIZE;
+    num16bit2arrayLe(sensor.outgoing, userArray, pos, userArrayMaxSize);
+    pos += USERARRAY_PASCOUNT_SENSOR_DATA_SIZE;
+    return USERARRAY_PASCOUNT_SENSOR_SIZE;
+}
+
 #endif // USERARRAY_LIB
