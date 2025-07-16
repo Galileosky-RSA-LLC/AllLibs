@@ -183,6 +183,29 @@ crc32(const data{}, dataSize, pos = 0, init = 0xFFFFFFFF)
     return res ^ 0xFFFFFFFF;
 }
 
+//! Poly: 0x8005 (x^16 + x^15 + x^2 + 1)
+//! Init  : 0x0000
+//! RefIn: false
+//! RefOut: false
+//! XorOut: 0x0000
+//! Check : 0xFEE8 ("123456789")
+//! \param[in] data массив с данными для расчета
+//! \param[in] dataSize размер массива
+//! \param[in] pos стартовый индекс подмассива для вычисления
+//! \param[in] init значение инициализации
+stock crc16buypass(const data{}, dataSize, pos = 0, init = 0x0000)
+{
+    const poly = 0x8005;
+    new res = init;
+    for (; pos < dataSize; pos++)
+    {
+        res ^= data{pos} << 8;
+        for(new i = 0; i < 8; i++)
+            res = (res & (1 << 15)) ? ((crc << 1) ^ poly) : (crc << 1);
+    }
+    return res;
+}
+
 // Приватные функции
 
 //! Расчет значений в блоке для fletcher16opt
