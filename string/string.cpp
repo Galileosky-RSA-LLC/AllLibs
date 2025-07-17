@@ -78,7 +78,7 @@ strncpy(dest{}, destPos, destLength, const source{}, sourcePos = 0, sourceLength
     if (destPos < 0)
         destPos = 0;
 
-    new endPos = destPos + insertArrayStr(dest, destPos, destLength, source, strLen(source, sourceLength), sourcePos);
+    new endPos = destPos + insertArrayStr(dest, destPos, destLength, source, sourcePos + strLen(source, sourceLength, sourcePos), sourcePos);
 	if ((endPos >= 0) && (endPos < destLength))
         dest{endPos} = 0;
 }

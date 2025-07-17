@@ -201,7 +201,7 @@ stock crc16buypass(const data{}, dataSize, pos = 0, init = 0x0000)
     {
         res ^= data{pos} << 8;
         for(new i = 0; i < 8; i++)
-            res = (res & (1 << 15)) ? ((crc << 1) ^ poly) : (crc << 1);
+            res = (res & (1 << 15)) ? ((res << 1) ^ poly) : (res << 1);
     }
     return res;
 }
