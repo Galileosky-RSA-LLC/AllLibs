@@ -1,6 +1,10 @@
-#ifndef CHECKCODE_H
+//! @file
+//! @brief Заголовок библиотеки проверочных кодов (CRC, CS, etc.)
+
+#ifdef CHECKCODE_H
+#endinput
+#endif
 #define CHECKCODE_H
-// Заголовок библиотеки проверочных кодов (CRC, CS, etc.)
 
 //// 8 бит
 
@@ -8,13 +12,13 @@
 //! \param[in] data исходный массив
 //! \param[in] length размер массива
 //! \param[in] pos стартовый индекс подмассива для вычисления
-forward stock crc8(const data{}, length, pos = 0)
+forward stock crc8(const data{}, length, pos = 0);
 
 //! LRC8
 //! \param[in] data исходный массив
 //! \param[in] length размер массива
 //! \param[in] pos стартовый индекс подмассива для вычисления
-forward stock lrc8(const data{}, length, pos = 0)
+forward stock lrc8(const data{}, length, pos = 0);
 
 //! CRC-8-Dallas/Maxim
 //! Poly: 0x31 (x^8 + x^5 + x^4 + 1)
@@ -24,7 +28,7 @@ forward stock lrc8(const data{}, length, pos = 0)
 //! \param[in] dataSize размер массива
 //! \param[in] pos стартовый индекс подмассива для вычисления
 //! \param[in] init значение инициализации
-forward stock crc8dallasMaxim(const data{}, dataSize, pos = 0, init = 0xFF)
+forward stock crc8dallasMaxim(const data{}, dataSize, pos = 0, init = 0xFF);
 
 
 //// 16 бит
@@ -34,19 +38,19 @@ forward stock crc8dallasMaxim(const data{}, dataSize, pos = 0, init = 0xFF)
 //! \param[in] length размер массива
 //! \param[in] pos стартовый индекс подмассива для вычисления
 //! \param[in] init значение при инициализации
-forward stock crc16Kermit(const data{}, length, pos = 0, init = 0)
+forward stock crc16Kermit(const data{}, length, pos = 0, init = 0);
 
 //! Контрольная сумма Флетчера 
 //! \param[in] data исходный массив
 //! \param[in] length размер массива
 //! \param[in] pos стартовый индекс подмассива для вычисления
-forward stock fletcher16(const data{}, length, pos = 0)
+forward stock fletcher16(const data{}, length, pos = 0);
 
 //! Контрольная сумма Флетчера, оптимизированный вариант 
 //! \param[in] data исходный массив
 //! \param[in] length размер массива
 //! \param[in] pos стартовый индекс подмассива для вычисления
-forward stock fletcher16opt(const data{}, length, pos = 0)
+forward stock fletcher16opt(const data{}, length, pos = 0);
 
 //! Poly  : 0x1021    x^16 + x^12 + x^5 + 1
 //!  Revert: false
@@ -58,7 +62,7 @@ forward stock fletcher16opt(const data{}, length, pos = 0)
 //! \param[in] length размер массива
 //! \param[in] pos стартовый индекс подмассива для вычисления
 //! \param[in] init значение при инициализации
-forward stock crc16ccitt(const data{}, length, pos = 0, init = 0xFFFF)
+forward stock crc16ccitt(const data{}, length, pos = 0, init = 0xFFFF);
 
 //! Poly: 0x8005 (x^16 + x^15 + x^2 + 1)
 //! Init  : 0x0000
@@ -70,7 +74,7 @@ forward stock crc16ccitt(const data{}, length, pos = 0, init = 0xFFFF)
 //! \param[in] dataSize размер массива
 //! \param[in] pos стартовый индекс подмассива для вычисления
 //! \param[in] init значение инициализации
-forward stock crc16buypass(const data{}, dataSize, pos = 0, init = 0x0000)
+forward stock crc16buypass(const data{}, dataSize, pos = 0, init = 0x0000);
 
 
 //// 32 бит
@@ -85,6 +89,4 @@ forward stock crc16buypass(const data{}, dataSize, pos = 0, init = 0x0000)
 //! \param[in] dataSize размер массива
 //! \param[in] pos стартовый индекс подмассива для вычисления
 //! \param[in] init значение инициализации
-forward stock crc32(const data{}, dataSize, pos = 0, init = 0xFFFFFFFF)
-
-#endif // CHECKCODE_H
+forward stock crc32(const data{}, dataSize, pos = 0, init = 0xFFFFFFFF);
