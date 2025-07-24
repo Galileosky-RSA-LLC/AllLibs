@@ -1,6 +1,10 @@
-#ifndef STRING_LIB
+//! @file
+//! @brief Функции для работы со строками
+
+#ifdef STRING_LIB
+#endinput
+#endif
 #define STRING_LIB
-// Функции для работы со строками
 
 #include "string.h"
 #include "..\array\array.h"
@@ -554,5 +558,3 @@ stock isAsciiHex(byte)
 {
     return ((byte >= '0') && (byte <= '9')) || ((byte >= 'A') && (byte <= 'F')) || ((byte >= 'a') && (byte <= 'f'));
 }
-
-#endif // STRING_LIB
