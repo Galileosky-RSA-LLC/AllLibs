@@ -149,6 +149,47 @@ stock crc16buypass(const data{}, dataSize, pos = 0, init = 0x0000)
     return res;
 }
 
+/**
+ * Универсальная функция расчета CRC
+ * 
+ * @param data[]      Массив с данными для расчета
+ * @param dataLen     Длина данных в байтах
+ * @param polyWidth   Степень полинома в битах (8, 16, 32 и т.д.)
+ * @param poly        Полином (без старшего бита)
+ * @param init        Начальное значение CRC
+ * @param Revert      Флаг инверсии битов (true - инвертировать, false - нет)
+ * @param XorOut      Величина для XOR с конечным значением
+ * @return            Рассчитанное значение CRC
+ */
+crc(const data{}, dataLen, polyWidth, poly, init, bool:Revert, XorOut)
+{
+    new crc = init;
+    new topBit = (1 << (polyWidth - 1));
+    for (new i = 0; i < dataLen; i++)
+    {
+        crc ^= (Revert ? (~data{i}) & 0xFF : data{i}) << (polyWidth - 8);
+        for (new j = 0; j < 8; j++)
+            crc = crc & topBit ? (crc << 1) ^ poly : (crc << 1);
+    }
+    if (Revert)
+    {
+        // Инверсия битов результата
+        crc = ((crc & 0x55555555) << 1) | ((crc & 0xAAAAAAAA) >>> 1);
+        crc = ((crc & 0x33333333) << 2) | ((crc & 0xCCCCCCCC) >>> 2);
+        crc = ((crc & 0x0F0F0F0F) << 4) | ((crc & 0xF0F0F0F0) >>> 4);
+        if (polyWidth > 8)
+        {
+            crc = ((crc & 0x00FF00FF) << 8) | ((crc & 0xFF00FF00) >>> 8);
+            
+            if (polyWidth > 16)
+            {
+                crc = (crc << 16) | (crc >>> 16);
+            }
+        }
+    }
+    return crc ^ XorOut;
+}
+
 //! @privatesection
 
 //! Расчет значений в блоке для fletcher16opt

@@ -26,7 +26,7 @@ forward stock crc8(const data{}, dataSize, pos = 0, init = 0x00);
 //! @param[in] pos стартовый индекс подмассива для вычисления
 forward stock lrc8(const data{}, dataSize, pos = 0, init = 0x00);
 
-//! @brief CRC-8-Dallas/Maxim, CRC-8/NRC-5
+//! @brief CRC-8 Dallas/Maxim, CRC-8/NRSC-5
 //! @details Poly: 0x31 (x^8 + x^5 + x^4 + 1), 0xC8
 //! RefIn: false
 //! RefOut: false
