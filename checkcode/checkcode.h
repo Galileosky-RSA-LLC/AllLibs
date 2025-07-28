@@ -6,6 +6,19 @@
 #endif
 #define CHECKCODE_H
 
+//! @brief Рассчитать CRC
+//! @param[in] data исходный массив
+//! @param[in] dataSize размер массива
+//! @param[in] polyWidth разрядность полинома
+//! @param[in] poly полином, без старшего бита
+//! @param[in] pos стартовый индекс массива
+//! @param[in] init начальное значение
+//! @param[in] isRevert признак инверсии битов: true - инвертировать, false - нет; к выходному значению применяется только при isFinish == true
+//! @param[in] xorOut величина для XOR с конечным значением, применяется только при isFinish == true
+//! @param[in] isFinish признак завершения расчета: true - последний проход, false - не последний
+//! @return рассчитанное значение
+forward stock crc(const data{}, dataSize, polyWidth, poly, pos = 0, init = 0, bool:isRevert = false, xorOut = 0, bool:isFinish = true);
+
 //! @defgroup bits8 8 бит
 //! @{
 

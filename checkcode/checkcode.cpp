@@ -6,6 +6,9 @@
 #endif
 #define CHECKCODE_LIB
 
+#include "..\numeric\numeric.h"
+#include "..\numeric\numeric.cpp"
+
 //! @publicsection
 
 stock crc8(const data{}, dataSize, pos = 0, init = 0x00)
@@ -149,18 +152,7 @@ stock crc16buypass(const data{}, dataSize, pos = 0, init = 0x0000)
     return res;
 }
 
-//! @brief Универсальная функция расчета CRC
-//! @param[in] data исходный массив
-//! @param[in] dataSize размер массива
-//! @param[in] polyWidth разрядность полинома
-//! @param[in] poly полином, без старшего бита
-//! @param[in] pos стартовый индекс массива
-//! @param[in] init начальное значение
-//! @param[in] isRevert признак инверсии битов: true - инвертировать, false - нет; к выходному значению применяется только при isFinish == true
-//! @param[in] xorOut величина для XOR с конечным значением, применяется только при isFinish == true
-//! @param[in] isFinish признак завершения расчета: true - последний проход, false - не последний
-//! @return рассчитанное значение, на последнем проходе (при isFinish == true) взять нужное количество бит
-crc(const data{}, dataSize, polyWidth, poly, pos = 0, init = 0, bool:isRevert = false, xorOut = 0, bool:isFinish = true)
+stock crc(const data{}, dataSize, polyWidth, poly, pos = 0, init = 0, bool:isRevert = false, xorOut = 0, bool:isFinish = true)
 {
     if (pos < 0)
         pos = 0;
@@ -169,11 +161,25 @@ crc(const data{}, dataSize, polyWidth, poly, pos = 0, init = 0, bool:isRevert = 
     new topBit = (1 << (polyWidth - 1));
     for (; pos < dataSize; pos++)
     {
-        crc ^= (isRevert ? (~data{pos}) & 0xFF : data{pos}) << (polyWidth - 8);
-        for (new j = 0; j < 8; j++)
+        new byte = data{pos};
+        crc ^= (isRevert ? reverseBits(byte, 8) : byte) << (polyWidth - 8);
+        for (new i = 0; i < 8; i++)
             crc = crc & topBit ? (crc << 1) ^ poly : (crc << 1);
     }
-    return isFinish ? (isRevert ? ~crc : crc) ^ xorOut : crc;
+    if (isFinish)
+    {
+        if (isRevert)
+        {
+            crc = reverseBits(crc, polyWidth);
+        }
+        else
+        {
+            new mask = (topBit << 1) - 1;
+            crc &= mask;
+        }
+        crc ^= xorOut;
+    }
+    return crc;
 }
 
 //! @privatesection

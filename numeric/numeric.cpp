@@ -197,7 +197,7 @@ stock reverseBits(value, bits)
 
 //! @privatesection
 
-//! @brief Нормализация битов для циклических сдвигов
+//! @brief Нормализовать биты для циклических сдвигов
 stock rolr_normalizeBits(&bits, &restBits)
 {
     const mask = BIT_DEPTH - 1;
