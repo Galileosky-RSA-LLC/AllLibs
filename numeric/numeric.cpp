@@ -1,11 +1,16 @@
-#ifndef NUMERIC_LIB
+//! @file
+//! @brief Функции библиотеки работы с числами
+
+#ifdef NUMERIC_LIB
+#endinput
+#endif
 #define NUMERIC_LIB
-// Библиотека работы с числами
 
 #include "numeric.h"
 
-//! Инвертировать биты в байте
-invertBitsInByte(byte)
+//! @publicsection
+
+stock invertBitsInByte(byte)
 {
     new tmp = 0;
     for (new j = 0; j < 8; j++)
@@ -17,11 +22,7 @@ invertBitsInByte(byte)
     return tmp;
 }
 
-//! Получить значение бита из байта
-//! \param[in] byteValue исходный байт
-//! \param[in] bit номер бита, 0..7
-//! \return значение бита false/true
-getBit(byteValue, bit)
+stock getBit(byteValue, bit)
 {
     if (bit < 0)
         bit = 0;
@@ -32,12 +33,7 @@ getBit(byteValue, bit)
     return ((byteValue & 0xFF) >> bit) & 1;
 }
 
-//! Установить значение бита в байте
-//! \param[in] byteValue исходный байт
-//! \param[in] bit номер изменяемого бита, 0..7
-//! \param[in] val устанавливаемое значение бита false/true
-//! \return измененный байт
-setBit(byteValue, bit, val)
+stock setBit(byteValue, bit, val)
 {
     if (bit < 0)
         bit = 0;
@@ -53,12 +49,7 @@ setBit(byteValue, bit, val)
     return byteValue;
 }
 
-//! Корректировать число так, чтобы оно оказалось внутри заданного диапазона
-//! \param[inout] num преобразуемое число
-//! \param[in] rangeMin минимум диапазона
-//! \param[in] rangeMax максимум диапазона
-//! \return false - число не корректировалось, true - число корректировалось
-coerce(&num, rangeMin, rangeMax)
+stock coerce(&num, rangeMin, rangeMax)
 {
     if (rangeMin > rangeMax)
     {
@@ -79,8 +70,7 @@ coerce(&num, rangeMin, rangeMax)
     return false;
 }
 
-//! Подсчёт числа разрядов в числе
-digits(val)
+stock digits(val)
 {
     if (val == 0)
         return 1;
@@ -100,11 +90,7 @@ digits(val)
     return res;
 }
 
-//! Возведение числа в неотрицательную степень,
-//! без проверок границ диапазона
-//! \param[in] num исходное число
-//! \param[in] p степень
-pow(num, p)
+stock pow(num, p)
 {
     if (p <= 0)
         return 1;
@@ -116,16 +102,12 @@ pow(num, p)
     return res;
 }
 
-//! Возвращает модуль числа
-abs(num)
+stock abs(num)
 {
     return (num >= 0) ? num : -num;
 }
 
-//! Возвращает псевдослучайное число в заданном диапазоне
-//! \param[in] atLeast нижняя граница (от), 0..2147483647
-//! \param[in] noGreater верхняя граница (до), 0..2147483647
-rnd(atLeast, noGreater)
+stock rnd(atLeast, noGreater)
 {
     if (atLeast < 0)
         atLeast = 0;
@@ -163,8 +145,7 @@ rnd(atLeast, noGreater)
     return atLeast + (uptimeNew > range ? uptimeNew % range : range % uptimeNew);
 }
 
-//! Конвертировать в BCD
-dec2bcd(dec)
+stock dec2bcd(dec)
 {
     new shift;
     new result;
@@ -177,8 +158,7 @@ dec2bcd(dec)
     return result;
 }
 
-//! Подсчет занятых ячеек по актуальной длине
-countUsedCells(size, cellSize)
+stock countUsedCells(size, cellSize)
 {
     if ((size <= 0) || (cellSize <= 0))
         return 0;
@@ -186,39 +166,41 @@ countUsedCells(size, cellSize)
     return (size / cellSize) + ((size % cellSize) ? 1 : 0);
 }
 
-//! Циклический сдвиг влево
-//! \param[in] value число
-//! \param[in] bits кол-во разрядов
-rol(value, bits)
+stock rol(value, bits)
 {
     new restBits;
     rolr_normalizeBits(bits, restBits);
     return (value << bits) | (value >>> restBits);
 }
 
-//! Циклический сдвиг вправо
-//! \param[in] value число
-//! \param[in] bits кол-во разрядов
-ror(value, bits)
+stock ror(value, bits)
 {
     new restBits;
     rolr_normalizeBits(bits, restBits);
     return (value >>> bits) | (value << restBits);
 }
 
-//! Переворачивает байты
-reverse(value)
+stock reverse(value)
 {
     return ((value & 0x000000FF) << 24) | ((value & 0x0000FF00) << 8) | ((value & 0x00FF0000) >>> 8) | ((value & 0xFF000000) >>> 24);
 }
 
-// Приватные функции
+stock reverseBits(value, bits)
+{
+    coerce(bits, 0, BIT_DEPTH);
+    new res = 0;
+    for (new i = 0; i < bits; i++)
+        res = (res << 1) | ((value >>> i) & 1);
 
-rolr_normalizeBits(&bits, &restBits)
+    return res;
+}
+
+//! @privatesection
+
+//! @brief Нормализация битов для циклических сдвигов
+stock rolr_normalizeBits(&bits, &restBits)
 {
     const mask = BIT_DEPTH - 1;
     bits &= mask;
     restBits = BIT_DEPTH - bits;
 }
-
-#endif // NUMERIC_LIB
