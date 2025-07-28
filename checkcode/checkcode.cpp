@@ -149,45 +149,31 @@ stock crc16buypass(const data{}, dataSize, pos = 0, init = 0x0000)
     return res;
 }
 
-/**
- * Универсальная функция расчета CRC
- * 
- * @param data[]      Массив с данными для расчета
- * @param dataLen     Длина данных в байтах
- * @param polyWidth   Степень полинома в битах (8, 16, 32 и т.д.)
- * @param poly        Полином (без старшего бита)
- * @param init        Начальное значение CRC
- * @param Revert      Флаг инверсии битов (true - инвертировать, false - нет)
- * @param XorOut      Величина для XOR с конечным значением
- * @return            Рассчитанное значение CRC
- */
-crc(const data{}, dataLen, polyWidth, poly, init, bool:Revert, XorOut)
+//! @brief Универсальная функция расчета CRC
+//! @param[in] data исходный массив
+//! @param[in] dataSize размер массива
+//! @param[in] polyWidth разрядность полинома
+//! @param[in] poly полином, без старшего бита
+//! @param[in] pos стартовый индекс массива
+//! @param[in] init начальное значение
+//! @param[in] isRevert признак инверсии битов: true - инвертировать, false - нет; к выходному значению применяется только при isFinish == true
+//! @param[in] xorOut величина для XOR с конечным значением, применяется только при isFinish == true
+//! @param[in] isFinish признак завершения расчета: true - последний проход, false - не последний
+//! @return рассчитанное значение, на последнем проходе (при isFinish == true) взять нужное количество бит
+crc(const data{}, dataSize, polyWidth, poly, pos = 0, init = 0, bool:isRevert = false, xorOut = 0, bool:isFinish = true)
 {
+    if (pos < 0)
+        pos = 0;
+
     new crc = init;
     new topBit = (1 << (polyWidth - 1));
-    for (new i = 0; i < dataLen; i++)
+    for (; pos < dataSize; pos++)
     {
-        crc ^= (Revert ? (~data{i}) & 0xFF : data{i}) << (polyWidth - 8);
+        crc ^= (isRevert ? (~data{pos}) & 0xFF : data{pos}) << (polyWidth - 8);
         for (new j = 0; j < 8; j++)
             crc = crc & topBit ? (crc << 1) ^ poly : (crc << 1);
     }
-    if (Revert)
-    {
-        // Инверсия битов результата
-        crc = ((crc & 0x55555555) << 1) | ((crc & 0xAAAAAAAA) >>> 1);
-        crc = ((crc & 0x33333333) << 2) | ((crc & 0xCCCCCCCC) >>> 2);
-        crc = ((crc & 0x0F0F0F0F) << 4) | ((crc & 0xF0F0F0F0) >>> 4);
-        if (polyWidth > 8)
-        {
-            crc = ((crc & 0x00FF00FF) << 8) | ((crc & 0xFF00FF00) >>> 8);
-            
-            if (polyWidth > 16)
-            {
-                crc = (crc << 16) | (crc >>> 16);
-            }
-        }
-    }
-    return crc ^ XorOut;
+    return isFinish ? (isRevert ? ~crc : crc) ^ xorOut : crc;
 }
 
 //! @privatesection
