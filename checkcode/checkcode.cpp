@@ -11,32 +11,9 @@
 
 //! @publicsection
 
-stock crc8(const data{}, dataSize, pos = 0, init = 0x00)
+stock crc8(const data{}, dataSize, pos = 0, init = 0x00, bool:isFinish = true)
 {
-    if (pos < 0)
-        pos = 0;
-
-    new res = init;
-    for (; pos < dataSize; pos++)
-    {
-        new t = data{pos};
-        for (new j = 0; j < 8; j++)
-        {
-            res ^= t & 0x01;
-            if (res & 0x01)
-            {
-                res ^= 0x18;
-                res >>>= 1;
-                res |= 0x80;
-            }
-            else
-            {
-                res >>>= 1;
-            }
-            t >>>= 1;
-        }
-    }
-    return res;
+    return crc(data, dataSize, .polyWidth = 8, .poly = 0x31, .pos = pos, .init = init, .isRevert = true, .xorOut = 0, .isFinish = isFinish);
 }
 
 stock lrc8(const data{}, dataSize, pos = 0, init = 0x00)
@@ -51,19 +28,9 @@ stock lrc8(const data{}, dataSize, pos = 0, init = 0x00)
     return res;
 }
 
-stock crc16Kermit(const data{}, dataSize, pos = 0, init = 0)
+stock crc16Kermit(const data{}, dataSize, pos = 0, init = 0, bool:isFinish = true)
 {
-    if (pos < 0)
-        pos = 0;
-
-    new crc = init;
-    for (; pos < dataSize; pos++)
-    {
-        crc ^= data{pos};
-        for (new j = 0; j < 8; j++)
-            crc = (crc & 1) == 1 ? (crc >>> 1) ^ 0x8408 : crc >>> 1;
-    }
-    return crc;
+    return crc(data, dataSize, .polyWidth = 16, .poly = 0x1021, .pos = pos, .init = init, .isRevert = true, .xorOut = 0, .isFinish = isFinish);
 }
 
 stock fletcher16(const data{}, dataSize, pos = 0)
@@ -97,59 +64,24 @@ stock fletcher16opt(const data{}, dataSize, pos = 0)
     return c1 << 8 | c0;
 }
 
-stock crc16ccitt(const data{}, dataSize, pos = 0, init = 0xFFFF)
+stock crc16ccitt(const data{}, dataSize, pos = 0, init = 0xFFFF, bool:isFinish = true)
 {
-    if (pos < 0)
-        pos = 0;
-
-    new crc = init;
-    for (; pos < dataSize; pos++)
-    {
-        crc ^= data{pos} << 8;
-        for (new i = 0; i < 8; i++)
-            crc = crc & 0x8000 ? (crc << 1) ^ 0x1021 : crc << 1;
-    }
-    return crc;
+    return crc(data, dataSize, .polyWidth = 16, .poly = 0x1021, .pos = pos, .init = init, .isRevert = false, .xorOut = 0, .isFinish = isFinish);
 }
 
-stock crc8dallasMaxim(const data{}, dataSize, pos = 0, init = 0xFF)
+stock crc8dallasMaxim(const data{}, dataSize, pos = 0, init = 0xFF, bool:isFinish = true)
 {
-    if (pos < 0)
-        pos = 0;
-
-    new res = init;
-    for (; pos < dataSize; pos++)
-    {
-        res ^= data{pos};
-        for (new i = 0; i < 8; i++)
-            res = res & 0x80 ? (res << 1) ^ 0x31 : res << 1;
-    }
-    return res;
+    return crc(data, dataSize, .polyWidth = 8, .poly = 0x31, .pos = pos, .init = init, .isRevert = false, .xorOut = 0, .isFinish = isFinish);
 }
 
-stock crc32(const data{}, dataSize, pos = 0, init = 0xFFFFFFFF)
+stock crc32(const data{}, dataSize, pos = 0, init = 0xFFFFFFFF, bool:isFinish = true)
 {
-    new res = init;
-    for (; pos < dataSize; pos++)
-    {
-        res ^= data{pos};
-        for (new j = 0; j < 8; j++)
-            res = (res & 1) ? (res >>> 1) ^ 0xEDB88320 : res >>> 1;
-    }
-    return res ^ 0xFFFFFFFF;
+    return crc(data, dataSize, .polyWidth = 32, .poly = 0x04C11DB7, .pos = pos, .init = init, .isRevert = true, .xorOut = 0xFFFFFFFF, .isFinish = isFinish);
 }
 
-stock crc16buypass(const data{}, dataSize, pos = 0, init = 0x0000)
+stock crc16buypass(const data{}, dataSize, pos = 0, init = 0x0000, bool:isFinish = true)
 {
-    const poly = 0x8005;
-    new res = init;
-    for (; pos < dataSize; pos++)
-    {
-        res ^= data{pos} << 8;
-        for(new i = 0; i < 8; i++)
-            res = (res & (1 << 15)) ? ((res << 1) ^ poly) : (res << 1);
-    }
-    return res;
+    return crc(data, dataSize, .polyWidth = 16, .poly = 0x8005, .pos = pos, .init = init, .isRevert = false, .xorOut = 0, .isFinish = isFinish);
 }
 
 stock crc(const data{}, dataSize, polyWidth, poly, pos = 0, init = 0, bool:isRevert = false, xorOut = 0, bool:isFinish = true)

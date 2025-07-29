@@ -6,6 +6,9 @@
 #endif
 #define CHECKCODE_H
 
+//! @defgroup general Общие функции
+//! @{
+
 //! @brief Рассчитать CRC
 //! @param[in] data исходный массив
 //! @param[in] dataSize размер массива
@@ -19,6 +22,9 @@
 //! @return рассчитанное значение
 forward stock crc(const data{}, dataSize, polyWidth, poly, pos = 0, init = 0, bool:isRevert = false, xorOut = 0, bool:isFinish = true);
 
+//! @}
+
+
 //! @defgroup bits8 8 бит
 //! @{
 
@@ -31,12 +37,15 @@ forward stock crc(const data{}, dataSize, polyWidth, poly, pos = 0, init = 0, bo
 //! @param[in] data исходный массив
 //! @param[in] dataSize размер массива
 //! @param[in] pos стартовый индекс подмассива для вычисления
-forward stock crc8(const data{}, dataSize, pos = 0, init = 0x00);
+//! @param[in] init значение инициализации
+//! @param[in] isFinish признак завершения расчета: true - последний проход, false - не последний
+forward stock crc8(const data{}, dataSize, pos = 0, init = 0x00, bool:isFinish = true);
 
 //! @brief LRC8, CHKSUM-8/ModBus, Intel HEX
 //! @param[in] data исходный массив
 //! @param[in] dataSize размер массива
 //! @param[in] pos стартовый индекс подмассива для вычисления
+//! @param[in] init значение инициализации
 forward stock lrc8(const data{}, dataSize, pos = 0, init = 0x00);
 
 //! @brief CRC-8 Dallas/Maxim, CRC-8/NRSC-5
@@ -49,7 +58,8 @@ forward stock lrc8(const data{}, dataSize, pos = 0, init = 0x00);
 //! @param[in] dataSize размер массива
 //! @param[in] pos стартовый индекс подмассива для вычисления
 //! @param[in] init значение инициализации
-forward stock crc8dallasMaxim(const data{}, dataSize, pos = 0, init = 0xFF);
+//! @param[in] isFinish признак завершения расчета: true - последний проход, false - не последний
+forward stock crc8dallasMaxim(const data{}, dataSize, pos = 0, init = 0xFF, bool:isFinish = true);
 
 //! @}
 
@@ -57,7 +67,7 @@ forward stock crc8dallasMaxim(const data{}, dataSize, pos = 0, init = 0xFF);
 //! @defgroup bits16 16 бит
 //! @{
 
-//! @brief CRC-16/KERMIT
+//! @brief CRC-16/KERMIT, CRC-16/BLUETOOTH, CRC-16/CCITT, CRC-16/CCITT-TRUE, CRC-16/V-41-LSB
 //! @details Poly: 0x1021 (x^16 + x^12 + x^5 + 1), 0x8408
 //! RefIn: true
 //! RefOut: true
@@ -66,8 +76,9 @@ forward stock crc8dallasMaxim(const data{}, dataSize, pos = 0, init = 0xFF);
 //! @param[in] data исходный массив
 //! @param[in] dataSize размер массива
 //! @param[in] pos стартовый индекс подмассива для вычисления
-//! @param[in] init значение при инициализации
-forward stock crc16Kermit(const data{}, dataSize, pos = 0, init = 0);
+//! @param[in] init значение инициализации
+//! @param[in] isFinish признак завершения расчета: true - последний проход, false - не последний
+forward stock crc16Kermit(const data{}, dataSize, pos = 0, init = 0, bool:isFinish = true);
 
 //! @brief Контрольная сумма Флетчера 
 //! @param[in] data исходный массив
@@ -81,7 +92,7 @@ forward stock fletcher16(const data{}, dataSize, pos = 0);
 //! @param[in] pos стартовый индекс подмассива для вычисления
 forward stock fletcher16opt(const data{}, dataSize, pos = 0);
 
-//! @brief CRC-16/CCITT
+//! @brief CRC-16/IBM-3740, CRC-16/AUTOSAR, CRC-16/CCITT-FALSE
 //! @details Poly: 0x1021 (x^16 + x^12 + x^5 + 1)
 //! Revert: false
 //! XorOut: 0x0000
@@ -90,10 +101,11 @@ forward stock fletcher16opt(const data{}, dataSize, pos = 0);
 //! @param[in] data исходный массив
 //! @param[in] dataSize размер массива
 //! @param[in] pos стартовый индекс подмассива для вычисления
-//! @param[in] init значение при инициализации
-forward stock crc16ccitt(const data{}, dataSize, pos = 0, init = 0xFFFF);
+//! @param[in] init значение инициализации
+//! @param[in] isFinish признак завершения расчета: true - последний проход, false - не последний
+forward stock crc16ccitt(const data{}, dataSize, pos = 0, init = 0xFFFF, bool:isFinish = true);
 
-//! @brief CRC-16/BUYPASS
+//! @brief CRC-16/UMTS, CRC-16/BUYPASS, CRC-16/VERIFONE
 //! @details Poly: 0x8005 (x^16 + x^15 + x^2 + 1)
 //! RefIn: false
 //! RefOut: false
@@ -103,7 +115,8 @@ forward stock crc16ccitt(const data{}, dataSize, pos = 0, init = 0xFFFF);
 //! @param[in] dataSize размер массива
 //! @param[in] pos стартовый индекс подмассива для вычисления
 //! @param[in] init значение инициализации
-forward stock crc16buypass(const data{}, dataSize, pos = 0, init = 0x0000);
+//! @param[in] isFinish признак завершения расчета: true - последний проход, false - не последний
+forward stock crc16buypass(const data{}, dataSize, pos = 0, init = 0x0000, bool:isFinish = true);
 
 //! @}
 
@@ -111,7 +124,7 @@ forward stock crc16buypass(const data{}, dataSize, pos = 0, init = 0x0000);
 //! @defgroup bits32 32 бит
 //! @{
 
-//! @brief CRC-32/zlib
+//! @brief CRC-32/zlib, CRC-32/ISO-HDLC, CRC-32, CRC-32/ADCCP, CRC-32/V-42, CRC-32/XZ, PKZIP
 //! @details Poly: 0x04C11DB7 (x^32 + x^26 + x^23 + x^22 + x^16 + x^12 + x^11 + x^10 + x^8 + x^7 + x^5 + x^4 + x^2 + x + 1)
 //! Revert: true
 //! XorOut: 0xFFFFFFFF
@@ -121,6 +134,7 @@ forward stock crc16buypass(const data{}, dataSize, pos = 0, init = 0x0000);
 //! @param[in] dataSize размер массива
 //! @param[in] pos стартовый индекс подмассива для вычисления
 //! @param[in] init значение инициализации
-forward stock crc32(const data{}, dataSize, pos = 0, init = 0xFFFFFFFF);
+//! @param[in] isFinish признак завершения расчета: true - последний проход, false - не последний
+forward stock crc32(const data{}, dataSize, pos = 0, init = 0xFFFFFFFF, bool:isFinish = true);
 
 //! @}

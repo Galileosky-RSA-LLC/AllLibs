@@ -22,6 +22,9 @@
 #define COUNT_USED_CELLS(%1,%2) ((%1) / (%2) + (((%1) % (%2)) != 0))
 #endif
 
+//! @defgroup general Общие функции
+//! @{
+
 //! @brief Получить модуль числа
 forward stock abs(num);
 
@@ -32,7 +35,7 @@ forward stock abs(num);
 //! @return false - число не корректировалось, true - число корректировалось
 forward stock coerce(&num, rangeMin, rangeMax);
 
-//! @brief Подсчет занятых ячеек по актуальной длине
+//! @brief Получить количество занятых ячеек по актуальной длине параметра
 forward stock countUsedCells(size, cellSize);
 
 //! @brief Конвертировать в BCD
@@ -55,6 +58,8 @@ forward stock reverse(value);
 //! @param[in] atLeast нижняя граница (от), 0..2147483647
 //! @param[in] noGreater верхняя граница (до), 0..2147483647
 forward stock rnd(atLeast, noGreater);
+
+//! @}
 
 
 //! @defgroup bits Битовые операции
