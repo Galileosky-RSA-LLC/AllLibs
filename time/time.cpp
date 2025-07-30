@@ -149,7 +149,7 @@ isLeapYear(year)
 //! \return длительность в мс
 duration(uptimeStart, uptimeEnd)
 {
-    return uptimeStart <= uptimeEnd ? uptimeEnd - uptimeStart : NUM_VALUE_MAX - uptimeStart + uptimeEnd;
+    return uptimeStart <= uptimeEnd ? uptimeEnd - uptimeStart : cellmax - uptimeStart + uptimeEnd;
 }
 
 #endif // TIME_LIB

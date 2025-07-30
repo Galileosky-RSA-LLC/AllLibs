@@ -6,9 +6,8 @@
 #endif
 #define NUMERIC_H
 
-#define NUM_VALUE_MAX 0x7FFFFFFF // 2 147 483 647
-#define NUM_VALUE_MIN 0x80000000 // -2 147 483 648
-#define BIT_DEPTH 32
+#define NUM_VALUE_MAX cellmax // 2 147 483 647, устаревшее определение, использовать cellmax
+#define NUM_VALUE_MIN cellmin // -2 147 483 648, устаревшее определение, использовать cellmin
 
 #ifndef MIN
 #define MIN(%1,%2) ((%1) < (%2) ? (%1) : (%2)) // при многих вложенных таких же - ЗАВИСАЕТ КОМПИЛЯЦИЯ
@@ -21,6 +20,9 @@
 #ifndef COUNT_USED_CELLS
 #define COUNT_USED_CELLS(%1,%2) ((%1) / (%2) + (((%1) % (%2)) != 0))
 #endif
+
+#define BYTE_BITS 8
+#define CELL_BYTES (cellbits / BYTE_BITS)
 
 //! @defgroup general Общие функции
 //! @{
