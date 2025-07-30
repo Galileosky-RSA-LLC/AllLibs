@@ -197,7 +197,7 @@ stock reverseBits(value, bits)
 
 stock changeByte(number, byteId, newByteValue)
 {
-    return number & (~(0xFF << (BYTE_BITS * byteId))) | (newByteValue << (byteId * BYTE_BITS));
+    return (number & (~(0xFF << (BYTE_BITS * byteId)))) | ((newByteValue & 0xFF) << (byteId * BYTE_BITS));
 }
 
 //! @privatesection
