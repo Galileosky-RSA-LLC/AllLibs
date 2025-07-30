@@ -75,7 +75,7 @@ stock digits(val)
     if (val == 0)
         return 1;
     
-    if (val == cellmin)
+    if (val == NUM_VALUE_MIN)
         return 10;
     
     if (val < 0)
@@ -131,7 +131,7 @@ stock rnd(atLeast, noGreater)
     if (uptimeNew == uptimeOld)
     {
         calls++;
-        uptimeNew = (uptimeNew >= calls) ? uptimeNew - calls : cellmax - calls + uptimeNew;
+        uptimeNew = (uptimeNew >= calls) ? uptimeNew - calls : NUM_VALUE_MAX - calls + uptimeNew;
     }
     else
     {
@@ -187,7 +187,7 @@ stock reverse(value)
 
 stock reverseBits(value, bits)
 {
-    coerce(bits, 0, cellbits);
+    coerce(bits, 0, BIT_DEPTH);
     new res = 0;
     for (new i = 0; i < bits; i++)
         res = (res << 1) | ((value >>> i) & 1);
@@ -200,7 +200,7 @@ stock reverseBits(value, bits)
 //! @brief Нормализовать биты для циклических сдвигов
 stock rolr_normalizeBits(&bits, &restBits)
 {
-    const mask = cellbits - 1;
+    const mask = BIT_DEPTH - 1;
     bits &= mask;
-    restBits = cellbits - bits;
+    restBits = BIT_DEPTH - bits;
 }
