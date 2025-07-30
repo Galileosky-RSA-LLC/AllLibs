@@ -195,6 +195,11 @@ stock reverseBits(value, bits)
     return res;
 }
 
+stock changeByte(number, byteId, newByteValue)
+{
+    return number & (~(0xFF << (BYTE_BITS * byteId))) | (newByteValue << (byteId * BYTE_BITS));
+}
+
 //! @privatesection
 
 //! @brief Нормализовать биты для циклических сдвигов

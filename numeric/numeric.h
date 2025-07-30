@@ -30,6 +30,13 @@
 //! @brief Получить модуль числа
 forward stock abs(num);
 
+//! @brief Изменить байт в числе
+//! @param[in] number исходное число
+//! @param[in] byteId номер изменяемого байта в числе, 0..3
+//! @param[in] newByteValue новое значение байта
+//! @return измененное число
+forward stock changeByte(number, byteId, newByteValue);
+
 //! @brief Привести число к требуемому диапазону
 //! @param[inout] num преобразуемое число
 //! @param[in] rangeMin минимум диапазона
