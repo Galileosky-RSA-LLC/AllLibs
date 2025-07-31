@@ -22,31 +22,20 @@ stock invertBitsInByte(byte)
     return tmp;
 }
 
-stock getBit(byteValue, bit)
+stock getBit(num, bit)
 {
-    if (bit < 0)
-        bit = 0;
-
-    if (bit > 7)
-        bit = 7;
-
-    return ((byteValue & 0xFF) >> bit) & 1;
+    return (num >> bit) & 1;
 }
 
-stock setBit(byteValue, bit, val)
+stock setBit(num, bit, bitValue)
 {
-    if (bit < 0)
-        bit = 0;
-
-    if (bit > 7)
-        bit = 7;
-    
-    if (val != 0)
-        byteValue |= 1 << bit;
+    new tmp = 1 << bit;
+    if (bitValue)
+        num |= tmp;
     else
-        byteValue &= ~(1 << bit);
+        num &= ~tmp;
 
-    return byteValue;
+    return num;
 }
 
 stock coerce(&num, rangeMin, rangeMax)
@@ -193,6 +182,17 @@ stock reverseBits(value, bits)
         res = (res << 1) | ((value >>> i) & 1);
 
     return res;
+}
+
+stock setByte(number, byteId, newByteValue)
+{
+    new shift = byteId * BYTE_BITS;
+    return (number & (~(0xFF << shift))) | ((newByteValue & 0xFF) << shift);
+}
+
+stock getByte(number, byteId)
+{
+    return (number >> (byteId * BYTE_BITS)) & 0xFF;
 }
 
 //! @privatesection
