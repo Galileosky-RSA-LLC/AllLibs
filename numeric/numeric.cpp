@@ -29,10 +29,11 @@ stock getBit(num, bit)
 
 stock setBit(num, bit, bitValue)
 {
+    new tmp = 1 << bit;
     if (bitValue)
-        num |= 1 << bit;
+        num |= tmp;
     else
-        num &= ~(1 << bit);
+        num &= ~tmp;
 
     return num;
 }
