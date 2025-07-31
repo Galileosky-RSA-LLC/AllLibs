@@ -101,7 +101,7 @@ stock decfractoa(num, exp, str{}, pos, length, separator)
     if (isMinus)
         str{pos++} = '-';
 
-    new len = itoa((num == NUM_VALUE_MIN ? -(num + 1) : (isMinus ? -num : num)) / divider, str, pos, length);
+    new len = itoa((num == cellmin ? -(num + 1) : (isMinus ? -num : num)) / divider, str, pos, length);
     if (len == 0)
         return 0;
 
@@ -136,7 +136,7 @@ stock itoa(num, str{}, pos, length)
         str{pos} = '0';
         return 1;
     }
-    if (num == NUM_VALUE_MIN)
+    if (num == cellmin)
         return insertArrayStr(str, pos, length, NUM_VALUE_MIN_STR, NUM_VALUE_MIN_STR_LENGTH);
     
     if (isMinus) 
@@ -181,7 +181,7 @@ stock itoaw(num, str{}, pos, length, width)
 
     if (isMinus)
     {
-        if (num == NUM_VALUE_MIN)
+        if (num == cellmin)
         {    
             insertArrayStr(str, pos, length, "2147483648", NUM_VALUE_MAX_STR_LENGTH);
             return totalSymbols;
@@ -254,7 +254,7 @@ stock atoi(const str{}, pos, length, &value)
 
         new newVal;
         newVal = (value * 10) + (str{pos} - '0');
-        if ((((value * 10) / 10) != value) || ((newVal < 0) && ((newVal != NUM_VALUE_MIN) || !isMinus))) // переполнение
+        if ((((value * 10) / 10) != value) || ((newVal < 0) && ((newVal != cellmin) || !isMinus))) // переполнение
             return 0;
 
         value = newVal;
@@ -314,7 +314,7 @@ stock atofi(const str{}, pos, length, separator, precision, &value)
 
             new newVal;
             newVal = (value * 10) + (str{pos} - '0');
-            if ((((value * 10) / 10) != value) || ((newVal < 0) && ((newVal != NUM_VALUE_MIN) || !isMinus))) // переполнение
+            if ((((value * 10) / 10) != value) || ((newVal < 0) && ((newVal != cellmin) || !isMinus))) // переполнение
                 return 0;
 
             value = newVal;
