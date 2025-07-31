@@ -22,31 +22,19 @@ stock invertBitsInByte(byte)
     return tmp;
 }
 
-stock getBit(byteValue, bit)
+stock getBit(num, bit)
 {
-    if (bit < 0)
-        bit = 0;
-
-    if (bit > 7)
-        bit = 7;
-
-    return ((byteValue & 0xFF) >> bit) & 1;
+    return (num >> bit) & 1;
 }
 
-stock setBit(byteValue, bit, val)
+stock setBit(num, bit, bitValue)
 {
-    if (bit < 0)
-        bit = 0;
-
-    if (bit > 7)
-        bit = 7;
-    
-    if (val != 0)
-        byteValue |= 1 << bit;
+    if (bitValue)
+        num |= 1 << bit;
     else
-        byteValue &= ~(1 << bit);
+        num &= ~(1 << bit);
 
-    return byteValue;
+    return num;
 }
 
 stock coerce(&num, rangeMin, rangeMax)
