@@ -46,6 +46,11 @@ forward stock dec2bcd(dec);
 //! @brief Получить количество разрядов в числе
 forward stock digits(val);
 
+//! @brief Получить байт из числа
+//! @param[in] number исходное число
+//! @param[in] byteId номер байта в числе, 0..3
+forward stock getByte(number, byteId);
+
 //! @brief Возвести число в неотрицательную степень
 //! @details без проверок границ диапазона
 //! @param[in] num исходное число

@@ -189,6 +189,11 @@ stock setByte(number, byteId, newByteValue)
     return (number & (~(0xFF << shift))) | ((newByteValue & 0xFF) << shift);
 }
 
+stock getByte(number, byteId)
+{
+    return (number >> (byteId * BYTE_BITS)) & 0xFF;
+}
+
 //! @privatesection
 
 //! @brief Нормализовать биты для циклических сдвигов
