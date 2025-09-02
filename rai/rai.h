@@ -6,7 +6,7 @@
 #endif
 #define RAI_H
 
-// #define RAI_DEBUG // включить для отладки
+//#define RAI_DEBUG // включить для отладки
 
 #define RAI_FILE_PATH_LENGTH_MAX 255
 #define RAI_FILE_PATH_LENGTH_MAX_W0 (RAI_FILE_PATH_LENGTH_MAX + 1)
@@ -28,8 +28,8 @@ stock const RAI_AUDIO_FILE_NAME{} = "route.wav";
 #define RAI_ROUTE_DATA [\
     .name{RAI_FILE_PATH_LENGTH_MAX_W0},\
     .crc,\
-	.finalStationsFilePath{RAI_FILE_PATH_LENGTH_MAX_W0},\
     .busLineFilePath{RAI_FILE_PATH_LENGTH_MAX_W0},\
+	.finalStationsFilePath{RAI_FILE_PATH_LENGTH_MAX_W0},\
     .advertismentFilePath{RAI_FILE_PATH_LENGTH_MAX_W0},\
     .audioFilePath{RAI_FILE_PATH_LENGTH_MAX_W0},\
     .startStation{RAI_STRING_LENGTH_MAX_W0},\
@@ -41,29 +41,24 @@ stock const RAI_AUDIO_FILE_NAME{} = "route.wav";
 //! @return true - успешно, false - ошибка файловой системы
 forward stock raiGetCurrentRoute(route[RAI_ROUTE_DATA]);
 
-//! Получить имя, crc и пути файлов следующего маршрута
+//! @brief Получить имя, crc и пути файлов следующего маршрута
 //! @param[in] currentRoute структура текущего маршрута
 //! @param[out] nextRoute структура следующего маршрута
 //! @return true - успешно, false - нет папок с маршрутами или ошибка файловой системы
 forward stock raiGetNewRoute(const currentRoute[RAI_ROUTE_DATA], nextRoute[RAI_ROUTE_DATA]);
 
-//! Воспроизвести название маршрута
-//! @param[in] route маршрут
-//! @return true - успешно, false - нет/ошибочный аудиофайл или ошибка файловой системы
-forward stock raiPlayRouteAudio(const route[RAI_ROUTE_DATA]);
-
-//! Получить начальную и конечную остановки маршрута из файла
+//! @brief Получить начальную и конечную остановки маршрута из файла
 //! @param[inout] route маршрут
 //! @return true - успешно, false - ошибка: нет файла или он пустой
 forward stock raiGetFinalStations(route[RAI_ROUTE_DATA]);
 
-//! Проверить нахождение в геозоне остановки
+//! @brief Проверить на присутствие в геозоне остановки
 //! @param[in] route маршрут
 //! @param[out] station{} название остановки, если в ее геозоне
 //! @param[out] &nextStationFilePos позиция следующей остановки в файле, если находимся в геозоне остановки
 //! @param[in] diag признак диагностики
 //! @return 0 - не в зоне, !=0 - в зоне
-forward stock raiInStationGeoPos(route[RAI_ROUTE_DATA], station{}, &nextStationFilePos, diag);
+forward stock raiIsOnStation(route[RAI_ROUTE_DATA], station{}, &nextStationFilePos, diag);
 
 //! Получить рекламное сообщение
 //! \param[in] route маршрут
@@ -78,3 +73,7 @@ forward stock raiGetAdvertisment(route[RAI_ROUTE_DATA], &filePos, adv{});
 //! \param[out] station{} остановка
 //! \return false - ошибка, true - успешно
 forward stock raiGetNextStation(route[RAI_ROUTE_DATA], filePos, station{});
+
+//! @brief Сохранить название маршрута в теге массива пользователя
+//! @param[in] route маршрут
+forward stock raiSaveRouteNameInTag(const route[RAI_ROUTE_DATA]);

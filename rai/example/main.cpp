@@ -1,0 +1,210 @@
+//! @file
+//! @brief Основной скрипт алгоритма с автоинформатором
+
+#ifdef DEBUG
+#define RAI_DEBUG
+#endif
+
+#include "..\rai.h"
+#include "..\rai.cpp"
+#include "..\..\time\time.h"
+#include "..\..\time\time.cpp"
+
+#define PERIOD_MS 1000
+
+main()
+{
+	if (!GetVar(gSeetingsInited) || !isTimerExpired(GetVar(gMainUptime), PERIOD_MS))
+    	return;
+
+	SetVar(gMainUptime, GetVar(UPTIME));
+    
+    // изменение часового пояса
+	new timeZone = GetVar(gTimeZone);
+	if (timeZone != GetVar(gTimeZoneOld))
+	{
+		SetVar(gTimeZoneOld, timeZone);
+		storeSetting(TIMEZONE_FILE, timeZone);
+	}
+
+    //!!! определение 
+
+	// изменение времени вывода вспомогательной информации
+	new advTime = GetVar(gAdvTime);
+	if (advTime != GetVar(gAdvTimeOld))
+	{
+		SetVar(gAdvTimeOld, advTime);
+		storeSetting(ADVTIME_FILE, advTime);
+	}
+	
+	
+	new route[RAI_ROUTE_DATA];
+    raiGetRoute(route);
+    if (GetVar(gSwitchRoute)) // обработка команды на смену маршрута
+    {
+        if (!raiGetNewRoute(route, diag))
+        {
+            Diagnostics("ERROR: Getting new route fail");
+            return;
+        }
+
+        Diagnostics("New route has been set");
+        raiPlayRouteAudio(route);
+
+		SetVar(gSwitchRoute, 0);  // Сбрасываем команду на смену маршрута
+		SetVar(gRouteInit, 1); // Инициализация маршрута
+    }
+    
+	if (route.name{0} == 0)
+	{
+		Diagnostics("ERROR: Route not found");
+		saveRouteInTag(route);
+		return;
+	}
+
+	Diagnostics("route=%s", route.name);
+	if (diag)
+		Diagnostics("BusLine=%s", route.busLine);
+
+	saveRouteInTag(route);
+
+	if (route.crc != GetVar(gRouteCRC)) // маршрут изменился, в т.ч. другим процессом
+	{
+		setAutoinformerRoute(route.name);
+		SetVar(gAdvertismentFilePos, 0);  // Сбросим позицию в файле с рекламой
+		SetVar(gNextStationFilePos, 0);  // Сбросим позицию следующей остановки
+		SetVar(gShowAdv, 0);			
+		SetVar(gRouteCRC, route.crc); // перезапишем актуальную CRC маршрута
+		unsetTimer(); // сброс таймера отображения остановочной/вспомогательной информации
+		SetVar(gRouteInit, 1); // Инициализация маршрута
+	}
+
+    if (GetVar(gRouteInit)) // инициализация маршрута: вывод маршрутной информации
+	{
+		// требуется инициализация всех табло
+		SetVar(gFrontDisplayInit, 1);
+		SetVar(gSideDisplayInit, 1);
+		SetVar(gRearDisplayInit, 1);
+		SetVar(gSalonDisplayInit, 1);
+        SetVar(gRouteInit, 0);
+	}
+
+	if (GetVar(gFrontDisplayInit) || GetVar(gSideDisplayInit))
+	{
+		if (!raiGetFinalStations(route))
+		{
+			Diagnostics("ERROR: Final stations empty");
+			return;
+		}
+	}
+
+	new portNum = GetVar(gPortnum);
+    new baudRate = GetVar(gBaudRate);
+    new stopBits = GetVar(gStopbits);
+    new parity = GetVar(gParity);
+    PortInit(portNum, baudRate, ISDT_PORT_BUFFER_SIZE, stopBits, parity);
+	new timeout = GetVar(gTimeout);
+	new res; // результат взаимодействия с табло
+	// вести учет инициализации каждого табло и если неуспешная, то повторять в следующих вызовах
+	new display[DISPLAY_DATA];
+	if (GetVar(gFrontDisplayInit)) // Инициализация лобового табло
+	{
+		display.addr = GetVar(gFrontDisplayAddr);
+		display.width = GetVar(gFrontDisplayWidth);
+		display.height = GetVar(gFrontDisplayHeight);
+		display.fontSize = GetVar(gFrontDisplayFontSize);
+		display.routeWidth = GetVar(gFrontDisplayRouteWidth);
+		display.routeFontSize = GetVar(gFrontDisplayRouteFontSize);
+		display.textSpeed = GetVar(gFrontDisplayTextSpeed);
+		res = isdtInitFrontSideDisplay(portNum, timeout, display, route, diag);
+		if (res == ISDT_OK)
+			SetVar(gFrontDisplayInit, 0);
+		else
+			Diagnostics("ERROR %d. Front display not initialized", res);
+	}
+
+	if (GetVar(gSideDisplayInit)) // Инициализация бокового табло
+	{
+		display.addr = GetVar(gSideDisplayAddr);
+		display.width = GetVar(gSideDisplayWidth);
+		display.height = GetVar(gSideDisplayHeight);
+		display.fontSize = GetVar(gSideDisplayFontSize);
+		display.routeWidth = GetVar(gSideDisplayRouteWidth);
+		display.routeFontSize = GetVar(gSideDisplayRouteFontSize);
+		display.textSpeed = GetVar(gSideDisplayTextSpeed);
+		res = isdtInitFrontSideDisplay(portNum, timeout, display, route, diag);
+		if (res == ISDT_OK)
+			SetVar(gSideDisplayInit, 0);
+		else
+			Diagnostics("ERROR %d. Side display not initialized", res);
+	}
+
+	if (GetVar(gRearDisplayInit)) // Инициализация заднего табло
+	{
+		display.addr = GetVar(gRearDisplayAddr);
+		display.width = GetVar(gRearDisplayWidth);
+		display.height = GetVar(gRearDisplayHeight);
+		display.routeFontSize = GetVar(gRearDisplayRouteFontSize);
+		res = isdtInitRearDisplay(portNum, timeout, display, route, diag);
+		if (res == ISDT_OK)
+			SetVar(gRearDisplayInit, 0);
+		else
+			Diagnostics("ERROR %d. Rear display not initialized", res);
+	}
+
+	display.addr = GetVar(gSalonDisplayAddr);
+	if (GetVar(gSalonDisplayInit)) // Инициализация салонного табло
+	{
+		display.width = GetVar(gSalonDisplayWidth);
+		display.height = GetVar(gSalonDisplayHeight);
+		res = isdtInitSalonDisplay(portNum, timeout, display, diag);
+		if (res == ISDT_OK)
+			SetVar(gSalonDisplayInit, 0);
+		else
+			Diagnostics("ERROR %d. Salon display not initialized", res);
+	}
+
+    // вывод текущей остановки и сообщений
+    if (!GetVar(gSalonDisplayInit))
+	{
+		new nextStationFilePos = GetVar(gNextStationFilePos); // восстановить сохраненную позицию следующей остановки в файле остановок;
+		new text{RAI_STRING_LENGTH_MAX}; // выводимый текст
+		display.fontSize = GetVar(gSalonDisplayFontSize);
+		display.textSpeed = GetVar(gSalonDisplayTextSpeed);
+		if (raiInStationGeoPos(route, text, nextStationFilePos, diag))
+		{
+			// вывод текущей остановки на табло
+			res = isdtSendSalonText(portNum, timeout, display, text, diag);
+			if (res != ISDT_OK)
+				Diagnostics("ERROR %d. Station not displayed", res);
+			unsetTimer(); // сброс таймера отображения остановочной и вспомогательной информации
+			SetVar(gNextStationFilePos, nextStationFilePos);
+		}
+		else if (isTimerExpired()) // истек таймер смены остановочной и вспомогательной информации
+		{
+			new showAdv = GetVar(gShowAdv); // восстановить, что отображалось в прошлом вызове - следущая остановка или сообщение
+			if (nextStationFilePos == 0)
+				showAdv = 1; // неверная позиция следующей остановки, показать сообщение
+
+			if (diag)
+				Diagnostics("timer expired. nextStationFilePos=%d, showAdv=%d", nextStationFilePos, showAdv);
+
+			new advFilePos = GetVar(gAdvertismentFilePos); // восстановить сохраненную позицию в файле сообщений
+			if (diag)
+				Diagnostics("restored advFilePos=%d", advFilePos);
+			showAdv ? raiGetAdvertisment(route, advFilePos, text) : raiGetNextStation(route, nextStationFilePos, text);
+			SetVar(gShowAdv, !showAdv); // сохранить между вызовами отображаемое - следующую остановку или сообщение, чтобы в следующий раз отображать другое
+			SetVar(gAdvertismentFilePos, advFilePos); // сохранить между вызовами позицию в файле сообщений
+			if (diag)
+				Diagnostics("store advFilePos=%d", advFilePos);
+
+			Delay(100);
+			Diagnostics(text);
+			// показать информацию text на табло
+			res = isdtSendSalonText(portNum, timeout, display, text, diag);
+			if (res != ISDT_OK)
+				Diagnostics("ERROR %d. Message not displayed", res);
+			setTimer(GetVar(gAdvTime)); // запустить таймер показа текста
+		}
+	}
+}

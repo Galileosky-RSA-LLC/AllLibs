@@ -58,6 +58,7 @@ stock raiGetNewRoute(route[RAI_ROUTE_DATA], diag)
 	return 0;
 }
 
+//!!! надо ли?
 stock raiPlayRouteAudio(route[RAI_ROUTE_DATA])
 {
 	new res = rai_generateFilePath(route, RAI_AUDIO_FILE_NAME, RAI_AUDIO_FILE_NAME_LENGTH, route.audioFilePath);
@@ -99,7 +100,7 @@ stock raiGetFinalStations(route[RAI_ROUTE_DATA])
 	return 1;
 }
 
-stock raiInStationGeoPos(route[RAI_ROUTE_DATA], station{}, &nextStationFilePos, diag)
+stock raiIsOnStation(route[RAI_ROUTE_DATA], station{}, &nextStationFilePos, diag)
 {
 	new currentFilePos = 0;
 	new latitude       = 0;
