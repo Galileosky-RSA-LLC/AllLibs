@@ -1,5 +1,5 @@
 //! @file
-//! @brief Основной скрипт алгоритма с автоинформатором
+//! @brief Основное взаимодействие автоинформатора и табло
 
 #ifdef DEBUG
 #define RAI_DEBUG
@@ -37,14 +37,18 @@ main()
 		storeSetting(ADVTIME_FILE, advTime);
 	}
 	
-	
+	//!!! восстановить сохраненный объект из глобальных переменных?
+
 	new route[RAI_ROUTE_DATA];
-    raiGetRoute(route);
-    if (GetVar(gSwitchRoute)) // обработка команды на смену маршрута
+    if (!raiGetCurrentRoute(route))
+        Diagnostics("current route?");
+
+    // обработка команды на смену маршрута
+    if (GetVar(gSwitchRoute))
     {
-        if (!raiGetNewRoute(route, diag))
+        if (!raiGetNewRoute(route, route))
         {
-            Diagnostics("ERROR: Getting new route fail");
+            Diagnostics("new route?");
             return;
         }
 
