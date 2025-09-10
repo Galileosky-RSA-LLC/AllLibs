@@ -1,6 +1,10 @@
-#ifndef STRING_LIB
+//! @file
+//! @brief Функции для работы со строками
+
+#ifdef STRING_LIB
+#endinput
+#endif
 #define STRING_LIB
-// Библиотека для работы со строками
 
 #include "string.h"
 #include "..\array\array.h"
@@ -8,13 +12,7 @@
 #include "..\numeric\numeric.h"
 #include "..\numeric\numeric.cpp"
 
-
-//! Переводит подстроку к нижнему регистру символов, в т.ч. кириллических
-//! \param[inout] str массив со строкой
-//! \param[in] strLength длина массива
-//! \param[in] start индекс начала подстроки
-//! \param[in] ignoreNull признак необходимости игнорирования \0: false - преобразование заканчивается на \0, true - продолжается до конца массива
-toLowerCase(str{}, strLength, start = 0, ignoreNull = false)
+stock toLowerCase(str{}, strLength, start = 0, ignoreNull = false)
 {
     if (start < 0)
         start = 0;
@@ -30,12 +28,7 @@ toLowerCase(str{}, strLength, start = 0, ignoreNull = false)
     }
 }
 
-//! Переводит подстроку к верхнему регистру символов, в т.ч. кириллических
-//! \param[inout] str массив со строкой
-//! \param[in] strLength длина массива
-//! \param[in] start индекс начала подстроки
-//! \param[in] ignoreNull признак необходимости игнорирования \0: false - преобразование заканчивается на \0, true - продолжается до конца массива
-toUpperCase(str{}, strLength, start = 0, ignoreNull = false)
+stock toUpperCase(str{}, strLength, start = 0, ignoreNull = false)
 {
     if (start < 0)
         start = 0;
@@ -51,11 +44,7 @@ toUpperCase(str{}, strLength, start = 0, ignoreNull = false)
     }
 }
 
-//! Вычисление длины подстроки символов до \0 или до конца массива
-//! \param[in] str массив со строкой
-//! \param[in] strLength длина массива, если <=0, то игнорируется
-//! \param[in] start индекс начала подстроки
-strLen(const str{}, strLength = 0, start = 0)
+stock strLen(const str{}, strLength = 0, start = 0)
 {
     if (start < 0)
         start = 0;
@@ -66,30 +55,17 @@ strLen(const str{}, strLength = 0, start = 0)
     return i - start;
 }
 
-//! Копирование одной подстроки в другую с ее завершением (если позволяет длина)
-//! \param[out] dest массив строки-приемника
-//! \param[in] destPos позиция начала вставки в строку-приемник
-//! \param[in] destLength длина массива строки-приемника
-//! \param[in] source массив строки-источника
-//! \param[in] sourcePos начальная позиция в строке-источнике
-//! \param[in] sourceLength длина массива строки-источника (если <=0, то будет вычислена)
-strncpy(dest{}, destPos, destLength, const source{}, sourcePos = 0, sourceLength = 0)
+stock strncpy(dest{}, destPos, destLength, const source{}, sourcePos = 0, sourceLength = 0)
 {
     if (destPos < 0)
         destPos = 0;
 
-    new endPos = destPos + insertArrayStr(dest, destPos, destLength, source, strLen(source, sourceLength), sourcePos);
+    new endPos = destPos + insertArrayStr(dest, destPos, destLength, source, sourcePos + strLen(source, sourceLength, sourcePos), sourcePos);
 	if ((endPos >= 0) && (endPos < destLength))
         dest{endPos} = 0;
 }
 
-//! Преобразовать нечитаемые символы в пробелы
-//! \param[inout] str массив со строкой для преобразования
-//! \param[in] strLength длина массива со строкой
-//! \param[in] start стартовый индекс начала преобразования
-//! \param[in] ignoreNull признак необходимости игнорирования \0: false - преобразование заканчивается на \0, true - продолжается до конца массива
-//! \return кол-во преобразований
-unread2space(str{}, strLength, start = 0, ignoreNull = false)
+stock unread2space(str{}, strLength, start = 0, ignoreNull = false)
 {
     if (start < 0)
         start = 0;
@@ -109,16 +85,7 @@ unread2space(str{}, strLength, start = 0, ignoreNull = false)
     return count;
 }
 
-//! Конвертация десятичной дроби в строку,
-//! незначащие нули справа также вставляются
-//! \param[in] num исходное целое число
-//! \param[in] exp степень числа 10, на которое нужно разделить исходное число (= кол-во знаков, на которое нужно переместить дес. точку влево), 0..9
-//! \param[out] str массив со строкой
-//! \param[in] pos позиция в строке для вставки
-//! \param[in] length длина массива со строкой
-//! \param[in] separator символ-разделитель целой и дробной частей
-//! \return кол-во вставленных в строку символов (0 - ошибка: недостаточная длина строки, недопустимая позиция вставки или большая степень)
-decfractoa(num, exp, str{}, pos, length, separator)
+stock decfractoa(num, exp, str{}, pos, length, separator)
 {
     if (pos < 0)
         pos = 0;
@@ -134,7 +101,7 @@ decfractoa(num, exp, str{}, pos, length, separator)
     if (isMinus)
         str{pos++} = '-';
 
-    new len = itoa((num == NUM_VALUE_MIN ? -(num + 1) : (isMinus ? -num : num)) / divider, str, pos, length);
+    new len = itoa((num == cellmin ? -(num + 1) : (isMinus ? -num : num)) / divider, str, pos, length);
     if (len == 0)
         return 0;
 
@@ -154,14 +121,7 @@ decfractoa(num, exp, str{}, pos, length, separator)
     return (isMinus ? 1 : 0) + len + 1 + zeros + itoa(num, str, pos, length);
 }
 
-//! Конвертация числа в строку символов, 
-//! завершающий \0 не добавляется
-//! \param[in] num число для конвертации
-//! \param[out] str массив со строкой
-//! \param[in] pos позиция в строке для вставки
-//! \param[in] length длина массива со строкой
-//! \return кол-во вставленных в строку символов (0 - ошибка: недостаточная длина строки или неверная позиция вставки)
-itoa(num, str{}, pos, length)
+stock itoa(num, str{}, pos, length)
 {
     new countDigits = digits(num);
     new isMinus = num < 0;
@@ -176,7 +136,7 @@ itoa(num, str{}, pos, length)
         str{pos} = '0';
         return 1;
     }
-    if (num == NUM_VALUE_MIN)
+    if (num == cellmin)
         return insertArrayStr(str, pos, length, NUM_VALUE_MIN_STR, NUM_VALUE_MIN_STR_LENGTH);
     
     if (isMinus) 
@@ -198,14 +158,7 @@ itoa(num, str{}, pos, length)
     return countDigits + (isMinus ? 1 : 0);
 }
 
-//! Преобразовать число в строку и дополнить слева незначащими нулями
-//! \param[in] num число для конвертации
-//! \param[out] str массив со строкой
-//! \param[in] pos позиция в строке для вставки
-//! \param[in] length длина массива со строкой
-//! \param[in] width ширина числа, если больше строкового представления, то будет дополнена справа нулями; если меньше, чем символов в числе, то игнорируется
-//! \return кол-во вставленных в строку символов (0 - ошибка: недостаточная длина строки или неверная позиция вставки)
-itoaw(num, str{}, pos, length, width)
+stock itoaw(num, str{}, pos, length, width)
 {
     new isMinus = num < 0;
     new numDigits = digits(num);
@@ -228,7 +181,7 @@ itoaw(num, str{}, pos, length, width)
 
     if (isMinus)
     {
-        if (num == NUM_VALUE_MIN)
+        if (num == cellmin)
         {    
             insertArrayStr(str, pos, length, "2147483648", NUM_VALUE_MAX_STR_LENGTH);
             return totalSymbols;
@@ -256,20 +209,13 @@ itoaw(num, str{}, pos, length, width)
     return totalSymbols;
 }
 
-//! Преобразует последний полубайт числа в его ASCII-hex символ
-num2asciiHexHalfByte(num)
+stock num2asciiHexHalfByte(num)
 {
     num &= 0x0F;
     return num + (num < 10 ? 0x30 : 0x37);
 }
 
-//! Преобразовывает каждый элемент подмассива в его ASCII-hex 2-символьное представление
-//! \param[inout] ar преобразуемый массив
-//! \param[in] arLength длина массива
-//! \param[in] subLength длина подмассива
-//! \param[in] start стартовый индекс подмассива
-//! \return true - успешно, false - ошибка (недостаточная длина массива)
-toAsciiHex(ar{}, arLength, subLength, start = 0)
+stock toAsciiHex(ar{}, arLength, subLength, start = 0)
 {
     if (start < 0)
         start = 0;
@@ -285,14 +231,7 @@ toAsciiHex(ar{}, arLength, subLength, start = 0)
     return true;
 }
 
-//! Преобразование подстроки в целое число. 
-//! Если встречается нечисловой символ (после начальных "-" или "+", если они есть), преобразование прекращается
-//! \param[in] str массив со строкой
-//! \param[in] pos позиция начала числа
-//! \param[in] length длина массива со строкой
-//! \param[out] value преобразованное число
-//! \return кол-во преобразованных символов подстроки, т.е. если 0 - ошибка (неверные входные данные, нет числа или неверный формат)
-atoi(const str{}, pos, length, &value)
+stock atoi(const str{}, pos, length, &value)
 {
     if (pos < 0)
         pos = 0;
@@ -315,7 +254,7 @@ atoi(const str{}, pos, length, &value)
 
         new newVal;
         newVal = (value * 10) + (str{pos} - '0');
-        if ((((value * 10) / 10) != value) || ((newVal < 0) && ((newVal != NUM_VALUE_MIN) || !isMinus))) // переполнение
+        if ((((value * 10) / 10) != value) || ((newVal < 0) && ((newVal != cellmin) || !isMinus))) // переполнение
             return 0;
 
         value = newVal;
@@ -329,12 +268,7 @@ atoi(const str{}, pos, length, &value)
     return pos - startPos;
 }
 
-//! Пропустить пустоты в строке (пробел, табуляция)
-//! \param[in] str массив со строкой
-//! \param[in] length длина массива со строкой
-//! \param[in] pos позиция начала
-//! \return кол-во пропущенных символов
-skipSpaces(const str{}, length, pos = 0)
+stock skipSpaces(const str{}, length, pos = 0)
 {
     if (pos < 0)
         pos = 0;
@@ -348,23 +282,12 @@ skipSpaces(const str{}, length, pos = 0)
     return pos - startPos;
 }
 
-//! Проверяет, является ли символ цифрой в формате ASCII
-//! \param[in] byte предполагаемый символ цифры в ASCII
-isDigit(byte)
+stock isDigit(byte)
 {
     return ((byte >= '0') && (byte <= '9'));
 }
 
-//! Преобразование подстроки ASCII дробного числа в целое число, 
-//! пробельные символы в начале строки пропускаются
-//! \param[in] str массив со строкой
-//! \param[in] pos позиция начала числа
-//! \param[in] length длина массива со строкой
-//! \param[in] separator символ-разделитель целой и дробной частей числа
-//! \param[in] precision требуемая точность - кол-во цифр после разделителя целой и дробной частей
-//! \param[out] value преобразованное число
-//! \return кол-во преобразованных символов подстроки, т.е. если 0 - ошибка
-atofi(const str{}, pos, length, separator, precision, &value)
+stock atofi(const str{}, pos, length, separator, precision, &value)
 {
 	if (pos < 0)
         pos = 0;
@@ -391,7 +314,7 @@ atofi(const str{}, pos, length, separator, precision, &value)
 
             new newVal;
             newVal = (value * 10) + (str{pos} - '0');
-            if ((((value * 10) / 10) != value) || ((newVal < 0) && ((newVal != NUM_VALUE_MIN) || !isMinus))) // переполнение
+            if ((((value * 10) / 10) != value) || ((newVal < 0) && ((newVal != cellmin) || !isMinus))) // переполнение
                 return 0;
 
             value = newVal;
@@ -415,16 +338,7 @@ atofi(const str{}, pos, length, separator, precision, &value)
     return pos - startPos;
 }
 
-//! Получить hex строковое представление подмассива 
-//! (например, {0, 1, 171, 255} -> "0001ABFF")
-//! \param[in] ar исходный массив
-//! \param[in] arStart индекс начала конвертируемой части в исходном массиве
-//! \param[in] arSize длина исходного массива
-//! \param[out] str строка для вставки конвертации
-//! \param[in] strSize длина конвертированной строки, должно соблюдаться (strSize - strPos) >= 2 * (arSize - arStart)
-//! \param[in] strPos позиция для вставки
-//! \return кол-во вставленных байт
-getHexString(const ar{}, arStart, arSize, str{}, strSize, strPos = 0)
+stock getHexString(const ar{}, arStart, arSize, str{}, strSize, strPos = 0)
 {
     if (arStart < 0)
         arStart = 0;
@@ -441,25 +355,13 @@ getHexString(const ar{}, arStart, arSize, str{}, strSize, strPos = 0)
     return i * 2;
 }
 
-//! Посчитать длину символов числа
-//! Например -1 -> 2
-//! \param[in] num исходное число
-//! \return кол-во символов в строковом представлении числа
-numLength(num)
+stock numLength(num)
 {
     new d = digits(num);
     return num < 0 ? d + 1 : d;
 }
 
-//! Закодировать в Base64 (RFC 4648)
-//! \param[in] in массив для кодирования
-//! \param[in] inSize длина массива для кодирования
-//! \param[in] inPos позиция начала в массиве для кодирования
-//! \param[out] out выходной массив для закодированных данных
-//! \param[in] outSize длина массива для закодированных данных
-//! \param[in] outPos позиция в массиве для закодированных данных
-//! \return кол-во вставленных символов в выходной массив
-base64Encode(const in{}, inSize, inPos, out{}, outSize, outPos = 0)
+stock base64Encode(const in{}, inSize, inPos, out{}, outSize, outPos = 0)
 {
     if (inPos < 0)
         inPos = 0;
@@ -502,21 +404,12 @@ base64Encode(const in{}, inSize, inPos, out{}, outSize, outPos = 0)
     return outStrLength;
 }
 
-//! Проверка на принадлежность символа алфавиту base64
-isBase64(ch)
+stock isBase64(ch)
 {
     return searchLinearStr(BASE64_ALPHABET, BASE64_ALPHABET_SIZE, ch) >= 0;
 }
 
-//! Декодировать из Base64 (RFC 4648)
-//! \param[in] in массив закодированных данных
-//! \param[in] inSize длина массива закодированных данных
-//! \param[in] inPos позиция начала в массиве закодированных данных
-//! \param[out] out выходной массив для декодированных данных
-//! \param[in] outSize длина массива декодированных данных
-//! \param[in] outPos позиция в массиве декодированных данных
-//! \return кол-во вставленных символов в выходной массив
-base64Decode(const in{}, inSize, inPos, out{}, outSize, outPos = 0)
+stock base64Decode(const in{}, inSize, inPos, out{}, outSize, outPos = 0)
 {
     if (inPos < 0)
         inPos = 0;
@@ -577,35 +470,22 @@ base64Decode(const in{}, inSize, inPos, out{}, outSize, outPos = 0)
     return outPos - outPosStart;
 }
 
-//! Вычислить длину закодированного массива в base64 по длине исходного
-base64StrLength(inSize)
+stock base64StrLength(inSize)
 {
     return ((inSize + 2) / 3) * 4;
 }
 
-//! Вычислить максимальную длину для декодированной строки из base64 по длине кодированной
-fromBase64StrMaxSize(base64Size)
+stock fromBase64StrMaxSize(base64Size)
 {
     return (base64Size / 4) * 3;
 }
 
-//! Вычислить минимальную длину для декодированной строки из base64 по длине кодированной
-fromBase64StrMinSize(base64Size)
+stock fromBase64StrMinSize(base64Size)
 {
     return fromBase64StrMaxSize(base64Size) - 2;
 }
 
-//! Разобрать целые числа из строки с заданными разделителями вида [<разделитель>]<число>[<разделитель><число>... ]
-//! несколько разделителей подряд не допускаются, преобразование прекращается на нечисловом символе (+, -, пробельные символы перед числом допускаются)
-//! \param[in] str строка
-//! \param[in] strSize длина строки
-//! \param[in] pos позиция начала в строке
-//! \param[in] separator символ-разделитель
-//! \param[out] values найденные числа
-//! \param[in] valuesMaxSize предельное кол-во для найденных значений
-//! \param[out] valuesActualSize найденное кол-во чисел
-//! \return кол-во обработанных символов в строке
-strSplitNums(const str{}, strSize, pos, separator, values[], valuesMaxSize, &valuesActualSize)
+stock strSplitNums(const str{}, strSize, pos, separator, values[], valuesMaxSize, &valuesActualSize)
 {
     if (pos < 0)
         pos = 0;
@@ -639,9 +519,7 @@ strSplitNums(const str{}, strSize, pos, separator, values[], valuesMaxSize, &val
     return pos - startPos;
 }
 
-//! Получить значения из их ASCII-hex строкового представления
-//! \return кол-во вставленных байт
-asciiHexStr2array(const asciiStr{}, asciiStrSize, asciiStrPos, hex{}, hexMaxSize)
+stock asciiHexStr2array(const asciiStr{}, asciiStrSize, asciiStrPos, hex{}, hexMaxSize)
 {
     if (asciiStrPos < 0)
         asciiStrPos = 0;
@@ -663,14 +541,12 @@ asciiHexStr2array(const asciiStr{}, asciiStrSize, asciiStrPos, hex{}, hexMaxSize
     return hexPos;
 }
 
-//! Вернуть цифру из ее кода символа
-getDigit(byte)
+stock getDigit(byte)
 {
     return byte - 0x30;
 }
 
-//! Преобразовать ASCII-hex символ в полубайт числа
-asciiHex2num(byte)
+stock asciiHex2num(byte)
 {
     if (isDigit(byte))
         return getDigit(byte);
@@ -678,10 +554,7 @@ asciiHex2num(byte)
     return byte - (((byte >= 'A') && (byte <= 'F')) ? 'A' : 'a') + 10;
 }
 
-//! Проверить символ на принадлежность к ASCII-hex (0..9,A..F,a..f)
-isAsciiHex(byte)
+stock isAsciiHex(byte)
 {
     return ((byte >= '0') && (byte <= '9')) || ((byte >= 'A') && (byte <= 'F')) || ((byte >= 'a') && (byte <= 'f'));
 }
-
-#endif // STRING_LIB
