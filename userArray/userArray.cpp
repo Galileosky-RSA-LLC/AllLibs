@@ -72,6 +72,8 @@ sendFileInUserArray(const fileName{}, &lastFileId)
         TagWriteArray(TAG_USER_ARRAY, userArSize, userAr);
         SavePoint();
         TagWriteArray(TAG_USER_ARRAY, 0, userAr);
+        const interChunksWaitMs = 10;
+        Delay(interChunksWaitMs);
     }
     lastFileId = uid;
     return true;
