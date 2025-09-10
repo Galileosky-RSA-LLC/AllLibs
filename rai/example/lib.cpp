@@ -8,6 +8,8 @@
 
 #include "..\rai.h"
 #include "..\rai.cpp"
+#include "..\..\numeric\numeric.h"
+#include "..\..\numeric\numeric.cpp"
 
 stock isSettingsInited()
 {
@@ -53,4 +55,31 @@ stock storeRouteCurrentData(const route[RAI_ROUTE_DATA])
     route.advertismentFilePos = GetVar(gAdvertismentFilePos);
     route.isShowAdvertisment = GetVar(gIsShowAdvertisment);
     route.advertismentStartUptime = GetVar(gAdvertismentStartUptime);
+}
+
+stock isDisplayInited(displayIndex)
+{
+    return getBit(_getIsDisplaysInited(), displayIndex);
+}
+
+stock setDisplayInit(displayIndex, value)
+{
+    _setIsDisplaysInited(setBit(_getIsDisplaysInited(), displayIndex, value));
+}
+
+stock resetAlldisplaysInit()
+{
+    _setIsDisplaysInited(0);
+}
+
+// приватные функции
+
+stock _getIsDisplaysInited()
+{
+    return GetVar(gIsDisplaysInited);
+}
+
+stock _setIsDisplaysInited(value)
+{
+    return SetVar(gIsDisplaysInited, value);
 }

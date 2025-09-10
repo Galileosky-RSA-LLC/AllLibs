@@ -36,8 +36,10 @@ stock const RAI_AUDIO_FILE_NAME{} = "route.wav";
     .stopStation{RAI_STRING_LENGTH_MAX_W0},\
     .nextStationFilePos,\
     .advertismentFilePos,\
+    .isShowCurrentStation,\
+    .isShowNextStation,\
     .isShowAdvertisment,\
-    .advertismentStartUptime,\
+    .showStartUptime,\
 ]
 
 //! @brief Получить имя, crc и пути файлов текущего маршрута
@@ -57,12 +59,11 @@ forward stock raiGetNewRoute(const currentRoute[RAI_ROUTE_DATA], nextRoute[RAI_R
 forward stock raiGetFinalStations(route[RAI_ROUTE_DATA]);
 
 //! @brief Проверить на присутствие в геозоне остановки
-//! @param[in] route маршрут
-//! @param[out] station{} название остановки, если в ее геозоне
-//! @param[out] &nextStationFilePos позиция следующей остановки в файле, если находимся в геозоне остановки
-//! @param[in] diag признак диагностики
+//! @param[inout] route маршрут
+//! @param[out] station название остановки, если в ее геозоне
+//! @param[in] stationSizeMax предельный размер для названия остановки
 //! @return 0 - не в зоне, !=0 - в зоне
-forward stock raiIsOnStation(route[RAI_ROUTE_DATA], station{}, &nextStationFilePos, diag);
+forward stock raiIsOnStation(route[RAI_ROUTE_DATA], station{}, stationSizeMax);
 
 //! Получить рекламное сообщение
 //! \param[in] route маршрут
@@ -71,12 +72,12 @@ forward stock raiIsOnStation(route[RAI_ROUTE_DATA], station{}, &nextStationFileP
 //! \return false - ошибка, true - успешно
 forward stock raiGetAdvertisment(route[RAI_ROUTE_DATA], &filePos, adv{});
 
-//! Получить текст следующей остановки "Следующая остановка: ..."
+//! Получить следующую остановку от текущей
 //! \param route маршрут
-//! \param[in] filePos позиция в файле, с которой считывать
-//! \param[out] station{} остановка
+//! @param[out] station название остановки
+//! @param[in] stationSizeMax предельный размер для названия остановки
 //! \return false - ошибка, true - успешно
-forward stock raiGetNextStation(route[RAI_ROUTE_DATA], filePos, station{});
+forward stock raiGetNextStation(route[RAI_ROUTE_DATA], station{}, stationSizeMax);
 
 //! @brief Сохранить название маршрута в теге массива пользователя
 //! @param[in] route маршрут

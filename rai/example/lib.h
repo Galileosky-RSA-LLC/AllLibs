@@ -6,6 +6,11 @@
 #endif
 #define ALG_H
 
+#define FRONT_DISPLAY_INDEX 0
+#define REAR_DISPLAY_INDEX 1
+#define SIDE_DISPLAY_INDEX 2
+#define SALON_DISPLAY_INDEX 3
+
 #include "..\rai.h"
 
 //! Получить статус инициализации настроек
@@ -33,3 +38,16 @@ forward stock setRouteCrc(value);
 //! Восстановить сохраненные текущие данные маршрута: позиции в файлах, таймеры, флаги
 //! @param[out] route структура маршрута
 forward stock restoreRouteCurrentData(route[RAI_ROUTE_DATA]);
+
+//! Проверить инициализацию табло
+//! @param[in] displayIndex индекс табло
+//! @return true - табло инициализировано, false - не инициализировано
+forward stock isDisplayInited(displayIndex);
+
+//! Установить статус инициализации табло
+//! @param[in] displayIndex индекс табло
+//! @param[in] value устанавливаемый статус: 0 - не инициализировано, !=0: инициализировано
+forward stock setDisplayInit(displayIndex, value);
+
+//! Сбросить статус инициализации всех табло
+forward stock resetAlldisplaysInit();
