@@ -9,12 +9,14 @@
 #include "..\rai.cpp"
 #include "..\..\time\time.h"
 #include "..\..\time\time.cpp"
+#include "lib.h"
+#include "lib.cpp"
 
 #define PERIOD_MS 1000
 
 main()
 {
-	if (!GetVar(gSeetingsInited) || !isTimerExpired(GetVar(gMainUptime), PERIOD_MS))
+	if (!isSettingsInited() || !isTimerExpired(GetVar(gMainUptime), PERIOD_MS))
     	return;
 
 	SetVar(gMainUptime, GetVar(UPTIME));
@@ -27,8 +29,6 @@ main()
 		storeSetting(TIMEZONE_FILE, timeZone);
 	}
 
-    //!!! определение 
-
 	// изменение времени вывода вспомогательной информации
 	new advTime = GetVar(gAdvTime);
 	if (advTime != GetVar(gAdvTimeOld))
@@ -37,50 +37,42 @@ main()
 		storeSetting(ADVTIME_FILE, advTime);
 	}
 	
-	//!!! восстановить сохраненный объект из глобальных переменных?
-
 	new route[RAI_ROUTE_DATA];
     if (!raiGetCurrentRoute(route))
         Diagnostics("current route?");
 
-    // обработка команды на смену маршрута
-    if (GetVar(gSwitchRoute))
+    if (!isNeedSwithRoute())
     {
+        if (!route.name)
+            return;
+    }
+    else
+    {
+        // обработка команды на смену маршрута
         if (!raiGetNewRoute(route, route))
         {
             Diagnostics("new route?");
             return;
         }
-
-        Diagnostics("New route has been set");
-        raiPlayRouteAudio(route);
-
-		SetVar(gSwitchRoute, 0);  // Сбрасываем команду на смену маршрута
-		SetVar(gRouteInit, 1); // Инициализация маршрута
+		setNeedSwithRoute(false);
     }
-    
-	if (route.name{0} == 0)
-	{
-		Diagnostics("ERROR: Route not found");
-		saveRouteInTag(route);
-		return;
-	}
-
-	Diagnostics("route=%s", route.name);
-	if (diag)
-		Diagnostics("BusLine=%s", route.busLine);
-
-	saveRouteInTag(route);
-
-	if (route.crc != GetVar(gRouteCRC)) // маршрут изменился, в т.ч. другим процессом
-	{
-		setAutoinformerRoute(route.name);
-		SetVar(gAdvertismentFilePos, 0);  // Сбросим позицию в файле с рекламой
-		SetVar(gNextStationFilePos, 0);  // Сбросим позицию следующей остановки
-		SetVar(gShowAdv, 0);			
-		SetVar(gRouteCRC, route.crc); // перезапишем актуальную CRC маршрута
-		unsetTimer(); // сброс таймера отображения остановочной/вспомогательной информации
-		SetVar(gRouteInit, 1); // Инициализация маршрута
+    Diagnostics("route=%s", route.name);
+    if (route.crc == getRouteCrc())
+    {
+        //!!! восстановить остальные поля объекта из глобальных переменных
+        restoreRouteCurrentData(route);
+    }
+    else
+    {
+        // маршрут изменился
+        Diagnostics("init new route start");
+        setAutoinformerRoute(route.name);
+        PlayAudio(route.audioFilePath);
+        raiSaveRouteNameInTag(route);
+        SavePoint();
+        setRouteCrc(route.crc);
+		SetVar(gDisplaysInit, 0xFFFFFFFF); // Нужна инициализация всех табло
+        Diagnostics("init new route done");
 	}
 
     if (GetVar(gRouteInit)) // инициализация маршрута: вывод маршрутной информации
@@ -211,4 +203,6 @@ main()
 			setTimer(GetVar(gAdvTime)); // запустить таймер показа текста
 		}
 	}
+
+    //!!! сохраняем маршрут в глобальных переменных
 }

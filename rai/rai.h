@@ -34,6 +34,10 @@ stock const RAI_AUDIO_FILE_NAME{} = "route.wav";
     .audioFilePath{RAI_FILE_PATH_LENGTH_MAX_W0},\
     .startStation{RAI_STRING_LENGTH_MAX_W0},\
     .stopStation{RAI_STRING_LENGTH_MAX_W0},\
+    .nextStationFilePos,\
+    .advertismentFilePos,\
+    .isShowAdvertisment,\
+    .advertismentStartUptime,\
 ]
 
 //! @brief Получить имя, crc и пути файлов текущего маршрута
