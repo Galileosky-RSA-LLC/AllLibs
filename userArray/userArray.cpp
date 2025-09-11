@@ -48,10 +48,10 @@ ustructMakeDescriptor(isNumbers, amount, size)
 sendFileInUserArray(const fileName{}, &lastFileId)
 {
     new fsize = FileSize(fileName);
-    if (fsize <= 0)
+    if (fsize < 0)
         return false;
 
-    new chunks = fsize / USERARRAY_FILE_CHUNK_LEN_MAX + 1;// последняя часть должна быть менее USERARRAY_FILE_CHUNK_LEN_MAX
+    new chunks = (fsize / USERARRAY_FILE_CHUNK_LEN_MAX) + 1;// последняя часть должна быть менее USERARRAY_FILE_CHUNK_LEN_MAX
     new data{USERARRAY_FILE_CHUNK_LEN_MAX};
     new sentFileNum = lastFileId + 1;
     new time = GetVar(UNIX_TIME);
