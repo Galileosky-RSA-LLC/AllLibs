@@ -20,6 +20,7 @@
 #define SHOW_ADVERTISMENT 3
 
 #define ROUTE_CURRENT_DATA [\
+    .crc,\
     .isOnStation,\
     .nextStationFilePos,\
     .advertismentFilePos,\

@@ -9,6 +9,8 @@
 #include "..\rai.cpp"
 #include "..\..\time\time.h"
 #include "..\..\time\time.cpp"
+#include "..\..\string\string.h"
+#include "..\..\string\string.cpp"
 #include "lib.h"
 #include "lib.cpp"
 
@@ -55,18 +57,20 @@ main()
 
     Diagnostics("route=%s", route.name);
     new routeCurData[ROUTE_CURRENT_DATA];
-    if (route.crc == getRouteCrc())
-    {
-        restoreRouteCurrentData(route);
-    }
-    else
+    restoreRouteCurrentData(routeCurData);
+    new crc = CRC16(route.name, strLen(route.name, RAI_FILE_PATH_LENGTH_MAX));
+    if (routeCurData.crc != crc)
     {
         Diagnostics("init new route start");
         setAutoinformerRoute(route.name);
         PlayAudio(route.audioFilePath);
         raiSaveRouteNameInTag(route);
         SavePoint();
-        setRouteCrc(route.crc);
+        routeCurData.crc = crc;
+        routeCurData.isOnStation = false;
+        routeCurData.nextStationFilePos = 0;
+        routeCurData.advertismentFilePos = 0;
+        routeCurData.show = SHOW_UNKNOWN;
         storeRouteCurrentData(routeCurData);
 		resetAlldisplaysInit();
         Diagnostics("init new route done");
@@ -76,7 +80,7 @@ main()
 	if ((!isFrontDisplayInited || !isSideDisplayInited) && !raiGetFinalStations(route))
     	Diagnostics("final stations?");
 
-	new res;
+	new res = true; // для шаблона - положительный результат, в реальных применениях - сначала отрицательный
     if (!isFrontDisplayInited)
 	{
         Diagnostics("init front display start");
@@ -114,10 +118,8 @@ main()
 
 		setDisplayInit(FRONT_DISPLAY_INDEX, true);
 	}
-    
-    restoreRouteCurrentData(routeCurData);
     new text{RAI_STRING_LENGTH_MAX_W0};
-    if (raiIsOnStation(route, text, RAI_STRING_LENGTH_MAX))
+    if (raiIsOnStation(route, text, RAI_STRING_LENGTH_MAX, routeCurData.nextStationFilePos))
     {
         // вывод текущей остановки на табло
         // res = ...
