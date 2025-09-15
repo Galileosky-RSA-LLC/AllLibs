@@ -54,6 +54,7 @@ main()
         return;
 
     Diagnostics("route=%s", route.name);
+    new routeCurData[ROUTE_CURRENT_DATA];
     if (route.crc == getRouteCrc())
     {
         restoreRouteCurrentData(route);
@@ -66,7 +67,7 @@ main()
         raiSaveRouteNameInTag(route);
         SavePoint();
         setRouteCrc(route.crc);
-        storeRouteCurrentData(route);
+        storeRouteCurrentData(routeCurData);
 		resetAlldisplaysInit();
         Diagnostics("init new route done");
 	}
@@ -114,7 +115,7 @@ main()
 		setDisplayInit(FRONT_DISPLAY_INDEX, true);
 	}
     
-    restoreRouteCurrentData(route);
+    restoreRouteCurrentData(routeCurData);
     new text{RAI_STRING_LENGTH_MAX_W0};
     if (raiIsOnStation(route, text, RAI_STRING_LENGTH_MAX))
     {
@@ -144,5 +145,5 @@ main()
             Diagnostics("ERROR %d. Message not displayed", res);
         setTimer(GetVar(gAdvTime)); // запустить таймер показа текста
     }
-    storeRouteCurrentData(route);
+    storeRouteCurrentData(routeCurData);
 }

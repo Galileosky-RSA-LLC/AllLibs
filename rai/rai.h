@@ -34,12 +34,6 @@ stock const RAI_AUDIO_FILE_NAME{} = "route.wav";
     .audioFilePath{RAI_FILE_PATH_LENGTH_MAX_W0},\
     .startStation{RAI_STRING_LENGTH_MAX_W0},\
     .stopStation{RAI_STRING_LENGTH_MAX_W0},\
-    .nextStationFilePos,\
-    .advertismentFilePos,\
-    .isShowCurrentStation,\
-    .isShowNextStation,\
-    .isShowAdvertisment,\
-    .showStartUptime,\
 ]
 
 //! @brief Получить имя, crc и пути файлов текущего маршрута
@@ -60,7 +54,7 @@ forward stock raiGetFinalStations(route[RAI_ROUTE_DATA]);
 
 //! @brief Проверить на присутствие в геозоне остановки
 //! @param[inout] route маршрут
-//! @param[out] station название остановки, если в ее геозоне
+//! @param[out] station название остановки, если в ее геозоне; при этом 
 //! @param[in] stationSizeMax предельный размер для названия остановки
 //! @return 0 - не в зоне, !=0 - в зоне
 forward stock raiIsOnStation(route[RAI_ROUTE_DATA], station{}, stationSizeMax);

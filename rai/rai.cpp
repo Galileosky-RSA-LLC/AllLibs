@@ -58,18 +58,6 @@ stock raiGetNewRoute(route[RAI_ROUTE_DATA], diag)
 	return 0;
 }
 
-//!!! надо ли?
-stock raiPlayRouteAudio(route[RAI_ROUTE_DATA])
-{
-	new res = rai_generateFilePath(route, RAI_AUDIO_FILE_NAME, RAI_AUDIO_FILE_NAME_LENGTH, route.audioFilePath);
-	res = res && (FileSize(route.audioFilePath) > 0);
-	if (res)
-		PlayAudio(route.audioFilePath);
-	else
-		Diagnostics("Route audio file %s not found", route.audioFilePath);
-	return res;
-}
-
 stock raiGetFinalStations(route[RAI_ROUTE_DATA])
 {
 	route.startStation{0} = 0;
@@ -161,11 +149,6 @@ stock raiIsOnStation(route[RAI_ROUTE_DATA], station{}, &nextStationFilePos, diag
 			}
 
 			return true;
-		}
-		else
-		{
-			if (diag)
-				Diagnostics("Not in Zone");
 		}
 	}
 

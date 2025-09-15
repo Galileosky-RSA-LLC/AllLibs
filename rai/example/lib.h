@@ -13,6 +13,20 @@
 
 #include "..\rai.h"
 
+// что отображалось на салонном табло
+#define SHOW_UNKNOWN 0
+#define SHOW_CURRENT_STATION 1
+#define SHOW_NEXT_STATION 2
+#define SHOW_ADVERTISMENT 3
+
+#define ROUTE_CURRENT_DATA [\
+    .isOnStation,\
+    .nextStationFilePos,\
+    .advertismentFilePos,\
+    .show,\
+    .showStartUptime,\
+]
+
 //! Получить статус инициализации настроек
 //! @return true - настройки инициализированы, false - не инициализированы
 forward stock isSettingsInited();
