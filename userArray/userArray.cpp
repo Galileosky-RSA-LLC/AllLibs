@@ -1,6 +1,10 @@
-#ifndef USERARRAY_LIB
+//! @file
+//! @brief Функции библиотеки массива пользователя
+
+#ifdef USERARRAY_LIB
+#endinput
+#endif
 #define USERARRAY_LIB
-// Библиотека массива пользователя
 
 #include "userArray.h"
 #include "..\array\array.h"
@@ -9,11 +13,7 @@
 #include "..\checkcode\checkcode.cpp"
 #include "..\gdefines.h"
 
-//! Сформировать описатель для группы параметров массива пользователя универсальной структуры
-//! \param[in] isNumbers признак числового типа данных (!=0 - числа, =0 - строка)
-//! \param[in] amount количество элементов: для строки - длина в байтах (от 0 до 127), для чисел - от 1 до 8
-//! \param[in] size размер памяти числа: 0, 1, 2, 4 или 8 (для строкового типа данных не учитывается)
-ustructMakeDescriptor(isNumbers, amount, size)
+stock ustructMakeDescriptor(isNumbers, amount, size)
 {
     if (isNumbers)
     {    
@@ -41,11 +41,7 @@ ustructMakeDescriptor(isNumbers, amount, size)
     return ((isNumbers == 0) << 7) + (isNumbers ? ((amount - 1) << 4) + size : amount);
 }
 
-//! Отправить файл с помощью массива пользователя
-//! \param[in] fileName имя файла, должно оканчиваться \0
-//! \param[inout] lastFileId идентификатор последнего отправленного файла
-//! \return true - успешно, false - ошибка файловой системы: файл пустой или не прочитался
-sendFileInUserArray(const fileName{}, &lastFileId)
+stock sendFileInUserArray(const fileName{}, &lastFileId)
 {
     new fsize = FileSize(fileName);
     if (fsize < 0)
@@ -58,8 +54,9 @@ sendFileInUserArray(const fileName{}, &lastFileId)
     new uid = GetVar(ARE_COORDINATES_VALID) ? time : sentFileNum;
     for (new i = 0; i < chunks; i++)
     {
-        new bytesRead = FileRead(fileName, data, USERARRAY_FILE_CHUNK_LEN_MAX, i * USERARRAY_FILE_CHUNK_LEN_MAX);
-        if ((bytesRead != USERARRAY_FILE_CHUNK_LEN_MAX) && (bytesRead != (fsize - i * USERARRAY_FILE_CHUNK_LEN_MAX)))
+        new savedSize = i * USERARRAY_FILE_CHUNK_LEN_MAX;
+        new bytesRead = FileRead(fileName, data, USERARRAY_FILE_CHUNK_LEN_MAX, savedSize);
+        if ((bytesRead != USERARRAY_FILE_CHUNK_LEN_MAX) && (bytesRead != (fsize - savedSize)))
             return false;
 
         new userAr{USERARRAY_MAX_SIZE} = {USERARRAY_FILE_TYPE};
@@ -73,34 +70,23 @@ sendFileInUserArray(const fileName{}, &lastFileId)
         SavePoint();
         TagWriteArray(TAG_USER_ARRAY, 0, userAr);
         const interChunksWaitMs = 10;
-        //Delay(interChunksWaitMs);
+        Delay(interChunksWaitMs);
     }
     lastFileId = uid;
     return true;
 }
 
-//! Сформировать описатель группы чисел в массиве пользователя универсальной структуры
-//! \param[in] amount количество чисел, 1..8
-//! \param[in] size размер памяти числа: 1, 2, 4 или 8 байт
-ustructMakeDescriptorNum(amount, size)
+stock ustructMakeDescriptorNum(amount, size)
 {
     return ustructMakeDescriptor(true, amount, size < 1 ? 1 : size);
 }
 
-//! Сформировать описатель строки в массиве пользователя универсальной структуры
-//! \param[in] strSize длина строки в байтах, 0..127
-ustructMakeDescriptorStr(strSize)
+stock ustructMakeDescriptorStr(strSize)
 {
     return ustructMakeDescriptor(false, strSize, 0);
 }
 
-//! Пропустить неиспользуемые параметры в массиве пользователя универсальной структуры
-//! \param[inout] userArray массив пользователя
-//! \param[in] userArrayMaxSize предельный размер массива пользователя
-//! \param[inout] pos позиция в массиве пользователя
-//! \param[in] emptyCount количество пропускаемых параметров
-//! \return количество вставленных байт (0 - ошибка)
-ustructInsertEmpty(userArray{}, userArrayMaxSize, &pos, emptyCount)
+stock ustructInsertEmpty(userArray{}, userArrayMaxSize, &pos, emptyCount)
 {
     new groups = (emptyCount / USERARRAY_USTRUCT_DESCR_NUMBERS_MAX) + ((emptyCount % USERARRAY_USTRUCT_DESCR_NUMBERS_MAX) != 0);
     if ((pos < 0) || ((pos + groups) > userArrayMaxSize))
@@ -112,13 +98,7 @@ ustructInsertEmpty(userArray{}, userArrayMaxSize, &pos, emptyCount)
     return groups;
 }
 
-//! Вставить данные датчика пассажиропотока в массив пользователя
-//! \param[inout] userArray массив пользователя
-//! \param[in] userArrayMaxSize предельный размер массива пользователя
-//! \param[in] sensor данные датчика
-//! \param[inout] pos позиция в массиве пользователя
-//! \return количество вставленных байт (0 - ошибка входных данных)
-userArrayAddPasCounting(userArray{}, userArrayMaxSize, const sensor[USERARRAY_PASCOUNT_SENSOR_DATA], &pos)
+stock userArrayAddPasCounting(userArray{}, userArrayMaxSize, const sensor[USERARRAY_PASCOUNT_SENSOR_DATA], &pos)
 {
     if ((pos < USERARRAY_PASCOUNT_DATA_POS_MIN)
         || ((pos + USERARRAY_PASCOUNT_SENSOR_SIZE) > USERARRAY_PASCOUNT_SIZE_MAX)
@@ -137,5 +117,3 @@ userArrayAddPasCounting(userArray{}, userArrayMaxSize, const sensor[USERARRAY_PA
     pos += USERARRAY_PASCOUNT_SENSOR_DATA_SIZE;
     return USERARRAY_PASCOUNT_SENSOR_SIZE;
 }
-
-#endif // USERARRAY_LIB
