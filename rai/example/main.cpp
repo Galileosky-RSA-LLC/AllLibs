@@ -77,8 +77,14 @@ main()
 	}
     new isFrontDisplayInited = isDisplayInited(FRONT_DISPLAY_INDEX);
     new isSideDisplayInited = isDisplayInited(SIDE_DISPLAY_INDEX);
-	if ((!isFrontDisplayInited || !isSideDisplayInited) && !raiGetFinalStations(route))
-    	Diagnostics("final stations?");
+    new hasFinalStations = false;
+	if (!isFrontDisplayInited || !isSideDisplayInited)
+    {
+        if (hasFinalStations = raiGetFinalStations(route))
+            Diagnostics("final stations:\"%s\"-\"%s\"", route.startStation, route.endStation);
+        else
+            Diagnostics("final stations?");
+    }
 
 	new res = true; // для шаблона - положительный результат, в реальных применениях - сначала отрицательный
     if (!isFrontDisplayInited)

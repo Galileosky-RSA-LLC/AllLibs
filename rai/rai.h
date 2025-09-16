@@ -22,8 +22,15 @@ stock const RAI_ADVERTISMENT_FILE_NAME{} = "advertisment.txt";
 stock const RAI_AUDIO_FILE_NAME{} = "route.wav";
 #define RAI_AUDIO_FILE_NAME_LENGTH 9 // длина имени аудиофайла маршрута
 
-#define RAI_CR_SYMBOL 0x0D // символ возврата каретки
-#define RAI_LF_SYMBOL 0x0A // символ конца строки
+//!!! в библиотеку строк
+#define SYMBOL_CR 0x0D
+#define SYMBOL_LF 0x0A
+
+//!!! в библиотеку файлов
+#define SYMBOL_PATH_SEPARATOR_PRIME '/'
+#define SYMBOL_PATH_SEPARATOR_SECOND '\\'
+stock const PATH_SEPARATOR_PRIME{} = {SYMBOL_PATH_SEPARATOR_PRIME};
+stock const PATH_SEPARATOR_SECOND{} = {SYMBOL_PATH_SEPARATOR_SECOND};
 
 #define RAI_ROUTE_DATA [\
     .name{RAI_FILE_PATH_LENGTH_MAX_W0},\
@@ -32,7 +39,7 @@ stock const RAI_AUDIO_FILE_NAME{} = "route.wav";
     .advertismentFilePath{RAI_FILE_PATH_LENGTH_MAX_W0},\
     .audioFilePath{RAI_FILE_PATH_LENGTH_MAX_W0},\
     .startStation{RAI_STRING_LENGTH_MAX_W0},\
-    .stopStation{RAI_STRING_LENGTH_MAX_W0},\
+    .endStation{RAI_STRING_LENGTH_MAX_W0},\
 ]
 
 //! @brief Получить имя и пути файлов текущего маршрута
@@ -43,20 +50,20 @@ forward stock raiGetCurrentRoute(route[RAI_ROUTE_DATA]);
 //! @brief Получить имя и пути файлов следующего маршрута
 //! @param[in] currentRoute структура текущего маршрута
 //! @param[out] nextRoute структура следующего маршрута
-//! @return true - успешно, false - нет папок с маршрутами или ошибка файловой системы
+//! @return true - успешно, false - нет маршрутов или ошибка файловой системы
 forward stock raiGetNewRoute(const currentRoute[RAI_ROUTE_DATA], nextRoute[RAI_ROUTE_DATA]);
 
 //! @brief Получить начальную и конечную остановки маршрута из файла
 //! @details Предварительно необходимо получить имя и пути маршрута
 //! @param[inout] route маршрут
-//! @return true - успешно, false - ошибка: нет файла или он пустой
+//! @return true - успешно, false - ошибка: нет маршрута или файла с конечными остановками
 forward stock raiGetFinalStations(route[RAI_ROUTE_DATA]);
 
 //! @brief Проверить на присутствие в геозоне остановки
 //! @param[in] route маршрут
 //! @param[out] currentStationFilePos позиция в файле названия текущей остановки, если в ее геозоне
 //! @param[out] nextStationFilePos позиция в файле названия следующей остановки, если в геозоне остановки
-//! @return !=0 - в зоне, 0 - не в зоне
+//! @return !=0 - в геозоне, 0 - не в геозоне
 forward stock raiIsOnStation(const route[RAI_ROUTE_DATA], &currentStationFilePos, &nextStationFilePos);
 
 //! Получить рекламное сообщение
@@ -70,10 +77,3 @@ forward stock raiGetAdvertisment(route[RAI_ROUTE_DATA], &filePos, adv{});
 //! @param[in] route маршрут
 forward stock raiSaveRouteNameInTag(const route[RAI_ROUTE_DATA]);
 
-//! @brief Прочитать из файла сообщение до конца строки
-//! @param[in] fileFullPath имя файла, должно оканчиваться \0
-//! @param[in] filePos позиция начала чтения
-//! @param[out] message прочитанное сообщение
-//! @param[in] messageMaxSize предельная длина для прочитанного сообщения
-//! @return длина прочитанного сообщения
-forward stock raiReadMessage(const fileFullPath{}, filePos, message{}, messageMaxSize);

@@ -7,151 +7,105 @@
 #define RAI_LIB
 
 #include "rai.h"
+#include "..\string\string.h"
+#include "..\string\string.cpp"
 
 //! @publicsection
 
 stock raiGetCurrentRoute(route[RAI_ROUTE_DATA])
 {
-    new res = rai_readRouteName(route);
-	// признак, что папка - именно маршрут - наличие файла с конечными остановками, хоть и пустого
-	res *= rai_getFinalStationsFile(route);
-	if (!res)
-		return 0;
-	route.crc = CRC16(route.name, GS_strlen(route.name));
-	return res + rai_generateFilePath(route, RAI_BUSLINE_FILE_NAME, RAI_BUSLINE_FILE_NAME_LENGTH, route.busLineFilePath);
+    return rai_restoreRouteName(route) && rai_getFilePaths(route);
 }
 
-stock raiGetNewRoute(route[RAI_ROUTE_DATA], diag)
+stock raiGetNewRoute(const currentRoute[RAI_ROUTE_DATA], nextRoute[RAI_ROUTE_DATA])
 {
-	new res = true;
-	new scan = 0;
-	while ((res) && (scan <= 1))
+	strncpy(nextRoute.name, 0, RAI_FILE_PATH_LENGTH_MAX, currentRoute.name);
+    new isReScan = false;
+	while (true)
 	{
-		if (diag)
-			Diagnostics("GetNewRoute. last dir=%s", route.name);
-		res = NextDir("/", route.name, route.name, RAI_FILE_PATH_LENGTH_MAX_W0);
-		if (res)
+		if (NextDir("", nextRoute.name, nextRoute.name, RAI_FILE_PATH_LENGTH_MAX))
 		{
-			if (rai_getFinalStationsFile(route))
-			{
-				if (diag)
-					Diagnostics("GetNewRoute. found route dir=%s", route.name);
-				if (!rai_writeRouteName(route))
-				{
-					Diagnostics("GetNewRoute. ERROR write route");
-					return 0;
-				}
-				route.crc = CRC16(route.name, GS_strlen(route.name));
-				return 1 + rai_generateFilePath(route, RAI_BUSLINE_FILE_NAME, RAI_BUSLINE_FILE_NAME_LENGTH, route.busLineFilePath);
-			}
+			Diagnostics("found dir=%s", nextRoute.name);//!!!
+            if (rai_getFilePaths(nextRoute))
+                return true;
+
+            continue;
 		}
-		else
+		else if (isReScan)
 		{
-			if (diag)
-				Diagnostics("GetNewRoute. dir not found, rescan");
-			scan++;
-			res = true;
-			route.name{0} = 0;
+			break;
 		}
+        isReScan = true;
+        nextRoute.name{0} = 0;
 	}
-	route.name{0} = 0;
-	return 0;
+    nextRoute.name{0} = 0;
+    return false;
 }
 
 stock raiGetFinalStations(route[RAI_ROUTE_DATA])
 {
 	route.startStation{0} = 0;
-	route.stopStation{0} = 0;
-	if ((FileSize(route.finalStations) < 0) || (route.name{0} == 0))
-		return 0;
+	route.endStation{0} = 0;
+	if (!route.name{0} || (FileSize(route.finalStationsFilePath) < 0))
+		return false;
 
-	new len = FileRead(route.finalStations, route.startStation, RAI_STRING_LENGTH_MAX - 1, 0);
-	new pos = 0;
-	for (; pos < len; ++pos)
-	{
-		if (route.startStation{pos} == RAI_CR_SYMBOL)
-			break;
-	}
-	route.startStation{pos} = 0;
-	pos = pos + 2;
-	len = FileRead(route.finalStations, route.stopStation, RAI_STRING_LENGTH_MAX - 1, pos);
-	pos = 0;
-	for (; pos < len; ++pos)
-	{
-		if (route.stopStation{pos} == RAI_CR_SYMBOL)
-			break;
-	}
-	route.stopStation{pos} = 0;
-	Diagnostics("RouteAutoinformer. First and last stations:");
-	Diagnostics(route.startStation);
-	Diagnostics(route.stopStation);
-	return 1;
+	new pos = fileReadLine(route.finalStationsFilePath, route.startStation, RAI_STRING_LENGTH_MAX, 0);
+    if (pos)
+        fileReadLine(route.finalStationsFilePath, route.endStation, RAI_STRING_LENGTH_MAX, pos);
+
+	return true;
 }
 
-stock raiIsOnStation(route[RAI_ROUTE_DATA], station{}, &nextStationFilePos, diag)
+stock raiIsOnStation(const route[RAI_ROUTE_DATA], &currentStationFilePos, &nextStationFilePos)
 {
-	new currentFilePos = 0;
-	new latitude       = 0;
-	new longitude      = 0;
-	new directionAngle = 0;
-	new spreadAngle    = 0;
-	new R0             = 0;
-	new R1             = 0;
-
-	while (true)
+    new filePos = 0;
+    new fileSize = FileSize(route.busLineFilePath);
+	while (filePos < fileSize)
 	{
-		new rowData{RAI_STRING_LENGTH_MAX};
-		new rowLen = GS_readLine(route.busLineFilePath, currentFilePos, rowData, RAI_STRING_LENGTH_MAX - 1);
-		
-		if (diag)
-			Diagnostics("busline str=%s", rowData);
-		
-		if (!rowLen)
+		new str{RAI_STRING_LENGTH_MAX};
+		new readSize = fileReadLine(route.busLineFilePath, str, RAI_STRING_LENGTH_MAX, filePos);
+		if (!readSize)
 			return false;
 
-		// В файле идет:
-		// Широта, долгота, угол направления, угол разброса, внешний радиус R0, внутренний радиус R1, имя аудио файла, название остановки.
-		new pos = 0;
+		// В строке файла идет:
+		// Широта;долгота;угол направления;угол разброса;внешний радиус R0;внутренний радиус R1;имя аудио файла;название остановки.
+        // типа:
+        // 51.540487;46.004783;111.00;45.00;60.00;20.00;Universitatska_.wav;Остановка ул. Университетская
+		new strPos = 0;
 
-		latitude       = rai_readParam(rowData, pos, 6);
-		longitude      = rai_readParam(rowData, pos, 6);
-		directionAngle = rai_readParam(rowData, pos, 2);
-		spreadAngle    = rai_readParam(rowData, pos, 2);
-		R0             = rai_readParam(rowData, pos, 2);
-		R1             = rai_readParam(rowData, pos, 2);
+		new latitude       = rai_readParam(str, strPos, 6);
+		new longitude      = rai_readParam(str, strPos, 6);
+		new directionAngle = rai_readParam(str, strPos, 2);
+		new spreadAngle    = rai_readParam(str, strPos, 2);
+		new extRadiusR0             = rai_readParam(str, strPos, 2);
+		new intRadiusR1             = rai_readParam(str, strPos, 2);
 		
-		if (diag)
-		{
-			Diagnostics("str latitude=%d, longitude=%d", latitude, longitude);
-			Diagnostics("str directionAngle=%d, spreadAngle=%d", directionAngle, spreadAngle);
-			Diagnostics("str R0=%d, R1=%d", R0, R1);
-		}
+		Diagnostics("str latitude=%d,longitude=%d,directionAngle=%d,spreadAngle=%d,R0=%d,R1=%d", latitude, longitude, directionAngle, spreadAngle, extRadiusR0,
+                    intRadiusR1);//!!!
+		if (!InZone(latitude, longitude, directionAngle, spreadAngle, extRadiusR0, intRadiusR1))
+        {
+            filePos += readSize;
+            continue;
+        }
+        new p = rai_getStationNameStart(str, strPos, rowLen);
 
-		currentFilePos = currentFilePos + rowLen + 2; // 2 символа - CR LF
+        if (diag)
+            Diagnostics("InZone, stationNamePos=%d", p);
 
-		if (InZone(latitude, longitude, directionAngle, spreadAngle, R0, R1) == true)
-		{
-			new p = rai_getStationNameStart(rowData, pos, rowLen);
+        if (p > 0)
+        {
+            new i = 0;
+            for (; i + p < rowLen; ++i)
+                station{i} = str{p + i};
 
-			if (diag)
-				Diagnostics("InZone, stationNamePos=%d", p);
+            station{i} = 0;
+            Diagnostics("Station: %s", station);
+            new nextStation{RAI_STRING_LENGTH_MAX};
+            nextStationFilePos = rai_getNextStationPos(route, filePos, nextStation) + filePos;
+        }
 
-			if (p > 0)
-			{
-				new i = 0;
-				for (; i + p < rowLen; ++i)
-					station{i} = rowData{p + i};
-
-				station{i} = 0;
-				Diagnostics("Station: %s", station);
-				new nextStation{RAI_STRING_LENGTH_MAX};
-				nextStationFilePos = rai_getNextStationPos(route, currentFilePos, nextStation) + currentFilePos;
-			}
-
-			return true;
-		}
+        return true;
 	}
-
 	return false;
 }
 
@@ -174,7 +128,7 @@ stock raiGetAdvertisment(route[RAI_ROUTE_DATA], &filePos, adv{})
 	new p = 0;
 	for (; p < len; ++p)
 	{
-		if(adv{p} == RAI_CR_SYMBOL)
+		if(adv{p} == SYMBOL_CR)
 			break;
 	}
 
@@ -198,79 +152,75 @@ stock raiGetNextStation(route[RAI_ROUTE_DATA], filePos, station{})
 	return true;
 }
 
-//! @privatesection
-
-//! Получить полный путь файла
-//! Приватная функция
-//! \param[in] route маршрут
-//! \param[in] fileName имя файла
-//! \param[in] fileNameLength длина имени файла
-//! \param[out] path путь
-//! \return 0 - ошибка (превышена длина / нет маршрута), 1 - успешно
-stock rai_generateFilePath(route[RAI_ROUTE_DATA], fileName{}, fileNameLength, path{})
+//!!! в библиотеку файлов
+//! @brief Прочитать строку из текстового файла
+//! @details Завершение строк в файле может быть в форматах LF и CRLF
+//! @param[in] fileFullPath имя файла, должно оканчиваться \0
+//! @param[in] fileOffset смещение начала чтения
+//! @param[out] buf буфер для прочитанной строки
+//! @param[in] bufMaxSize предельный размер буфера для прочитанной строки, с учетом спец. символов завершения строки
+//! @return прочитанный размер, включая спец. символы завершения и все промежуточные \0
+stock fileReadLine(const fileFullPath{}, buf{}, bufMaxSize, fileOffset)
 {
-	if (route.name{0} == 0)
-	{
-		path{0} = 0;
+	new size = FileRead(fileFullPath, buf, bufMaxSize, fileOffset);
+    if (size <= 0)
 		return 0;
-	}
-	new pos = 0;
-	path{pos++} = '/';
-	GS_append(path, pos, RAI_FILE_PATH_LENGTH_MAX_W0, route.name, GS_strlen(route.name));
-    path{pos++} = '/';
-	GS_append(path, pos, RAI_FILE_PATH_LENGTH_MAX_W0, fileName, fileNameLength);
-	if (pos >= RAI_FILE_PATH_LENGTH_MAX_W0)
-	{
-		path{RAI_FILE_PATH_LENGTH_MAX_W0 - 1} = 0;
-		return 0;
-	}
 
-	path{pos} = 0;
-	return 1;
+	new i;
+    new hasCrSymbol = false;
+    new hasLfSymbol = false;
+    for (i = 0; (i < size) && !(hasLfSymbol = buf{i} == SYMBOL_LF); i++)
+        hasCrSymbol = buf{i} == SYMBOL_CR;
+    
+    if (i < bufMaxSize)
+        buf{hasCrSymbol && hasLfSymbol ? i - 1 : i} = 0;
+
+    return hasLfSymbol ? i + 1 : i;
 }
 
-//! Прочитать название текущего маршрута из файла в корне SD
-//! Приватная функция
-//! \param[out] route маршрут
-//! \return длина прочитанных данных, если 0, то нет файла 
-stock rai_readRouteName(route[RAI_ROUTE_DATA])
+//! @privatesection
+
+stock rai_generateFilePath(const route[RAI_ROUTE_DATA], const fileName{}, filePath{})
+{
+	new pos = 0;
+    filePath{0} = 0;
+    new routeNameLength = strLen(route.name);
+    new fileNameLength = strLen(fileName);
+    if ((routeNameLength <= 0) || (fileNameLength <= 0) || ((routeNameLength + fileNameLength + 1) > RAI_FILE_PATH_LENGTH_MAX))
+        return false;
+
+    pos += insertArrayStr(filePath, pos, RAI_FILE_PATH_LENGTH_MAX, route.name, routeNameLength);
+    pos += insertArrayStr(filePath, pos, RAI_FILE_PATH_LENGTH_MAX, PATH_SEPARATOR_PRIME, strLen(PATH_SEPARATOR_PRIME));
+    strncpy(filePath, pos, RAI_FILE_PATH_LENGTH_MAX, fileName);
+	return true;
+}
+
+//! Прочитать название текущего маршрута из файла
+//! @param[out] route структура маршрута
+//! @return true - успешно, false - ошибка
+stock rai_restoreRouteName(route[RAI_ROUTE_DATA])
 {
 	new len = FileRead(RAI_CURRENT_ROUTE_FILE_PATH, route.name, RAI_FILE_PATH_LENGTH_MAX);
-
-	if (len == 0)
-	{
-		Diagnostics("RouteAutoinformer ERROR: Current route unknown");
-		route.name{0} = 0;
-		return 0;
-	}
-
-	if (len >= (RAI_FILE_PATH_LENGTH_MAX))
-	{
-		route.name{RAI_FILE_PATH_LENGTH_MAX} = 0;
-		return RAI_FILE_PATH_LENGTH_MAX;
-	}
-
-	route.name{len} = 0;
-	return len;
+	route.name{len <= 0 ? 0 : ((len < RAI_FILE_PATH_LENGTH_MAX) ? len : RAI_FILE_PATH_LENGTH_MAX)} = 0;
+	return len > 0;
 }
 
 //! Сохранить имя маршрута в файл
-//! Приватная функция
-//! \param[in] route маршрут
-stock rai_writeRouteName(route[RAI_ROUTE_DATA])
+//! @param[in] route структура маршрута
+//! @return true - успешно, false - ошибка
+stock rai_storeRouteName(const route[RAI_ROUTE_DATA])
 {
-	FileDelete(RAI_CURRENT_ROUTE_FILE_PATH);
-	return FileWrite(RAI_CURRENT_ROUTE_FILE_PATH, route.name, GS_strlen(route.name));
+	return !FileDelete(RAI_CURRENT_ROUTE_FILE_PATH) && FileWrite(RAI_CURRENT_ROUTE_FILE_PATH, route.name, strLen(route.name));
 }
 
-//! Проверить наличие файла с конечными остановками
-//! Приватная функция
-//! \param[in] route маршрут
-//! \return 0 - нет файла, !=0 - файл существует
-stock rai_getFinalStationsFile(route[RAI_ROUTE_DATA])
+//! Получить путь файла с конечными остановками
+//! @param[inout] route структура маршрута
+//! @return true - успешно, false - ошибка
+stock rai_getFinalStationsFilePath(route[RAI_ROUTE_DATA])
 {
-	rai_generateFilePath(route, RAI_FINAL_STATIONS_FILE_NAME, RAI_FINAL_STATIONS_FILE_NAME_LENGTH, route.finalStations);
-	return (FileSize(route.finalStations) >= 0) && (route.name{0} != 0);
+	return route.name{0}
+            && rai_generateFilePath(route, RAI_FINAL_STATIONS_FILE_NAME, route.finalStationsFilePath)
+            && (FileSize(route.finalStationsFilePath) >= 0);
 }
 
 //! Получить значение из строки и пропустить 1 символ
@@ -336,4 +286,15 @@ stock rai_getNextStationPos(route[RAI_ROUTE_DATA], pos, buf{})
 	}
 
 	return rai_getStationNameStart(buf, pos, len);
+}
+
+stock rai_getFilePaths(route[RAI_ROUTE_DATA])
+{
+	if (!rai_getFinalStationsFilePath(route))
+		return false;
+	
+	rai_generateFilePath(route, RAI_AUDIO_FILE_NAME, route.audioFilePath);
+    rai_generateFilePath(route, RAI_BUSLINE_FILE_NAME, route.busLineFilePath);
+    rai_generateFilePath(route, RAI_ADVERTISMENT_FILE_NAME, route.advertismentFilePath);
+    return true;
 }
