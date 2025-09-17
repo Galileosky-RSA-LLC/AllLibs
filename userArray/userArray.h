@@ -1,8 +1,14 @@
-#ifndef USERARRAY_H
+//! @file
+//! @brief Заголовок библиотеки массива пользователя
+
+#ifdef USERARRAY_H
+#endinput
+#endif
 #define USERARRAY_H
-// Заголовок библиотеки массива пользователя
 
 #include "..\gdefines.h"
+
+#define USERARRAY_MAX_SIZE TAG_USER_ARRAY_MAX_SIZE
 
 #define USERARRAY_TYPE_POS 0
 
@@ -40,8 +46,6 @@
 #define USERARRAY_USTRUCT_DESCR_SYMBOLS_MAX 127
 #define USERARRAY_USTRUCT_DESCR_NUMBERS_MAX 8
 
-#define USERARRAY_MAX_SIZE TAG_USER_ARRAY_MAX_SIZE
-
 #define USERARRAY_FILE_TYPE 0x80
 #define USERARRAY_FILE_TYPE_LEN 1
 #define USERARRAY_FILE_UID_POS (USERARRAY_TYPE_POS + USERARRAY_FILE_TYPE_LEN)
@@ -56,11 +60,44 @@
 #define USERARRAY_FILE_FRAME_LEN_MIN (USERARRAY_FILE_HEADER_LEN + USERARRAY_FILE_CRC_LEN)
 #define USERARRAY_FILE_CHUNK_LEN_MAX (USERARRAY_MAX_SIZE - USERARRAY_FILE_FRAME_LEN_MIN)
 
-ustructMakeDescriptor(isNumbers, amount, size);
-ustructMakeDescriptorNum(amount, size);
-ustructMakeDescriptorStr(strSize);
-ustructInsertEmpty(userArray{}, userArrayMaxSize, &pos, emptyCount);
-sendFileInUserArray(const fileName{}, &lastFileId);
-userArrayAddPasCounting(userArray{}, userArrayMaxSize, const sensor[USERARRAY_PASCOUNT_SENSOR_DATA], &pos);
+//! @defgroup ustruct Функции универсальной структуры
+//! @{
 
-#endif // USERARRAY_H
+//! @brief Сформировать описатель для группы параметров массива пользователя универсальной структуры
+//! @param[in] isNumbers признак числового типа данных (!=0 - числа, =0 - строка)
+//! @param[in] amount количество элементов: для строки - длина в байтах (от 0 до 127), для чисел - от 1 до 8
+//! @param[in] size размер памяти числа: 0, 1, 2, 4 или 8 (для строкового типа данных не учитывается)
+forward stock ustructMakeDescriptor(isNumbers, amount, size);
+
+//! @brief Сформировать описатель группы чисел в массиве пользователя универсальной структуры
+//! @param[in] amount количество чисел, 1..8
+//! @param[in] size размер памяти числа: 1, 2, 4 или 8 байт
+forward stock ustructMakeDescriptorNum(amount, size);
+
+//! @brief Сформировать описатель строки в массиве пользователя универсальной структуры
+//! @param[in] strSize длина строки в байтах, 0..127
+forward stock ustructMakeDescriptorStr(strSize);
+
+//! @brief Пропустить неиспользуемые параметры в массиве пользователя универсальной структуры
+//! @param[inout] userArray массив пользователя
+//! @param[in] userArrayMaxSize предельный размер массива пользователя
+//! @param[inout] pos позиция в массиве пользователя
+//! @param[in] emptyCount количество пропускаемых параметров
+//! @return количество вставленных байт (0 - ошибка)
+forward stock ustructInsertEmpty(userArray{}, userArrayMaxSize, &pos, emptyCount);
+
+//! @}
+
+//! @brief Отправить файл с помощью массива пользователя
+//! @param[in] fileName имя файла, должно оканчиваться \0
+//! @param[inout] lastFileId идентификатор последнего отправленного файла
+//! @return true - успешно, false - ошибка файловой системы: файл пустой или не прочитался
+forward stock sendFileInUserArray(const fileName{}, &lastFileId);
+
+//! @brief Вставить данные датчика пассажиропотока в массив пользователя
+//! @param[inout] userArray массив пользователя
+//! @param[in] userArrayMaxSize предельный размер массива пользователя
+//! @param[in] sensor данные датчика
+//! @param[inout] pos позиция в массиве пользователя
+//! @return количество вставленных байт (0 - ошибка входных данных)
+forward stock userArrayAddPasCounting(userArray{}, userArrayMaxSize, const sensor[USERARRAY_PASCOUNT_SENSOR_DATA], &pos);

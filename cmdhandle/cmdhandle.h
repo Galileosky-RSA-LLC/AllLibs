@@ -1,7 +1,16 @@
-// Заголовок библиотеки обработчика ответов на команды
+//! @file
+//! @brief Заголовок библиотеки обработчика команд
 
-#ifndef CMDHANDLE_H
+#ifdef CMDHANDLE_H
+#endinput
+#endif
 #define CMDHANDLE_H
+
+#define CMD_LENGTH_MAX 255
+#define CMD_LENGTH_MAX_W0 (CMD_LENGTH_MAX + 1)
+
+stock const CMD_TEXT_SEPARATOR{} = " ";
+stock const CMD_PARAM_SEPARATOR{} = ",";
 
 #define CMDHANDLE_ANSWER_SIZE_MAX 254
 #define CMDHANDLE_ANSWER_SIZE_MAX_W0 (CMDHANDLE_ANSWER_SIZE_MAX + 1)
@@ -11,11 +20,18 @@
     .answerSize,\
 ]
 
+//! @brief Добавить текст к ответу
+forward stock cmdHandlerAddTextToAnswer(obj[CMDHANDLE_DATA], const text{}, textSize = 0);
 
-cmdHandlerAddTextToAnswer(obj[CMDHANDLE_DATA], const text{}, textSize = 0);
-cmdHandlerAddNumToAnswer(obj[CMDHANDLE_DATA], num);
-cmdHandlerAddParValueToAnswer(obj[CMDHANDLE_DATA], const parName{}, parValue, parNameSize = 0);
-cmdHandlerAddHexAsciiToAnswer(obj[CMDHANDLE_DATA], const data{}, dataSize);
-cmdHandlerSendPreparedAnswer(obj[CMDHANDLE_DATA]);
+//! @brief Добавить текстовое представление числа к ответу
+forward stock cmdHandlerAddNumToAnswer(obj[CMDHANDLE_DATA], num);
 
-#endif
+//! @brief Добавить к ответу имя параметра и его числовое значение
+forward stock cmdHandlerAddParValueToAnswer(obj[CMDHANDLE_DATA], const parName{}, parValue, parNameSize = 0);
+
+//! @brief Добавить к ответу hex данные в строковом виде
+forward stock cmdHandlerAddHexAsciiToAnswer(obj[CMDHANDLE_DATA], const data{}, dataSize);
+
+//! @brief Послать подготовленный ранее ответ на команду
+//! @param[inout] obj объект обработчика, ответ может быть изменен в зависимости от типа соединения источника команды
+forward stock cmdHandlerSendPreparedAnswer(obj[CMDHANDLE_DATA]);
