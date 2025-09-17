@@ -43,19 +43,17 @@ stock ustructMakeDescriptor(isNumbers, amount, size)
 
 stock sendFileInUserArray(const fileName{}, &lastFileId)
 {
-    new fsize = FileSize(fileName);
+    new const fsize = FileSize(fileName);
     if (fsize < 0)
         return false;
 
-    new chunks = (fsize / USERARRAY_FILE_CHUNK_LEN_MAX) + 1;// последняя часть должна быть менее USERARRAY_FILE_CHUNK_LEN_MAX
+    new const chunks = (fsize / USERARRAY_FILE_CHUNK_LEN_MAX) + 1;// последняя часть должна быть менее USERARRAY_FILE_CHUNK_LEN_MAX
     new data{USERARRAY_FILE_CHUNK_LEN_MAX};
-    new sentFileNum = lastFileId + 1;
-    new time = GetVar(UNIX_TIME);
-    new uid = GetVar(ARE_COORDINATES_VALID) ? time : sentFileNum;
+    new const uid = GetVar(ARE_COORDINATES_VALID) ? GetVar(UNIX_TIME) : lastFileId + 1;
     for (new i = 0; i < chunks; i++)
     {
-        new savedSize = i * USERARRAY_FILE_CHUNK_LEN_MAX;
-        new bytesRead = FileRead(fileName, data, USERARRAY_FILE_CHUNK_LEN_MAX, savedSize);
+        new const savedSize = i * USERARRAY_FILE_CHUNK_LEN_MAX;
+        new const bytesRead = FileRead(fileName, data, USERARRAY_FILE_CHUNK_LEN_MAX, savedSize);
         if ((bytesRead != USERARRAY_FILE_CHUNK_LEN_MAX) && (bytesRead != (fsize - savedSize)))
             return false;
 
@@ -64,7 +62,7 @@ stock sendFileInUserArray(const fileName{}, &lastFileId)
         num2array(i, USERARRAY_FILE_NCHUNK_LEN, true, userAr, USERARRAY_FILE_NCHUNK_POS, USERARRAY_MAX_SIZE);
         userAr{USERARRAY_FILE_SIZE_POS} = bytesRead;
         insertArrayStr(userAr, USERARRAY_FILE_DATA_POS, USERARRAY_MAX_SIZE, data, bytesRead);
-        new userArSize = USERARRAY_FILE_FRAME_LEN_MIN + bytesRead;
+        new const userArSize = USERARRAY_FILE_FRAME_LEN_MIN + bytesRead;
         userAr{USERARRAY_FILE_DATA_POS + bytesRead} = crc8dallasMaxim(userAr, userArSize - 1) & 0xFF;
         TagWriteArray(TAG_USER_ARRAY, userArSize, userAr);
         SavePoint();

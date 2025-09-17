@@ -16,11 +16,11 @@
 
 stock fileRename(const src{}, const dest{})
 {
-    new srcLength = strLen(src);
-    new destLength = strLen(dest);
+    new const srcLength = strLen(src);
+    new const destLength = strLen(dest);
     new const cmdText{} = "FSMOVE";
-    new cmdTextLength = strLen(cmdText);
-    new fileNamesLengthMax = CMD_LENGTH_MAX - (cmdTextLength + strLen(CMD_TEXT_SEPARATOR) + strLen(CMD_PARAM_SEPARATOR));
+    new const cmdTextLength = strLen(cmdText);
+    new const fileNamesLengthMax = CMD_LENGTH_MAX - (cmdTextLength + strLen(CMD_TEXT_SEPARATOR) + strLen(CMD_PARAM_SEPARATOR));
     if ((srcLength + destLength) > fileNamesLengthMax)
         return false;
 
