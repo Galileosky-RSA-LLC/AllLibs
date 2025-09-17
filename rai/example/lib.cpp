@@ -31,30 +31,32 @@ stock setNeedSwithRoute(value)
     SetVar(gIsNeedSwithRoute, value);
 }
 
-stock getRouteCrc()
+stock getMessageShowTimeMs()
 {
-    return GetVar(gRouteCrc);
+    return GetVar(gMessageShowTimeMs);
 }
 
-stock setRouteCrc(value)
+stock setMessageShowTimeMs(value)
 {
-    SetVar(gRouteCrc, value);
+    SetVar(gMessageShowTimeMs, value);
 }
 
-stock restoreRouteCurrentData(route[RAI_ROUTE_DATA])
+stock restoreRouteCurrentData(routeCurrentData[ROUTE_CURRENT_DATA])
 {
-    route.nextStationFilePos = GetVar(gNextStationFilePos);
-    route.advertismentFilePos = GetVar(gAdvertismentFilePos);
-    route.isShowAdvertisment = GetVar(gIsShowAdvertisment);
+    routeCurrentData.nextStationFilePos = GetVar(gNextStationFilePos);
+    routeCurrentData.advertismentFilePos = GetVar(gAdvertismentFilePos);
+    !!!routeCurrentData.isShowAdvertisment = GetVar(gIsShowAdvertisment);
+    routeCurrentData.advertismentStartUptime = GetVar(gAdvertismentStartUptime);
+    routeCurrentData.crc = GetVar(gRouteCrc);
+}
+
+stock storeRouteCurrentData(const routeCurrentData[ROUTE_CURRENT_DATA])
+{
+    SetVar(gNextStationFilePos, routeCurrentData.nextStationFilePos);
+    SetVar(gAdvertismentFilePos, routeCurrentData.advertismentFilePos);
+    !!!route.isShowAdvertisment = SetVar(gIsShowAdvertisment);
     route.advertismentStartUptime = GetVar(gAdvertismentStartUptime);
-}
-
-stock storeRouteCurrentData(const route[RAI_ROUTE_DATA])
-{
-    route.nextStationFilePos = GetVar(gNextStationFilePos);
-    route.advertismentFilePos = GetVar(gAdvertismentFilePos);
-    route.isShowAdvertisment = GetVar(gIsShowAdvertisment);
-    route.advertismentStartUptime = GetVar(gAdvertismentStartUptime);
+    SetVar(gRouteCrc, routeCurrentData.crc);
 }
 
 stock isDisplayInited(displayIndex)
@@ -70,6 +72,11 @@ stock setDisplayInit(displayIndex, value)
 stock resetAlldisplaysInit()
 {
     _setIsDisplaysInited(0);
+}
+
+stock resetShowTimer(routeCurrentData[ROUTE_CURRENT_DATA])
+{
+    routeCurData.showStartUptime = GetVar(UPTIME);
 }
 
 // приватные функции

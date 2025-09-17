@@ -61,17 +61,22 @@ forward stock raiGetFinalStations(route[RAI_ROUTE_DATA]);
 
 //! @brief Проверить на присутствие в геозоне остановки
 //! @param[in] route маршрут
-//! @param[out] currentStationFilePos позиция в файле названия текущей остановки, если в ее геозоне
-//! @param[out] nextStationFilePos позиция в файле названия следующей остановки, если в геозоне остановки
+//! @param[out] currentStation название текущей остановки, если в ее геозоне
+//! @param[in] currentStationMaxSize предельная длина для названия текущей остановки
+//! @param[out] nextStation название следующей остановки, если в геозоне текущей остановки
+//! @param[in] nextStationMaxSize предельная длина для названия следующей остановки
+//! @param[out] nextStationFilePos позиция в файле названия следующей остановки (-1 - название не найдено или не в геозоне текущей остановки)
 //! @return !=0 - в геозоне, 0 - не в геозоне
-forward stock raiIsOnStation(const route[RAI_ROUTE_DATA], &currentStationFilePos, &nextStationFilePos);
+forward stock raiIsAtStation(const route[RAI_ROUTE_DATA], currentStation{}, currentStationMaxSize, nextStation{}, nextStationMaxSize, &nextStationFilePos);
 
 //! Получить рекламное сообщение
 //! \param[in] route маршрут
-//! \param[in] &filePos позиция в файле, с которой считывать. Смещается после чтения
-//! \param[out] adv{} сообщение
-//! \return false - ошибка, true - успешно
-forward stock raiGetAdvertisment(route[RAI_ROUTE_DATA], &filePos, adv{});
+//! \param[in] filePos смещение текущего сообщения в файле
+//! \param[out] advertisment сообщение
+//! \param[in] advertismentMaxSize предельная длина сообщения
+//! \param[out] nextPos позиция следующего сообщения
+//! \return true - успешно, false - ошибка
+forward stock raiGetAdvertisment(const route[RAI_ROUTE_DATA], filePos, advertisment{}, advertismentMaxSize, &nextPos);
 
 //! @brief Сохранить название маршрута в теге массива пользователя
 //! @param[in] route маршрут

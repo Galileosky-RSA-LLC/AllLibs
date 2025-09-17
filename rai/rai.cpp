@@ -10,6 +10,13 @@
 #include "..\string\string.h"
 #include "..\string\string.cpp"
 
+#define RAI_FRAC_SEPARATOR_SYMBOL '.'
+#define RAI_COORD_PRECISION 6
+#define RAI_ANGLE_PRECISION 2
+#define RAI_RADIUS_PRECISION 2
+#define RAI_PARAMS_SEPARATOR_SYMBOL ';'
+#define RAI_PARAMS_SEPARATOR_SIZE 1
+
 //! @publicsection
 
 stock raiGetCurrentRoute(route[RAI_ROUTE_DATA])
@@ -56,10 +63,13 @@ stock raiGetFinalStations(route[RAI_ROUTE_DATA])
 	return true;
 }
 
-stock raiIsOnStation(const route[RAI_ROUTE_DATA], &currentStationFilePos, &nextStationFilePos)
+stock raiIsAtStation(const route[RAI_ROUTE_DATA], currentStation{}, currentStationMaxSize, nextStation{}, nextStationMaxSize, &nextStationFilePos)
 {
+    currentStation{0} = 0;
+    nextStation{0} = 0;
+    nextStationFilePos = -1;
     new filePos = 0;
-    new fileSize = FileSize(route.busLineFilePath);
+    new const fileSize = FileSize(route.busLineFilePath);
 	while (filePos < fileSize)
 	{
 		new str{RAI_STRING_LENGTH_MAX};
@@ -72,69 +82,70 @@ stock raiIsOnStation(const route[RAI_ROUTE_DATA], &currentStationFilePos, &nextS
         // типа:
         // 51.540487;46.004783;111.00;45.00;60.00;20.00;Universitatska_.wav;Остановка ул. Университетская
 		new strPos = 0;
+        new strLength = strLen(str);
+		const zoneParamsQty = 6;
+        new const precisions[zoneParamsQty] = [RAI_COORD_PRECISION, RAI_COORD_PRECISION, RAI_ANGLE_PRECISION, RAI_ANGLE_PRECISION, RAI_RADIUS_PRECISION,
+                                                RAI_RADIUS_PRECISION];
+        new zoneParams[zoneParamsQty];
+        new len;
+        for (new i = 0; i < zoneParamsQty; i++)
+        {
+            len = atofi(str, strPos, strLength, RAI_FRAC_SEPARATOR_SYMBOL, precisions[i], zoneParams[i]);
+            if (!len)
+                return false;
 
-		new latitude       = rai_readParam(str, strPos, 6);
-		new longitude      = rai_readParam(str, strPos, 6);
-		new directionAngle = rai_readParam(str, strPos, 2);
-		new spreadAngle    = rai_readParam(str, strPos, 2);
-		new extRadiusR0             = rai_readParam(str, strPos, 2);
-		new intRadiusR1             = rai_readParam(str, strPos, 2);
-		
-		Diagnostics("str latitude=%d,longitude=%d,directionAngle=%d,spreadAngle=%d,R0=%d,R1=%d", latitude, longitude, directionAngle, spreadAngle, extRadiusR0,
-                    intRadiusR1);//!!!
-		if (!InZone(latitude, longitude, directionAngle, spreadAngle, extRadiusR0, intRadiusR1))
+            strPos += len + RAI_PARAMS_SEPARATOR_SIZE;
+        }
+		Diagnostics("str latitude=%d,longitude=%d,directionAngle=%d,spreadAngle=%d,R0=%d,R1=%d", zoneParams[0], zoneParams[1], zoneParams[2], zoneParams[3],
+                    zoneParams[4], zoneParams[5]);//!!!
+		if (!InZone(zoneParams[0], zoneParams[1], zoneParams[2], zoneParams[3], zoneParams[4], zoneParams[5]))
         {
             filePos += readSize;
+            Delay(1);
             continue;
         }
-        new p = rai_getStationNameStart(str, strPos, rowLen);
+        strPos = searchLinearStr(str, strLength, RAI_PARAMS_SEPARATOR_SYMBOL, strPos);
+        if (strPos >= 0)
+            strncpy(currentStation, 0, currentStationMaxSize, str, strPos + RAI_PARAMS_SEPARATOR_SIZE);
 
-        if (diag)
-            Diagnostics("InZone, stationNamePos=%d", p);
+        filePos += readSize;
+        if (filePos >= fileSize)
+            return true;
 
-        if (p > 0)
+        readSize = fileReadLine(route.busLineFilePath, str, RAI_STRING_LENGTH_MAX, filePos);
+		if (!readSize)
+            return true;
+
+        strPos = 0;
+        strLength = strLen(str);
+        const skipParamsQty = zoneParamsQty + 1;
+        for (new i = 0; i < skipParamsQty; i++, strPos += RAI_PARAMS_SEPARATOR_SIZE)
         {
-            new i = 0;
-            for (; i + p < rowLen; ++i)
-                station{i} = str{p + i};
-
-            station{i} = 0;
-            Diagnostics("Station: %s", station);
-            new nextStation{RAI_STRING_LENGTH_MAX};
-            nextStationFilePos = rai_getNextStationPos(route, filePos, nextStation) + filePos;
+            strPos = searchLinearStr(str, strLength, RAI_PARAMS_SEPARATOR_SYMBOL, strPos);
+            if (strPos < 0)
+                return true;
         }
-
+        nextStationFilePos = strPos;
+        strncpy(nextStation, 0, nextStationMaxSize, str, strPos);
         return true;
 	}
 	return false;
 }
 
-stock raiGetAdvertisment(route[RAI_ROUTE_DATA], &filePos, adv{})
+stock raiGetAdvertisment(const route[RAI_ROUTE_DATA], filePos, advertisment{}, advertismentMaxSize, &nextPos)
 {
-	adv{0} = 0;
-	rai_generateFilePath(route, RAI_ADVERTISMENT_FILE_NAME, RAI_ADV_FILE_NAME_LENGTH, route.advertismentFilePath);
-	if (FileSize(route.advertismentFilePath) <= 0)
-		return false;
-
-	new pos = filePos;
-	new len = FileRead(route.advertismentFilePath, adv, RAI_STRING_LENGTH_MAX - 1, pos);
-
-	if (len == 0)
-	{
-		pos = 0;
-		len = FileRead(route.advertismentFilePath, adv, RAI_STRING_LENGTH_MAX - 1, pos);
-	}
-
-	new p = 0;
-	for (; p < len; ++p)
-	{
-		if(adv{p} == SYMBOL_CR)
-			break;
-	}
-
-	adv{p} = 0;
-	filePos = pos + p + 2;
-	return (adv{0} != 0);
+    advertisment{0} = 0;
+    nextPos = 0;
+    new readSize = fileReadLine(route.advertismentFilePath, advertisment, advertismentMaxSize, filePos);
+    if (!readSize)
+    {
+        filePos = 0;
+        readSize = fileReadLine(route.advertismentFilePath, advertisment, advertismentMaxSize, filePos);
+        if (!readSize)
+            return false;
+    }
+    nextPos = filePos + readSize;
+    return true;
 }
 
 stock raiGetNextStation(route[RAI_ROUTE_DATA], filePos, station{})

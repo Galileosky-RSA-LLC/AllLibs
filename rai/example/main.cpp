@@ -16,6 +16,8 @@
 
 #define PERIOD_MS 1000
 
+stock const NEXT_STATION_PREFIX{} = "Следующая остановка: ";
+
 main()
 {
 	if (!isSettingsInited() || !isTimerExpired(GetVar(gMainUptime), PERIOD_MS))
@@ -94,7 +96,7 @@ main()
 		if (res)
 			setDisplayInit(FRONT_DISPLAY_INDEX, true);
     	
-        Diagnostics(res ? "init front display done" : "init front display error");
+        Diagnostics("init front display %s", res ? "done" : "error");
 	}
 	if (!isSideDisplayInited)
 	{
@@ -103,7 +105,7 @@ main()
 		if (res)
 			setDisplayInit(FRONT_DISPLAY_INDEX, true);
     	
-        Diagnostics(res ? "init side display done" : "init side display error");
+        Diagnostics("init side display %s", res ? "done" : "error");
 	}
 	if (!isDisplayInited(REAR_DISPLAY_INDEX))
 	{
@@ -112,30 +114,59 @@ main()
 		if (res)
 			setDisplayInit(FRONT_DISPLAY_INDEX, true);
     	
-        Diagnostics(res ? "init rear display done" : "init rear display error");
+        Diagnostics("init rear display %s", res ? "done" : "error");
 	}
 	if (!isDisplayInited(SALON_DISPLAY_INDEX))
 	{
 		Diagnostics("init salon display start");
         // res = ...
-        Diagnostics(res ? "init salon display done" : "init salon display error");
+        Diagnostics("init salon display %s", res ? "done" : "error");
         if (!res)
             return;
 
 		setDisplayInit(FRONT_DISPLAY_INDEX, true);
 	}
     new text{RAI_STRING_LENGTH_MAX_W0};
-    if (raiIsOnStation(route, text, RAI_STRING_LENGTH_MAX, routeCurData.nextStationFilePos))
+    new addText{RAI_STRING_LENGTH_MAX_W0};
+    if (raiIsAtStation(route, text, RAI_STRING_LENGTH_MAX, addText, RAI_STRING_LENGTH_MAX, routeCurData.nextStationFilePos))
     {
-        // вывод текущей остановки на табло
-        // res = ...
-        if (res != ISDT_OK)
-            Diagnostics("ERROR %d. Station not displayed", res);
-        // !!! хорошо бы показывать: текущую, следующую, рекламу
-        unsetTimer(); // сброс таймера отображения остановочной и вспомогательной информации
+        Diagnostics("at station=\"%s\",next=\"%s\"", text, addText);
+        if (!routeCurData.isAtStation)
+        {    
+            routeCurData.isAtStation = true;
+            routeCurData.show = SHOW_UNKNOWN;
+        }
+        if ((routeCurData.show == SHOW_UNKNOWN) || isTimerExpired(routeCurData.showStartUptime, getMessageShowTimeMs()))
+        {
+            routeCurData.show = routeCurData.show == SHOW_CURRENT_STATION ? SHOW_NEXT_STATION : SHOW_CURRENT_STATION;
+            resetShowTimer(routeCurrentData);
+        }
+        
+        // вывод остановки на табло
+        // res = ... routeCurData.show == SHOW_NEXT_STATION ? addText : text ...
+        if (!res)
+            resetShowTimer(routeCurrentData);
     }
-    else if (isTimerExpired()) // истек таймер смены остановочной и вспомогательной информации
+    else
     {
+        if (routeCurData.isAtStation)
+        {    
+            routeCurData.isAtStation = false;
+            routeCurData.show = SHOW_UNKNOWN;
+        }
+        if ((routeCurData.show == SHOW_UNKNOWN) || isTimerExpired(routeCurData.showStartUptime, getMessageShowTimeMs()))
+        {
+            routeCurData.show = routeCurData.show == SHOW_NEXT_STATION ? SHOW_ADVERTISMENT : SHOW_NEXT_STATION;
+            resetShowTimer(routeCurrentData);
+        }
+        new nextPos;
+        if (routeCurData.show == SHOW_ADVERTISMENT)
+        {
+            raiGetAdvertisment(route, routeCurData.advertismentFilePos, text, RAI_STRING_LENGTH_MAX, nextPos);
+            !!!
+        }
+
+
         new showAdv = GetVar(gShowAdv); // восстановить, что отображалось в прошлом вызове - следущая остановка или сообщение
         if (nextStationFilePos == 0)
             showAdv = 1; // неверная позиция следующей остановки, показать сообщение

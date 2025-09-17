@@ -21,7 +21,7 @@
 
 #define ROUTE_CURRENT_DATA [\
     .crc,\
-    .isOnStation,\
+    .isAtStation,\
     .nextStationFilePos,\
     .advertismentFilePos,\
     .show,\
@@ -43,16 +43,13 @@ forward stock isNeedSwithRoute();
 //! @param[in] value устанавливаемое значение: true - нужно сменить, false - не нужно
 forward stock setNeedSwithRoute(value);
 
-//! Получить crc маршрута
-forward stock getRouteCrc();
+//! Восстановить сохраненные текущие данные маршрута
+//! @param[out] routeCurrentData структура текущих данных маршрута
+forward stock restoreRouteCurrentData(routeCurrentData[ROUTE_CURRENT_DATA]);
 
-//! Установить crc маршрута
-//! @param[in] value устанавливаемое значение
-forward stock setRouteCrc(value);
-
-//! Восстановить сохраненные текущие данные маршрута: позиции в файлах, таймеры, флаги
-//! @param[out] route структура маршрута
-forward stock restoreRouteCurrentData(route[RAI_ROUTE_DATA]);
+//! Сохранить текущие данные маршрута
+//! @param[out] routeCurrentData структура текущих данных маршрута
+forward stock storeRouteCurrentData(const routeCurrentData[ROUTE_CURRENT_DATA]);
 
 //! Проверить инициализацию табло
 //! @param[in] displayIndex индекс табло
@@ -66,3 +63,12 @@ forward stock setDisplayInit(displayIndex, value);
 
 //! Сбросить статус инициализации всех табло
 forward stock resetAlldisplaysInit();
+
+//! Получить время показа сообщения
+forward stock getMessageShowTimeMs();
+
+//! Установить время показа сообщения
+forward stock setMessageShowTimeMs(value);
+
+//! Сбросить таймер показа сообщений
+forward stock resetShowTimer(routeCurrentData[ROUTE_CURRENT_DATA]);
