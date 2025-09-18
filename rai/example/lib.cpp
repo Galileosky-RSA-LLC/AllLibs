@@ -76,7 +76,17 @@ stock resetAlldisplaysInit()
 
 stock resetShowTimer(routeCurrentData[ROUTE_CURRENT_DATA])
 {
-    routeCurData.showStartUptime = GetVar(UPTIME);
+    routeCurrentData.showStartUptime = GetVar(UPTIME);
+}
+
+stock changeShow(routeCurrentData[ROUTE_CURRENT_DATA])
+{
+    routeCurrentData.show = routeCurrentData.show == SHOW_UNKNOWN
+                            ? (routeCurrentData.isAtStation ? SHOW_CURRENT_STATION : SHOW_NEXT_STATION)
+                            : (routeCurrentData.show == SHOW_NEXT_STATION
+                                ? (routeCurrentData.isAtStation ? SHOW_CURRENT_STATION : SHOW_ADVERTISMENT)
+                                : SHOW_NEXT_STATION);
+    resetShowTimer(routeCurrentData);
 }
 
 // приватные функции

@@ -16,6 +16,7 @@
 
 #define PERIOD_MS 1000
 
+stock const CURRENT_STATION_PREFIX{} = "Остановка: ";
 stock const NEXT_STATION_PREFIX{} = "Следующая остановка: ";
 
 main()
@@ -87,7 +88,6 @@ main()
         else
             Diagnostics("final stations?");
     }
-
 	new res = true; // для шаблона - положительный результат, в реальных применениях - сначала отрицательный
     if (!isFrontDisplayInited)
 	{
@@ -126,26 +126,23 @@ main()
 
 		setDisplayInit(FRONT_DISPLAY_INDEX, true);
 	}
-    new text{RAI_STRING_LENGTH_MAX_W0};
-    new addText{RAI_STRING_LENGTH_MAX_W0};
-    if (raiIsAtStation(route, text, RAI_STRING_LENGTH_MAX, addText, RAI_STRING_LENGTH_MAX, routeCurData.nextStationFilePos))
+    const textMaxSize = RAI_STRING_LENGTH_MAX_W0 + ((sizeof(NEXT_STATION_PREFIX) + 1) * 4);
+    new const currentStationPrefixLength = strLen(CURRENT_STATION_PREFIX);
+    new const nextStationPrefixLength = strLen(NEXT_STATION_PREFIX);
+    new text{textMaxSize};
+    new nextStation{RAI_STRING_LENGTH_MAX_W0};
+    new hasMessage = false;
+    if (raiIsAtStation(route, text, RAI_STRING_LENGTH_MAX, nextStation, RAI_STRING_LENGTH_MAX, routeCurData.nextStationFilePos))
     {
-        Diagnostics("at station=\"%s\",next=\"%s\"", text, addText);
+        hasMessage = true;
+        Diagnostics("at station=\"%s\",next=\"%s\"", text, nextStation);
         if (!routeCurData.isAtStation)
         {    
             routeCurData.isAtStation = true;
             routeCurData.show = SHOW_UNKNOWN;
         }
         if ((routeCurData.show == SHOW_UNKNOWN) || isTimerExpired(routeCurData.showStartUptime, getMessageShowTimeMs()))
-        {
-            routeCurData.show = routeCurData.show == SHOW_CURRENT_STATION ? SHOW_NEXT_STATION : SHOW_CURRENT_STATION;
-            resetShowTimer(routeCurrentData);
-        }
-        
-        // вывод остановки на табло
-        // res = ... routeCurData.show == SHOW_NEXT_STATION ? addText : text ...
-        if (!res)
-            resetShowTimer(routeCurrentData);
+            changeShow(routeCurData);
     }
     else
     {
@@ -156,33 +153,42 @@ main()
         }
         if ((routeCurData.show == SHOW_UNKNOWN) || isTimerExpired(routeCurData.showStartUptime, getMessageShowTimeMs()))
         {
-            routeCurData.show = routeCurData.show == SHOW_NEXT_STATION ? SHOW_ADVERTISMENT : SHOW_NEXT_STATION;
-            resetShowTimer(routeCurrentData);
+            changeShow(routeCurData);
+            if (routeCurData.show == SHOW_ADVERTISMENT)
+                routeCurData.currentAdvertismentFilePos = routeCurData.nextAdvertismentFilePos;
         }
-        new nextPos;
-        if (routeCurData.show == SHOW_ADVERTISMENT)
+        for (new i = 0; i < 2; i++)
         {
-            raiGetAdvertisment(route, routeCurData.advertismentFilePos, text, RAI_STRING_LENGTH_MAX, nextPos);
-            !!!
+            if (routeCurData.show == SHOW_ADVERTISMENT)
+            {
+                hasMessage = raiGetAdvertisment(route, routeCurData.currentAdvertismentFilePos, text, RAI_STRING_LENGTH_MAX, routeCurData.nextAdvertismentFilePos);
+                Diagnostics(hasMessage ? "adv=\"%s\"" : "adv?", text);
+            }
+            else
+            {
+                hasMessage = raiGetNextStation(route, routeCurData.nextStationFilePos, text, RAI_STRING_LENGTH_MAX);
+                Diagnostics(hasMessage ? "next station=\"%s\"" : "next station?", text);
+            }
+            if (hasMessage)
+                break;
+
+            changeShow(routeCurrentData);
         }
-
-
-        new showAdv = GetVar(gShowAdv); // восстановить, что отображалось в прошлом вызове - следущая остановка или сообщение
-        if (nextStationFilePos == 0)
-            showAdv = 1; // неверная позиция следующей остановки, показать сообщение
-
-        new advFilePos = GetVar(gAdvertismentFilePos); // восстановить сохраненную позицию в файле сообщений
-        showAdv ? raiGetAdvertisment(route, advFilePos, text) : raiGetNextStation(route, nextStationFilePos, text);
-        SetVar(gShowAdv, !showAdv); // сохранить между вызовами отображаемое - следующую остановку или сообщение, чтобы в следующий раз отображать другое
-        SetVar(gAdvertismentFilePos, advFilePos); // сохранить между вызовами позицию в файле сообщений
-
-        Delay(100);
-        Diagnostics(text);
-        // показать информацию text на табло
-        res = isdtSendSalonText(portNum, timeout, display, text, diag);
-        if (res != ISDT_OK)
-            Diagnostics("ERROR %d. Message not displayed", res);
-        setTimer(GetVar(gAdvTime)); // запустить таймер показа текста
+    }
+    if (hasMessage)
+    {
+        !!! переместить в text префикс и название
+        if (routeCurData.show == SHOW_CURRENT_STATION)
+        {
+            
+        }
+        Diagnostics("show %s", routeCurData.show == SHOW_CURRENT_STATION ? "current station" : (routeCurData.show == SHOW_NEXT_STATION ? "next station" : "adv"));//!!!
+        Diagnostics("text=%s", text);//!!!
+        
+        // показать информацию на табло
+        // res = ... text
+        if (!res)
+            resetShowTimer(routeCurrentData);
     }
     storeRouteCurrentData(routeCurData);
 }

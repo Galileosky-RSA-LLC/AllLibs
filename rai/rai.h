@@ -71,10 +71,10 @@ forward stock raiIsAtStation(const route[RAI_ROUTE_DATA], currentStation{}, curr
 
 //! Получить рекламное сообщение
 //! \param[in] route маршрут
-//! \param[in] filePos смещение текущего сообщения в файле
+//! \param[in] filePos смещение сообщения в файле, если за пределами файла, то будет считано первое
 //! \param[out] advertisment сообщение
 //! \param[in] advertismentMaxSize предельная длина сообщения
-//! \param[out] nextPos позиция следующего сообщения
+//! \param[out] nextPos позиция следующего сообщения, если найдено текущее
 //! \return true - успешно, false - ошибка
 forward stock raiGetAdvertisment(const route[RAI_ROUTE_DATA], filePos, advertisment{}, advertismentMaxSize, &nextPos);
 

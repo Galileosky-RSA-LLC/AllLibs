@@ -23,7 +23,8 @@
     .crc,\
     .isAtStation,\
     .nextStationFilePos,\
-    .advertismentFilePos,\
+    .currentAdvertismentFilePos,\
+    .nextAdvertismentFilePos,\
     .show,\
     .showStartUptime,\
 ]
@@ -72,3 +73,6 @@ forward stock setMessageShowTimeMs(value);
 
 //! Сбросить таймер показа сообщений
 forward stock resetShowTimer(routeCurrentData[ROUTE_CURRENT_DATA]);
+
+//! Изменить отображаемое сообщение на следующее
+forward stock changeShow(routeCurrentData[ROUTE_CURRENT_DATA]);

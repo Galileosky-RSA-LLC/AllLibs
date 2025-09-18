@@ -135,7 +135,6 @@ stock raiIsAtStation(const route[RAI_ROUTE_DATA], currentStation{}, currentStati
 stock raiGetAdvertisment(const route[RAI_ROUTE_DATA], filePos, advertisment{}, advertismentMaxSize, &nextPos)
 {
     advertisment{0} = 0;
-    nextPos = 0;
     new readSize = fileReadLine(route.advertismentFilePath, advertisment, advertismentMaxSize, filePos);
     if (!readSize)
     {
@@ -148,19 +147,9 @@ stock raiGetAdvertisment(const route[RAI_ROUTE_DATA], filePos, advertisment{}, a
     return true;
 }
 
-stock raiGetNextStation(route[RAI_ROUTE_DATA], filePos, station{})
+stock raiGetNextStation(const route[RAI_ROUTE_DATA], filePos, station{}, stationMaxSize)
 {
-	station{0} = 0;
-	if (filePos == 0)
-		return false;
-
-	new pos = 0;
-	GS_append(station, pos, RAI_STRING_LENGTH_MAX, "Следующая остановка: ", 21);
-	new buf{RAI_STRING_LENGTH_MAX};
-	new len = GS_readLine(route.busLineFilePath, filePos, buf, RAI_STRING_LENGTH_MAX - 1);
-	GS_append(station, pos, RAI_STRING_LENGTH_MAX - 1, buf, len);
-	station{pos} = 0;
-	return true;
+    return (filePos > 0) && (fileReadLine(route.busLineFilePath, station, stationMaxSize, filePos) > 0);
 }
 
 //!!! в библиотеку файлов
@@ -216,14 +205,6 @@ stock rai_restoreRouteName(route[RAI_ROUTE_DATA])
 	return len > 0;
 }
 
-//! Сохранить имя маршрута в файл
-//! @param[in] route структура маршрута
-//! @return true - успешно, false - ошибка
-stock rai_storeRouteName(const route[RAI_ROUTE_DATA])
-{
-	return !FileDelete(RAI_CURRENT_ROUTE_FILE_PATH) && FileWrite(RAI_CURRENT_ROUTE_FILE_PATH, route.name, strLen(route.name));
-}
-
 //! Получить путь файла с конечными остановками
 //! @param[inout] route структура маршрута
 //! @return true - успешно, false - ошибка
@@ -232,71 +213,6 @@ stock rai_getFinalStationsFilePath(route[RAI_ROUTE_DATA])
 	return route.name{0}
             && rai_generateFilePath(route, RAI_FINAL_STATIONS_FILE_NAME, route.finalStationsFilePath)
             && (FileSize(route.finalStationsFilePath) >= 0);
-}
-
-//! Получить значение из строки и пропустить 1 символ
-//! Приватная функция
-//! \param[in] buf{} строка
-//! \param[inout] &pos с какой позиции искать
-//! \param[in] precision требуемая точность после запятой
-stock rai_readParam(buf{}, &pos, precision)
-{
-	new res = GS_atof(buf, pos, precision, '.');
-
-	if (buf{pos} != 0)
-	{
-		++pos;
-	}
-
-	return res;
-}
-
-//! Получить позицию начала названия в строке
-//! Приватная функция
-//! \param rowData{} строка
-//! \param pos с какой позиции искать
-//! \param len длина строки
-stock rai_getStationNameStart(rowData{}, pos, len)
-{
-	for (; pos < len; pos++)
-	{
-		if (rowData{pos} == ';')
-		{
-			if(pos < len)
-			{
-				return (pos + 1);
-			}
-
-			return 0;
-		}
-	}
-
-	return 0;
-}
-
-//! Получить позицию начала следующей строки с остановкой
-//! \param[in] route маршрут
-//! \param[in] buf{} строка
-//! \param[in] pos с какой позиции искать
-stock rai_getNextStationPos(route[RAI_ROUTE_DATA], pos, buf{})
-{
-	new len = GS_readLine(route.busLineFilePath, pos, buf, RAI_STRING_LENGTH_MAX);
-
-	if (!len)
-	{
-		len = GS_readLine(route.busLineFilePath, 0, buf, RAI_STRING_LENGTH_MAX);
-		if (!len)
-			return 0;
-	}
-
-	pos = 0;
-
-	for (new i = 0; i < 6; ++i)
-	{
-		rai_readParam(buf, pos, 2);
-	}
-
-	return rai_getStationNameStart(buf, pos, len);
 }
 
 stock rai_getFilePaths(route[RAI_ROUTE_DATA])
