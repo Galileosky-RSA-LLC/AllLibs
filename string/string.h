@@ -10,10 +10,14 @@
 #define NUM_VALUE_MIN_STR_LENGTH 11
 #define NUM_VALUE_MAX_STR "2147483647"
 #define NUM_VALUE_MAX_STR_LENGTH 10
+
 #define BASE64_BLOCK_SIZE 4
 #define BASE64_PADDING '='
 #define BASE64_ALPHABET_SIZE 64
 stock const BASE64_ALPHABET{} ="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+
+#define SYMBOL_CR 0x0D
+#define SYMBOL_LF 0x0A
 
 //! @defgroup general Общие функции
 //! @{

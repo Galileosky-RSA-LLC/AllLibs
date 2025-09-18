@@ -9,6 +9,12 @@
 #define FILE_FULL_PATH_SIZE_MAX 255
 #define FILE_FULL_PATH_SIZE_MAX_W0 (FILE_FULL_PATH_SIZE_MAX + 1)
 
+#define SYMBOL_PATH_SEPARATOR_PRIME '/'
+stock const PATH_SEPARATOR_PRIME{} = {SYMBOL_PATH_SEPARATOR_PRIME};
+
+#define SYMBOL_PATH_SEPARATOR_SECOND '\\'
+stock const PATH_SEPARATOR_SECOND{} = {SYMBOL_PATH_SEPARATOR_SECOND};
+
 //! @defgroup reservedFiles Зарезервированные файлы
 //! @{
 
@@ -31,3 +37,12 @@ forward stock fileRename(const src{}, const dest{});
 //! @param[in] bufPos начало записываемой части буфера
 //! @return количество записанных байт
 forward stock fileWriteWrap(const fileName{}, const buf{}, bufSize, fileOffset, bufPos = 0);
+
+//! @brief Прочитать строку из текстового файла
+//! @details Завершение строк в файле может быть в форматах LF и CRLF
+//! @param[in] fileFullPath имя файла, должно оканчиваться \0
+//! @param[in] fileOffset смещение начала чтения
+//! @param[out] buf буфер для прочитанной строки
+//! @param[in] bufMaxSize предельный размер буфера для прочитанной строки, с учетом спец. символов завершения строки
+//! @return прочитанный размер, включая спец. символы завершения и все промежуточные \0
+forward stock fileReadLine(const fileFullPath{}, buf{}, bufMaxSize, fileOffset)

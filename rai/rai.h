@@ -22,16 +22,6 @@ stock const RAI_ADVERTISMENT_FILE_NAME{} = "advertisment.txt";
 stock const RAI_AUDIO_FILE_NAME{} = "route.wav";
 #define RAI_AUDIO_FILE_NAME_LENGTH 9 // длина имени аудиофайла маршрута
 
-//!!! в библиотеку строк
-#define SYMBOL_CR 0x0D
-#define SYMBOL_LF 0x0A
-
-//!!! в библиотеку файлов
-#define SYMBOL_PATH_SEPARATOR_PRIME '/'
-#define SYMBOL_PATH_SEPARATOR_SECOND '\\'
-stock const PATH_SEPARATOR_PRIME{} = {SYMBOL_PATH_SEPARATOR_PRIME};
-stock const PATH_SEPARATOR_SECOND{} = {SYMBOL_PATH_SEPARATOR_SECOND};
-
 #define RAI_ROUTE_DATA [\
     .name{RAI_FILE_PATH_LENGTH_MAX_W0},\
     .busLineFilePath{RAI_FILE_PATH_LENGTH_MAX_W0},\

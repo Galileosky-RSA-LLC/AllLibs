@@ -58,3 +58,21 @@ stock fileWriteWrap(const fileName{}, const buf{}, bufSize, fileOffset, bufPos =
     }
     return subSize + FileWrite(fileName, buf[bufCell], bufSize - (bufCell * CELL_BYTES), fileOffset < 0 ? fileOffset : fileOffset + subSize);
 }
+
+stock fileReadLine(const fileFullPath{}, buf{}, bufMaxSize, fileOffset)
+{
+	new size = FileRead(fileFullPath, buf, bufMaxSize, fileOffset);
+    if (size <= 0)
+		return 0;
+
+	new i;
+    new hasCrSymbol = false;
+    new hasLfSymbol = false;
+    for (i = 0; (i < size) && !(hasLfSymbol = buf{i} == SYMBOL_LF); i++)
+        hasCrSymbol = buf{i} == SYMBOL_CR;
+    
+    if (i < bufMaxSize)
+        buf{hasCrSymbol && hasLfSymbol ? i - 1 : i} = 0;
+
+    return hasLfSymbol ? i + 1 : i;
+}

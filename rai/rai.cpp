@@ -9,6 +9,8 @@
 #include "rai.h"
 #include "..\string\string.h"
 #include "..\string\string.cpp"
+#include "..\file\file.h"
+#include "..\file\file.cpp"
 
 #define RAI_FRAC_SEPARATOR_SYMBOL '.'
 #define RAI_COORD_PRECISION 6
@@ -150,32 +152,6 @@ stock raiGetAdvertisment(const route[RAI_ROUTE_DATA], filePos, advertisment{}, a
 stock raiGetNextStation(const route[RAI_ROUTE_DATA], filePos, station{}, stationMaxSize)
 {
     return (filePos > 0) && (fileReadLine(route.busLineFilePath, station, stationMaxSize, filePos) > 0);
-}
-
-//!!! в библиотеку файлов
-//! @brief Прочитать строку из текстового файла
-//! @details Завершение строк в файле может быть в форматах LF и CRLF
-//! @param[in] fileFullPath имя файла, должно оканчиваться \0
-//! @param[in] fileOffset смещение начала чтения
-//! @param[out] buf буфер для прочитанной строки
-//! @param[in] bufMaxSize предельный размер буфера для прочитанной строки, с учетом спец. символов завершения строки
-//! @return прочитанный размер, включая спец. символы завершения и все промежуточные \0
-stock fileReadLine(const fileFullPath{}, buf{}, bufMaxSize, fileOffset)
-{
-	new size = FileRead(fileFullPath, buf, bufMaxSize, fileOffset);
-    if (size <= 0)
-		return 0;
-
-	new i;
-    new hasCrSymbol = false;
-    new hasLfSymbol = false;
-    for (i = 0; (i < size) && !(hasLfSymbol = buf{i} == SYMBOL_LF); i++)
-        hasCrSymbol = buf{i} == SYMBOL_CR;
-    
-    if (i < bufMaxSize)
-        buf{hasCrSymbol && hasLfSymbol ? i - 1 : i} = 0;
-
-    return hasLfSymbol ? i + 1 : i;
 }
 
 //! @privatesection

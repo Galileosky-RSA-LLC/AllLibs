@@ -950,15 +950,16 @@ arrayRingShiftStr(ar{}, arSize, toRight, arStart = 0, count = 1)
     }
 }
 
-//! Вставить один подмассив в другой массив
-//! \param[out] dest целевой массив, куда копируется
+//! Вставить подмассив
+//! \param[out] dest целевой массив, в который вставляется
 //! \param[in] destPos смещение в целевом
-//! \param[in] destSize длина целевого массива
-//! \param[in] source копируемый массив
-//! \param[in] sourceSize длина копируемого массива
-//! \param[in] sourcePos смещение в копируемом, с которого начинать копирование
+//! \param[in] destSize размер целевого массива
+//! \param[in] source вставляемый массив
+//! \param[in] sourceSize размер вставляемого массива
+//! \param[in] sourcePos смещение в вставляемом, с которого начинать вставку
+//! \param[in] fromBack признак необходимости вставки с конца вставляемого (при совпадении вставляемого с целевым)
 //! \return количество вставленных элементов
-insertArray(dest[], destPos, destSize, const source[], sourceSize, sourcePos = 0)
+insertArray(dest[], destPos, destSize, const source[], sourceSize, sourcePos = 0, fromBack = false)
 {
     if (destPos < 0)
         destPos = 0;
@@ -967,10 +968,18 @@ insertArray(dest[], destPos, destSize, const source[], sourceSize, sourcePos = 0
         sourcePos = 0;
 
     new i;
-	for (i = 0; ((destPos + i) < destSize) && ((sourcePos + i) < sourceSize); i++)
-		dest[destPos + i] = source[sourcePos + i];
-
-	return i;
+    if (fromBack)
+    {
+        new len = sourceSize - sourcePos;
+        for (i = 0; ((destPos + i) < destSize) && ((sourceSize - 1 - i) >= sourcePos); i++)
+            dest[destPos + len - i] = source[sourceSize - 1 - i];
+    }
+    else
+    {
+        for (i = 0; ((destPos + i) < destSize) && ((sourcePos + i) < sourceSize); i++)
+            dest[destPos + i] = source[sourcePos + i];
+    }
+    return i;
 }
 
 #endif // ARRAY_LIB
