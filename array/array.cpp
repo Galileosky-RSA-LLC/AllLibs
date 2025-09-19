@@ -967,16 +967,20 @@ insertArray(dest[], destPos, destSize, const source[], sourceSize, sourcePos = 0
     if (sourcePos < 0)
         sourcePos = 0;
 
-    new i;
+    new sourceLen = sourceSize - sourcePos;
+    new destLen = destSize - destPos;
+    new i = 0;
     if (fromBack)
     {
-        new len = sourceSize - sourcePos;
-        for (i = 0; ((destPos + i) < destSize) && ((sourceSize - 1 - i) >= sourcePos); i++)
-            dest[destPos + len - i] = source[sourceSize - 1 - i];
+        if (sourceLen > destLen)
+            return 0;
+
+        for (; i < sourceLen; i++)
+            dest[destPos + sourceLen - 1 - i] = source[sourceSize - 1 - i];
     }
     else
     {
-        for (i = 0; ((destPos + i) < destSize) && ((sourcePos + i) < sourceSize); i++)
+        for (; (i < destLen) && (i < sourceLen); i++)
             dest[destPos + i] = source[sourcePos + i];
     }
     return i;
