@@ -1,0 +1,57 @@
+//! @file
+//! @brief Управление настройками
+
+//#define DEBUG // включить для отладки
+
+#define INIT_STORAGE_WAIT_MS 10000
+
+#ifdef DEBUG
+#define INIT_DIAG_AFTER_RESET_WAIT_MS 10000
+#define DEBUG_INIT_WAIT_MS (INIT_DIAG_AFTER_RESET_WAIT_MS + INIT_STORAGE_WAIT_MS)
+#endif
+
+new const varAddr[] =
+[
+    GetVarAddr(gDisplayDummy0),
+    GetVarAddr(gDisplayDummy1),
+];
+
+#define PARAMS_AMOUNT sizeof(varAddr)
+#define SETTING_PARAMS_AMOUNT PARAMS_AMOUNT
+
+#include "lib.h"
+#include "lib.cpp"
+#include "..\..\setting\setting.h"
+#include "..\..\setting\setting.cpp"
+
+#define CHANGE_PARAMS_DELAY_MS 500
+
+stock const FILE_PATH{} = "displayname/settings.bin";
+
+main()
+{
+    new settings[SETTING_DATA];
+    #ifdef DEBUG
+    Delay(DEBUG_INIT_WAIT_MS);
+    #endif
+    new advTime[SETTING_SINGLE_DATA];
+    settingSingleInit(advTime, "advtime", GetVarAddr(gMessageShowTimeS));
+    settingSingleRestoreParam(advTime);
+    new timeZone[SETTING_SINGLE_DATA];
+    settingSingleInit(timeZone, "time_zone", GetVarAddr(gTimeZone));
+    settingSingleRestoreParam(timeZone);
+    new routeSwitchInputIdx[SETTING_SINGLE_DATA];
+    settingSingleInit(routeSwitchInputIdx, "route_switch_input", GetVarAddr(gRouteSwitchInputIdx));
+    settingSingleRestoreParam(routeSwitchInputIdx);
+    settingInit(settings, FILE_PATH, varAddr, PARAMS_AMOUNT);
+    settingRestoreParams(settings);
+    setSettingsInited();
+    while (true)
+    {
+        settingSingleStoreParamByChange(advTime);
+        settingSingleStoreParamByChange(timeZone);
+        settingSingleStoreParamByChange(routeSwitchInputIdx);
+        settingStoreParamsByChange(settings);
+        Delay(CHANGE_PARAMS_DELAY_MS);
+    }
+}

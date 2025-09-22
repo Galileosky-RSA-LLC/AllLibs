@@ -42,15 +42,16 @@ arrayPlusStr(const ar{}, arSize, start = 0)
     return res;
 }
 
-//! Вставить один подмассив однобайтных элементов в другой массив
-//! \param[out] dest целевой массив, куда копируется
+//! Вставить подмассив однобайтных элементов
+//! \param[out] dest целевой массив, в который вставляется
 //! \param[in] destPos смещение в целевом
-//! \param[in] destSize длина целевого массива
-//! \param[in] source копируемый массив
-//! \param[in] sourceSize длина копируемого массива
-//! \param[in] sourcePos смещение в копируемом, с которого начинать копирование
+//! \param[in] destSize размер целевого массива
+//! \param[in] source вставляемый массив
+//! \param[in] sourceSize размер вставляемого массива
+//! \param[in] sourcePos смещение в вставляемом, с которого начинать вставку
+//! \param[in] fromBack признак необходимости вставки с конца вставляемого (при совпадении вставляемого с целевым)
 //! \return количество вставленных элементов
-insertArrayStr(dest{}, destPos, destSize, const source{}, sourceSize, sourcePos = 0)
+insertArrayStr(dest{}, destPos, destSize, const source{}, sourceSize, sourcePos = 0, fromBack = false)
 {
     if (destPos < 0)
         destPos = 0;
@@ -58,11 +59,23 @@ insertArrayStr(dest{}, destPos, destSize, const source{}, sourceSize, sourcePos 
     if (sourcePos < 0)
         sourcePos = 0;
 
-    new i;
-	for (i = 0; ((destPos + i) < destSize) && ((sourcePos + i) < sourceSize); i++)
-		dest{destPos + i} = source{sourcePos + i};
+    new sourceLen = sourceSize - sourcePos;
+    new destLen = destSize - destPos;
+    new i = 0;
+    if (fromBack)
+    {
+        if (sourceLen > destLen)
+            return 0;
 
-	return i;
+        for (; i < sourceLen; i++)
+            dest{destPos + sourceLen - 1 - i} = source{sourceSize - 1 - i};
+    }
+    else
+    {
+        for (; (i < destLen) && (i < sourceLen); i++)
+            dest{destPos + i} = source{sourcePos + i};
+    }
+    return i;
 }
 
 //! Проверить подмассивы на равенство соответствующих элементов

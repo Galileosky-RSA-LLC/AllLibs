@@ -1,10 +1,6 @@
 //! @file
 //! @brief Основное взаимодействие автоинформатора и табло
 
-#ifdef DEBUG
-#define RAI_DEBUG
-#endif
-
 #include "..\rai.h"
 #include "..\rai.cpp"
 #include "..\..\time\time.h"
@@ -25,23 +21,6 @@ main()
     	return;
 
 	SetVar(gMainUptime, GetVar(UPTIME));
-    
-    // изменение часового пояса
-	new timeZone = GetVar(gTimeZone);
-	if (timeZone != GetVar(gTimeZoneOld))
-	{
-		SetVar(gTimeZoneOld, timeZone);
-		storeSetting(TIMEZONE_FILE, timeZone);
-	}
-
-	// изменение времени вывода вспомогательной информации
-	new advTime = GetVar(gAdvTime);
-	if (advTime != GetVar(gAdvTimeOld))
-	{
-		SetVar(gAdvTimeOld, advTime);
-		storeSetting(ADVTIME_FILE, advTime);
-	}
-	
 	new route[RAI_ROUTE_DATA];
     if (!raiGetCurrentRoute(route))
         Diagnostics("current route?");
@@ -61,19 +40,15 @@ main()
     Diagnostics("route=%s", route.name);
     new routeCurData[ROUTE_CURRENT_DATA];
     restoreRouteCurrentData(routeCurData);
-    new crc = CRC16(route.name, strLen(route.name, RAI_FILE_PATH_LENGTH_MAX));
+    new crc = calcRouteCrc(route);
     if (routeCurData.crc != crc)
     {
         Diagnostics("init new route start");
         setAutoinformerRoute(route.name);
         PlayAudio(route.audioFilePath);
-        raiSaveRouteNameInTag(route);
+        raiSetRouteNameInUserArray(route);
         SavePoint();
-        routeCurData.crc = crc;
-        routeCurData.isOnStation = false;
-        routeCurData.nextStationFilePos = 0;
-        routeCurData.advertismentFilePos = 0;
-        routeCurData.show = SHOW_UNKNOWN;
+        initRouteCurrentData(crc, routeCurData);
         storeRouteCurrentData(routeCurData);
 		resetAlldisplaysInit();
         Diagnostics("init new route done");
@@ -126,10 +101,16 @@ main()
 
 		setDisplayInit(FRONT_DISPLAY_INDEX, true);
 	}
-    const textMaxSize = RAI_STRING_LENGTH_MAX_W0 + ((sizeof(NEXT_STATION_PREFIX) + 1) * 4);
+    new timeZone = getTimeZone();
+    // res = ... timeZone
+    if (!res)
+        return;
+
+    const textMaxSize = RAI_STRING_LENGTH_MAX + (sizeof(NEXT_STATION_PREFIX) * CELL_BYTES);
+    const textMaxSizeW0 = textMaxSize + 1;
     new const currentStationPrefixLength = strLen(CURRENT_STATION_PREFIX);
     new const nextStationPrefixLength = strLen(NEXT_STATION_PREFIX);
-    new text{textMaxSize};
+    new text{textMaxSizeW0};
     new nextStation{RAI_STRING_LENGTH_MAX_W0};
     new hasMessage = false;
     if (raiIsAtStation(route, text, RAI_STRING_LENGTH_MAX, nextStation, RAI_STRING_LENGTH_MAX, routeCurData.nextStationFilePos))
@@ -141,7 +122,7 @@ main()
             routeCurData.isAtStation = true;
             routeCurData.show = SHOW_UNKNOWN;
         }
-        if ((routeCurData.show == SHOW_UNKNOWN) || isTimerExpired(routeCurData.showStartUptime, getMessageShowTimeMs()))
+        if ((routeCurData.show == SHOW_UNKNOWN) || isTimerExpired(routeCurData.showStartUptime, getMessageShowTimeS() * MS_PER_SECOND))
             changeShow(routeCurData);
     }
     else
@@ -151,7 +132,7 @@ main()
             routeCurData.isAtStation = false;
             routeCurData.show = SHOW_UNKNOWN;
         }
-        if ((routeCurData.show == SHOW_UNKNOWN) || isTimerExpired(routeCurData.showStartUptime, getMessageShowTimeMs()))
+        if ((routeCurData.show == SHOW_UNKNOWN) || isTimerExpired(routeCurData.showStartUptime, getMessageShowTimeS() * MS_PER_SECOND))
         {
             changeShow(routeCurData);
             if (routeCurData.show == SHOW_ADVERTISMENT)
@@ -172,15 +153,20 @@ main()
             if (hasMessage)
                 break;
 
-            changeShow(routeCurrentData);
+            changeShow(routeCurData);
         }
     }
     if (hasMessage)
     {
-        !!! переместить в text префикс и название
         if (routeCurData.show == SHOW_CURRENT_STATION)
         {
-            
+            insertArrayStr(text, currentStationPrefixLength, textMaxSize, text, strLen(text), 0, true);
+            insertArrayStr(text, 0, textMaxSize, CURRENT_STATION_PREFIX, currentStationPrefixLength);
+        }
+        else if (routeCurData.show == SHOW_NEXT_STATION)
+        {
+            insertArrayStr(text, 0, textMaxSize, NEXT_STATION_PREFIX, nextStationPrefixLength);
+            strncpy(text, nextStationPrefixLength, textMaxSize, nextStation);
         }
         Diagnostics("show %s", routeCurData.show == SHOW_CURRENT_STATION ? "current station" : (routeCurData.show == SHOW_NEXT_STATION ? "next station" : "adv"));//!!!
         Diagnostics("text=%s", text);//!!!
@@ -188,7 +174,7 @@ main()
         // показать информацию на табло
         // res = ... text
         if (!res)
-            resetShowTimer(routeCurrentData);
+            resetShowTimer(routeCurData);
     }
     storeRouteCurrentData(routeCurData);
 }

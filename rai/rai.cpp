@@ -11,6 +11,8 @@
 #include "..\string\string.cpp"
 #include "..\file\file.h"
 #include "..\file\file.cpp"
+#include "..\userArray\userArray.h"
+#include "..\userArray\userArray.cpp"
 
 #define RAI_FRAC_SEPARATOR_SYMBOL '.'
 #define RAI_COORD_PRECISION 6
@@ -152,6 +154,11 @@ stock raiGetAdvertisment(const route[RAI_ROUTE_DATA], filePos, advertisment{}, a
 stock raiGetNextStation(const route[RAI_ROUTE_DATA], filePos, station{}, stationMaxSize)
 {
     return (filePos > 0) && (fileReadLine(route.busLineFilePath, station, stationMaxSize, filePos) > 0);
+}
+
+stock raiSetRouteNameInUserArray(const route[RAI_ROUTE_DATA])
+{
+    setTextInUserArray(route.name);
 }
 
 //! @privatesection

@@ -6,8 +6,8 @@
 countArrayUsedCells(currentArSizeInBytes);
 isArraysEqual(const ar1[], ar1start, ar1size, const ar2[], ar2start, ar2size);
 isArraysEqualStr(const ar1{}, ar1start, ar1size, const ar2{}, ar2start, ar2size);
-insertArray(dest[], destPos, destSize, const source[], sourceSize, sourcePos = 0);
-insertArrayStr(dest{}, destPos, destSize, const source{}, sourceSize, sourcePos = 0);
+insertArray(dest[], destPos, destSize, const source[], sourceSize, sourcePos = 0, fromBack = false);
+insertArrayStr(dest{}, destPos, destSize, const source{}, sourceSize, sourcePos = 0, fromBack = false);
 replaceVal(ar[], arSize, valOld, valNew, start = 0);
 replaceValStr(ar{}, arSize, valOld, valNew, start = 0);
 countIdentical(const ar1[], ar1start, ar1size, const ar2[], ar2start, ar2size);

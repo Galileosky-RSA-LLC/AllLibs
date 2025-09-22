@@ -44,6 +44,11 @@ forward stock isNeedSwithRoute();
 //! @param[in] value устанавливаемое значение: true - нужно сменить, false - не нужно
 forward stock setNeedSwithRoute(value);
 
+//! Инициализировать текущие данные маршрута
+//! @param[in] routeCrc crc маршрута
+//! @param[out] routeCurrentData структура текущих данных маршрута
+forward stock initRouteCurrentData(routeCrc, routeCurrentData[ROUTE_CURRENT_DATA]);
+
 //! Восстановить сохраненные текущие данные маршрута
 //! @param[out] routeCurrentData структура текущих данных маршрута
 forward stock restoreRouteCurrentData(routeCurrentData[ROUTE_CURRENT_DATA]);
@@ -66,13 +71,28 @@ forward stock setDisplayInit(displayIndex, value);
 forward stock resetAlldisplaysInit();
 
 //! Получить время показа сообщения
-forward stock getMessageShowTimeMs();
+forward stock getMessageShowTimeS();
 
 //! Установить время показа сообщения
-forward stock setMessageShowTimeMs(value);
+forward stock setMessageShowTimeS(value);
 
 //! Сбросить таймер показа сообщений
 forward stock resetShowTimer(routeCurrentData[ROUTE_CURRENT_DATA]);
 
 //! Изменить отображаемое сообщение на следующее
 forward stock changeShow(routeCurrentData[ROUTE_CURRENT_DATA]);
+
+//! Получить часовой пояс
+forward stock getTimeZone();
+
+//! Установить часовой пояс
+forward stock setTimeZone(value);
+
+//! Получить индекс входа переключения маршрута
+forward stock getRouteSwitchInputIdx();
+
+//! Установить индекс входа переключения маршрута
+forward stock setRouteSwitchInputIdx(value);
+
+//! Рассчитать crc маршрута
+forward stock calcRouteCrc(const route[RAI_ROUTE_DATA]);

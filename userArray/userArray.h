@@ -60,6 +60,11 @@
 #define USERARRAY_FILE_FRAME_LEN_MIN (USERARRAY_FILE_HEADER_LEN + USERARRAY_FILE_CRC_LEN)
 #define USERARRAY_FILE_CHUNK_LEN_MAX (USERARRAY_MAX_SIZE - USERARRAY_FILE_FRAME_LEN_MIN)
 
+#define USERARRAY_TEXT_TYPE 0xEE
+#define USERARRAY_TEXT_TYPE_LEN 1
+#define USERARRAY_TEXT_PAYLOAD_POS USERARRAY_TEXT_TYPE_LEN
+#define USERARRAY_TEXT_PAYLOAD_SIZE_MAX (USERARRAY_MAX_SIZE - USERARRAY_TEXT_TYPE_LEN)
+
 //! @defgroup ustruct Функции универсальной структуры
 //! @{
 
@@ -101,3 +106,7 @@ forward stock sendFileInUserArray(const fileName{}, &lastFileId);
 //! @param[inout] pos позиция в массиве пользователя
 //! @return количество вставленных байт (0 - ошибка входных данных)
 forward stock userArrayAddPasCounting(userArray{}, userArrayMaxSize, const sensor[USERARRAY_PASCOUNT_SENSOR_DATA], &pos);
+
+//! @brief Записать текст в массив пользователя
+//! @param[in] text записываемый текст
+forward stock setTextInUserArray(const text{});

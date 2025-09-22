@@ -31,32 +31,46 @@ stock setNeedSwithRoute(value)
     SetVar(gIsNeedSwithRoute, value);
 }
 
-stock getMessageShowTimeMs()
+stock getMessageShowTimeS()
 {
-    return GetVar(gMessageShowTimeMs);
+    return GetVar(gMessageShowTimeS);
 }
 
-stock setMessageShowTimeMs(value)
+stock setMessageShowTimeS(value)
 {
-    SetVar(gMessageShowTimeMs, value);
+    SetVar(gMessageShowTimeS, value);
+}
+
+stock initRouteCurrentData(routeCrc, routeCurrentData[ROUTE_CURRENT_DATA])
+{
+    routeCurrentData.crc = routeCrc;
+    routeCurrentData.isAtStation = false;
+    routeCurrentData.nextStationFilePos = 0;
+    routeCurrentData.currentAdvertismentFilePos = 0;
+    routeCurrentData.nextAdvertismentFilePos = 0;
+    routeCurrentData.show = SHOW_UNKNOWN;
 }
 
 stock restoreRouteCurrentData(routeCurrentData[ROUTE_CURRENT_DATA])
 {
-    routeCurrentData.nextStationFilePos = GetVar(gNextStationFilePos);
-    routeCurrentData.advertismentFilePos = GetVar(gAdvertismentFilePos);
-    !!!routeCurrentData.isShowAdvertisment = GetVar(gIsShowAdvertisment);
-    routeCurrentData.advertismentStartUptime = GetVar(gAdvertismentStartUptime);
     routeCurrentData.crc = GetVar(gRouteCrc);
+    routeCurrentData.isAtStation = GetVar(gIsAtStation);
+    routeCurrentData.nextStationFilePos = GetVar(gNextStationFilePos);
+    routeCurrentData.currentAdvertismentFilePos = GetVar(gCurrentAdvertismentFilePos);
+    routeCurrentData.nextAdvertismentFilePos = GetVar(gNextAdvertismentFilePos);
+    routeCurrentData.show = GetVar(gShow);
+    routeCurrentData.showStartUptime = GetVar(gShowStartUptime);
 }
 
 stock storeRouteCurrentData(const routeCurrentData[ROUTE_CURRENT_DATA])
 {
-    SetVar(gNextStationFilePos, routeCurrentData.nextStationFilePos);
-    SetVar(gAdvertismentFilePos, routeCurrentData.advertismentFilePos);
-    !!!route.isShowAdvertisment = SetVar(gIsShowAdvertisment);
-    route.advertismentStartUptime = GetVar(gAdvertismentStartUptime);
     SetVar(gRouteCrc, routeCurrentData.crc);
+    SetVar(gIsAtStation, routeCurrentData.isAtStation);
+    SetVar(gNextStationFilePos, routeCurrentData.nextStationFilePos);
+    SetVar(gCurrentAdvertismentFilePos, routeCurrentData.currentAdvertismentFilePos);
+    SetVar(gNextAdvertismentFilePos, routeCurrentData.nextAdvertismentFilePos);
+    SetVar(gShow, routeCurrentData.show);
+    SetVar(gShowStartUptime, routeCurrentData.showStartUptime);
 }
 
 stock isDisplayInited(displayIndex)
@@ -89,7 +103,32 @@ stock changeShow(routeCurrentData[ROUTE_CURRENT_DATA])
     resetShowTimer(routeCurrentData);
 }
 
-// приватные функции
+stock getTimeZone()
+{
+    return GetVar(gTimeZone);
+}
+
+stock setTimeZone(value)
+{
+    SetVar(gTimeZone, value);
+}
+
+stock getRouteSwitchInputIdx()
+{
+    return GetVar(gRouteSwitchInputIdx);
+}
+
+stock setRouteSwitchInputIdx(value)
+{
+    SetVar(gRouteSwitchInputIdx, value);
+}
+
+stock calcRouteCrc(const route[RAI_ROUTE_DATA])
+{
+    return CRC16(route.name, strLen(route.name, RAI_FILE_PATH_LENGTH_MAX));
+}
+
+//! @privatesection
 
 stock _getIsDisplaysInited()
 {

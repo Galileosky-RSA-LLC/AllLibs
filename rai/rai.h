@@ -6,21 +6,15 @@
 #endif
 #define RAI_H
 
-//#define RAI_DEBUG // включить для отладки
-
 #define RAI_FILE_PATH_LENGTH_MAX 255
 #define RAI_FILE_PATH_LENGTH_MAX_W0 (RAI_FILE_PATH_LENGTH_MAX + 1)
 #define RAI_STRING_LENGTH_MAX 255
 #define RAI_STRING_LENGTH_MAX_W0 (RAI_STRING_LENGTH_MAX + 1)
 stock const RAI_CURRENT_ROUTE_FILE_PATH{} = "route_name";
 stock const RAI_FINAL_STATIONS_FILE_NAME{} = "stations.txt";
-#define RAI_FINAL_STATIONS_FILE_NAME_LENGTH 12 // длина имени файла с конечными остановками
 stock const RAI_BUSLINE_FILE_NAME{} = "BusLine.txt";
-#define RAI_BUSLINE_FILE_NAME_LENGTH 11 // длина имени файла остановочной информации
 stock const RAI_ADVERTISMENT_FILE_NAME{} = "advertisment.txt";
-#define RAI_ADV_FILE_NAME_LENGTH 16 // длина имени файла вспомогательной информации
 stock const RAI_AUDIO_FILE_NAME{} = "route.wav";
-#define RAI_AUDIO_FILE_NAME_LENGTH 9 // длина имени аудиофайла маршрута
 
 #define RAI_ROUTE_DATA [\
     .name{RAI_FILE_PATH_LENGTH_MAX_W0},\
@@ -68,7 +62,6 @@ forward stock raiIsAtStation(const route[RAI_ROUTE_DATA], currentStation{}, curr
 //! \return true - успешно, false - ошибка
 forward stock raiGetAdvertisment(const route[RAI_ROUTE_DATA], filePos, advertisment{}, advertismentMaxSize, &nextPos);
 
-//! @brief Сохранить название маршрута в теге массива пользователя
+//! @brief Установить название маршрута в тег массива пользователя
 //! @param[in] route маршрут
-forward stock raiSaveRouteNameInTag(const route[RAI_ROUTE_DATA]);
-
+forward stock raiSetRouteNameInUserArray(const route[RAI_ROUTE_DATA]);
