@@ -31,7 +31,7 @@ stock raiGetCurrentRoute(route[RAI_ROUTE_DATA])
 stock raiGetNewRoute(const currentRoute[RAI_ROUTE_DATA], nextRoute[RAI_ROUTE_DATA])
 {
 	strncpy(nextRoute.name, 0, RAI_FILE_PATH_LENGTH_MAX, currentRoute.name);
-    new isReScan = false;
+    new isReScan = !currentRoute.name{0};
 	while (true)
 	{
 		if (NextDir("", nextRoute.name, nextRoute.name, RAI_FILE_PATH_LENGTH_MAX))

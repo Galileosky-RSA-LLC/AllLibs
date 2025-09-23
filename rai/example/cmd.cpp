@@ -10,9 +10,10 @@
 #define TIME_ZONE_UNKNOWN (TIME_ZONE_MIN - 1)
 
 #define CMD_SWITCH_ROUTE 1
-#define CMD_SET_ADV_TIME 2
-#define CMD_SET_TIME_ZONE 3
-#define CMD_DISPLAY 4
+#define CMD_ROUTE_INPUT 2
+#define CMD_SET_ADV_TIME 3
+#define CMD_SET_TIME_ZONE 4
+#define CMD_DISPLAY 5
 
 #define CMD_MIN CMD_SWITCH_ROUTE
 #define CMD_MAX CMD_DISPLAY
@@ -51,6 +52,7 @@ main()
     switch (cmd)
     {
         case CMD_SWITCH_ROUTE: cmdSwitchRoute();
+        case CMD_ROUTE_INPUT: cmdRouteInput();
         case CMD_SET_ADV_TIME: cmdAdvTime();
         case CMD_SET_TIME_ZONE: cmdTimeZone();
         case CMD_DISPLAY: displayCmd();
@@ -73,6 +75,21 @@ cmdSwitchRoute()
 {
     setNeedSwithRoute(true);
     cmdHandlerAddTextToAnswer(g_cmdhdl, "route switch sheduled");
+}
+
+cmdRouteInput()
+{
+    new inputIdx = GetVar(gRouteInputIdxNew);
+    if ((inputIdx >= ADC_INPUT_IDX_MIN) && (inputIdx <= ADC_INPUT_IDX_MAX))
+        setRouteSwitchInputIdx(inputIdx);
+
+    SetVar(gRouteInputIdxNew, -1);
+    makeRouteInputIdxAnswer();
+}
+
+makeRouteInputIdxAnswer()
+{
+    cmdHandlerAddParValueToAnswer(g_cmdhdl, "routeSwitchInputIdx=", getRouteSwitchInputIdx());
 }
 
 cmdAdvTime()
