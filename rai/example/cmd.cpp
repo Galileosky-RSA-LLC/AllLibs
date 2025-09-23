@@ -25,7 +25,7 @@
 #include "..\..\cmdhandle\cmdhandle.h"
 #include "..\..\cmdhandle\cmdhandle.cpp"
 
-#define SWITCH_TO_DIAG_WAIT_MS 1500
+#define SWITCH_TO_DIAG_WAIT_MS 2000
 
 new g_cmdhdl[CMDHANDLE_DATA];
 new g_cmdParams[PARAMS_QTY_MAX];

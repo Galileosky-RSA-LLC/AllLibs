@@ -25,7 +25,17 @@
 
 stock raiGetCurrentRoute(route[RAI_ROUTE_DATA])
 {
-    return rai_restoreRouteName(route) && rai_getFilePaths(route);
+    new res = rai_restoreRouteName(route) && rai_getFilePaths(route);
+    if (!res)
+        route.name{0} = 0;
+
+    return res;
+}
+
+stock raiSetCurrentRoute(const route[RAI_ROUTE_DATA])
+{
+    new len = strLen(route.name);
+    return (len > 0) && !FileDelete(RAI_CURRENT_ROUTE_FILE_PATH) && (FileWrite(RAI_CURRENT_ROUTE_FILE_PATH, route.name, len, 0) == len);
 }
 
 stock raiGetNewRoute(const currentRoute[RAI_ROUTE_DATA], nextRoute[RAI_ROUTE_DATA])

@@ -31,6 +31,11 @@ stock const RAI_AUDIO_FILE_NAME{} = "route.wav";
 //! @return true - успешно, false - ошибка файловой системы
 forward stock raiGetCurrentRoute(route[RAI_ROUTE_DATA]);
 
+//! @brief Установить маршрут в автоинформаторе
+//! @details !!! До исправления бага с setAutoinformerRoute()
+//! @param[in] route маршрут
+forward stock raiSetCurrentRoute(const route[RAI_ROUTE_DATA]);
+
 //! @brief Получить имя и пути файлов следующего маршрута
 //! @param[in] currentRoute структура текущего маршрута
 //! @param[out] nextRoute структура следующего маршрута

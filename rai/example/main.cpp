@@ -34,7 +34,7 @@ main()
         }
 		setNeedSwithRoute(false);
     }
-    if (!route.name)
+    if (!route.name{0})
         return;
 
     Diagnostics("route=%s", route.name);
@@ -45,6 +45,7 @@ main()
     {
         Diagnostics("init new route start");
         setAutoinformerRoute(route.name);
+        raiSetCurrentRoute(route);//!!!
         PlayAudio(route.audioFilePath);
         raiSetRouteNameInUserArray(route);
         SavePoint();
