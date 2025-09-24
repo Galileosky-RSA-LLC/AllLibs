@@ -22,6 +22,19 @@ main()
 
 	SetVar(gMainUptime, GetVar(UPTIME));
 	new route[RAI_ROUTE_DATA];
+    new routeCurData[ROUTE_CURRENT_DATA];
+    if (!getRoute(route, routeCurData))
+        return;
+
+    if (!checkAndInitDisplays(route))
+        return;
+
+    outputToSalonDisplay(route, routeCurData);
+    storeRouteCurrentData(routeCurData);
+}
+
+getRoute(route[RAI_ROUTE_DATA], routeCurData[ROUTE_CURRENT_DATA])
+{
     if (!raiGetCurrentRoute(route))
         Diagnostics("current route?");
 
@@ -30,15 +43,14 @@ main()
         if (!raiGetNewRoute(route, route))
         {
             Diagnostics("new route?");
-            return;
+            return false;
         }
 		setNeedSwithRoute(false);
     }
     if (!route.name{0})
-        return;
+        return false;
 
     Diagnostics("route=%s", route.name);
-    new routeCurData[ROUTE_CURRENT_DATA];
     restoreRouteCurrentData(routeCurData);
     new crc = calcRouteCrc(route);
     if (routeCurData.crc != crc)
@@ -54,6 +66,11 @@ main()
 		resetAlldisplaysInit();
         Diagnostics("init new route done");
 	}
+    return true;
+}
+
+checkAndInitDisplays(route[RAI_ROUTE_DATA])
+{
     new isFrontDisplayInited = isDisplayInited(FRONT_DISPLAY_INDEX);
     new isSideDisplayInited = isDisplayInited(SIDE_DISPLAY_INDEX);
     new hasFinalStations = false;
@@ -64,11 +81,11 @@ main()
         else
             Diagnostics("final stations?");
     }
-	new res = true; // для шаблона - положительный результат, в реальных применениях - сначала отрицательный
+    new res = true; // для шаблона - положительный результат, в реальных применениях - сначала отрицательный
     if (!isFrontDisplayInited)
 	{
         Diagnostics("init front display start");
-        // res = ...
+        // res = ... route.name, route.startStation, route.endStation
 		if (res)
 			setDisplayInit(FRONT_DISPLAY_INDEX, true);
     	
@@ -77,7 +94,7 @@ main()
 	if (!isSideDisplayInited)
 	{
 		Diagnostics("init side display start");
-        // res = ...
+        // res = ... route.name, route.startStation, route.endStation
 		if (res)
 			setDisplayInit(FRONT_DISPLAY_INDEX, true);
     	
@@ -86,7 +103,7 @@ main()
 	if (!isDisplayInited(REAR_DISPLAY_INDEX))
 	{
 		Diagnostics("init rear display start");
-        // res = ...
+        // res = ... route.name
 		if (res)
 			setDisplayInit(FRONT_DISPLAY_INDEX, true);
     	
@@ -95,15 +112,24 @@ main()
 	if (!isDisplayInited(SALON_DISPLAY_INDEX))
 	{
 		Diagnostics("init salon display start");
-        // res = ...
+        // res = ... route.name, route.startStation, route.endStation
         Diagnostics("init salon display %s", res ? "done" : "error");
         if (!res)
-            return;
+            return false;
 
 		setDisplayInit(FRONT_DISPLAY_INDEX, true);
 	}
+    return true;
+}
+
+outputToSalonDisplay(const route[RAI_ROUTE_DATA], routeCurData[ROUTE_CURRENT_DATA])
+{
+    new res = true; // для шаблона - положительный результат, в реальных применениях - сначала отрицательный
+    
+    // если нужно - отобразим время на салонном табло
     new timeZone = getTimeZone();
-    // res = ... timeZone
+    new unixTime = GetVar(UNIX_TIME);
+    // res = ... timeZone, unixTime
     if (!res)
         return;
 
@@ -116,15 +142,19 @@ main()
     new hasMessage = false;
     if (raiIsAtStation(route, text, RAI_STRING_LENGTH_MAX, nextStation, RAI_STRING_LENGTH_MAX, routeCurData.nextStationFilePos))
     {
-        hasMessage = true;
         Diagnostics("at station=\"%s\",next=\"%s\"", text, nextStation);
         if (!routeCurData.isAtStation)
         {    
             routeCurData.isAtStation = true;
             routeCurData.show = SHOW_UNKNOWN;
         }
-        if ((routeCurData.show == SHOW_UNKNOWN) || isTimerExpired(routeCurData.showStartUptime, getMessageShowTimeS() * MS_PER_SECOND))
+        if (isNeedChangeShow(routeCurData))
+        {    
+            hasMessage = true;
             changeShow(routeCurData);
+            if ((routeCurData.show == SHOW_NEXT_STATION) && !nextStation{0})
+                changeShow(routeCurData);
+        }
     }
     else
     {
@@ -133,28 +163,30 @@ main()
             routeCurData.isAtStation = false;
             routeCurData.show = SHOW_UNKNOWN;
         }
-        if ((routeCurData.show == SHOW_UNKNOWN) || isTimerExpired(routeCurData.showStartUptime, getMessageShowTimeS() * MS_PER_SECOND))
+        if (isNeedChangeShow(routeCurData))
         {
-            changeShow(routeCurData);
-            if (routeCurData.show == SHOW_ADVERTISMENT)
-                routeCurData.currentAdvertismentFilePos = routeCurData.nextAdvertismentFilePos;
-        }
-        for (new i = 0; i < 2; i++)
-        {
-            if (routeCurData.show == SHOW_ADVERTISMENT)
+            for (new i = 0; (i < 2) && !hasMessage; i++)
             {
-                hasMessage = raiGetAdvertisment(route, routeCurData.currentAdvertismentFilePos, text, RAI_STRING_LENGTH_MAX, routeCurData.nextAdvertismentFilePos);
-                Diagnostics(hasMessage ? "adv=\"%s\"" : "adv?", text);
-            }
-            else
-            {
-                hasMessage = raiGetNextStation(route, routeCurData.nextStationFilePos, text, RAI_STRING_LENGTH_MAX);
-                Diagnostics(hasMessage ? "next station=\"%s\"" : "next station?", text);
-            }
-            if (hasMessage)
-                break;
+                changeShow(routeCurData);
+                if (routeCurData.show == SHOW_ADVERTISMENT)
+                {    
+                    routeCurData.currentAdvertismentFilePos = routeCurData.nextAdvertismentFilePos;
+                    for (new j = 0; j < 2; j++)
+                    {
+                        hasMessage = raiGetAdvertisment(route, routeCurData.currentAdvertismentFilePos, text, RAI_STRING_LENGTH_MAX, routeCurData.nextAdvertismentFilePos);
+                        if (hasMessage)
+                            break;
 
-            changeShow(routeCurData);
+                        routeCurData.currentAdvertismentFilePos = 0;
+                    }
+                    Diagnostics(hasMessage ? "adv=\"%s\"" : "adv?", text);
+                }
+                else
+                {
+                    hasMessage = raiGetNextStation(route, routeCurData.nextStationFilePos, text, RAI_STRING_LENGTH_MAX);
+                    Diagnostics(hasMessage ? "next station=\"%s\"" : "next station?", text);
+                }
+            }
         }
     }
     if (hasMessage)
@@ -166,16 +198,16 @@ main()
         }
         else if (routeCurData.show == SHOW_NEXT_STATION)
         {
+            insertArrayStr(text, nextStationPrefixLength, textMaxSize, routeCurData.isAtStation ? nextStation : text,
+                            strLen(routeCurData.isAtStation ? nextStation : text), 0, true);
             insertArrayStr(text, 0, textMaxSize, NEXT_STATION_PREFIX, nextStationPrefixLength);
-            strncpy(text, nextStationPrefixLength, textMaxSize, nextStation);
         }
         Diagnostics("show %s", routeCurData.show == SHOW_CURRENT_STATION ? "current station" : (routeCurData.show == SHOW_NEXT_STATION ? "next station" : "adv"));//!!!
-        Diagnostics("text=%s", text);//!!!
+        Diagnostics("show text=\"%s\"", text);//!!!
         
         // показать информацию на табло
         // res = ... text
-        if (!res)
+        if (res)
             resetShowTimer(routeCurData);
     }
-    storeRouteCurrentData(routeCurData);
 }

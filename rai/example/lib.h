@@ -96,3 +96,6 @@ forward stock setRouteSwitchInputIdx(value);
 
 //! Рассчитать crc маршрута
 forward stock calcRouteCrc(const route[RAI_ROUTE_DATA]);
+
+//! Проверить необходимость изменения отображаемой информации
+forward stock isNeedChangeShow(const routeCurrentData[ROUTE_CURRENT_DATA]);

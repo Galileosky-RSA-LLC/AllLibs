@@ -100,7 +100,6 @@ stock changeShow(routeCurrentData[ROUTE_CURRENT_DATA])
                             : (routeCurrentData.show == SHOW_NEXT_STATION
                                 ? (routeCurrentData.isAtStation ? SHOW_CURRENT_STATION : SHOW_ADVERTISMENT)
                                 : SHOW_NEXT_STATION);
-    resetShowTimer(routeCurrentData);
 }
 
 stock getTimeZone()
@@ -126,6 +125,11 @@ stock setRouteSwitchInputIdx(value)
 stock calcRouteCrc(const route[RAI_ROUTE_DATA])
 {
     return CRC16(route.name, strLen(route.name, RAI_FILE_PATH_LENGTH_MAX));
+}
+
+stock isNeedChangeShow(const routeCurrentData[ROUTE_CURRENT_DATA])
+{
+    return (routeCurrentData.show == SHOW_UNKNOWN) || isTimerExpired(routeCurrentData.showStartUptime, getMessageShowTimeS() * MS_PER_SECOND);
 }
 
 //! @privatesection

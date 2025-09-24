@@ -79,9 +79,6 @@ stock raiGetFinalStations(route[RAI_ROUTE_DATA])
 
 stock raiIsAtStation(const route[RAI_ROUTE_DATA], currentStation{}, currentStationMaxSize, nextStation{}, nextStationMaxSize, &nextStationFilePos)
 {
-    currentStation{0} = 0;
-    nextStation{0} = 0;
-    nextStationFilePos = -1;
     new filePos = 0;
     new const fileSize = FileSize(route.busLineFilePath);
 	while (filePos < fileSize)
@@ -110,8 +107,7 @@ stock raiIsAtStation(const route[RAI_ROUTE_DATA], currentStation{}, currentStati
 
             strPos += len + RAI_PARAMS_SEPARATOR_SIZE;
         }
-		Diagnostics("str latitude=%d,longitude=%d,directionAngle=%d,spreadAngle=%d,R0=%d,R1=%d", zoneParams[0], zoneParams[1], zoneParams[2], zoneParams[3],
-                    zoneParams[4], zoneParams[5]);//!!!
+		//Diagnostics("str latitude=%d,longitude=%d,directionAngle=%d,spreadAngle=%d,R0=%d,R1=%d", zoneParams[0], zoneParams[1], zoneParams[2], zoneParams[3], zoneParams[4], zoneParams[5]);//!!!
 		if (!InZone(zoneParams[0], zoneParams[1], zoneParams[2], zoneParams[3], zoneParams[4], zoneParams[5]))
         {
             filePos += readSize;
@@ -122,6 +118,8 @@ stock raiIsAtStation(const route[RAI_ROUTE_DATA], currentStation{}, currentStati
         if (strPos >= 0)
             strncpy(currentStation, 0, currentStationMaxSize, str, strPos + RAI_PARAMS_SEPARATOR_SIZE);
 
+        nextStation{0} = 0;
+        nextStationFilePos = -1;
         filePos += readSize;
         if (filePos >= fileSize)
             return true;
@@ -139,7 +137,7 @@ stock raiIsAtStation(const route[RAI_ROUTE_DATA], currentStation{}, currentStati
             if (strPos < 0)
                 return true;
         }
-        nextStationFilePos = strPos;
+        nextStationFilePos = filePos + strPos;
         strncpy(nextStation, 0, nextStationMaxSize, str, strPos);
         return true;
 	}
@@ -151,12 +149,8 @@ stock raiGetAdvertisment(const route[RAI_ROUTE_DATA], filePos, advertisment{}, a
     advertisment{0} = 0;
     new readSize = fileReadLine(route.advertismentFilePath, advertisment, advertismentMaxSize, filePos);
     if (!readSize)
-    {
-        filePos = 0;
-        readSize = fileReadLine(route.advertismentFilePath, advertisment, advertismentMaxSize, filePos);
-        if (!readSize)
-            return false;
-    }
+        return false;
+
     nextPos = filePos + readSize;
     return true;
 }
