@@ -6,8 +6,6 @@
 #endif
 #define ALG_LIB
 
-#include "..\rai.h"
-#include "..\rai.cpp"
 #include "..\..\numeric\numeric.h"
 #include "..\..\numeric\numeric.cpp"
 
@@ -122,9 +120,9 @@ stock setRouteSwitchInputIdx(value)
     SetVar(gRouteSwitchInputIdx, value);
 }
 
-stock calcRouteCrc(const route[RAI_ROUTE_DATA])
+stock calcRouteCrc(const routeName{})
 {
-    return CRC16(route.name, strLen(route.name, RAI_FILE_PATH_LENGTH_MAX));
+    return CRC16(routeName, strLen(routeName, RAI_FILE_PATH_LENGTH_MAX));
 }
 
 stock isNeedChangeShow(const routeCurrentData[ROUTE_CURRENT_DATA])

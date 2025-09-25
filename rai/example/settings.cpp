@@ -16,15 +16,14 @@ new const varAddr[] =
     GetVarAddr(gDisplayDummy1),
 ];
 
-#define PARAMS_AMOUNT sizeof(varAddr)
-#define SETTING_PARAMS_AMOUNT PARAMS_AMOUNT
+#define CHANGE_PARAMS_DELAY_MS 500
+
+#define SETTING_PARAMS_AMOUNT sizeof(varAddr)
 
 #include "lib.h"
 #include "lib.cpp"
 #include "..\..\setting\setting.h"
 #include "..\..\setting\setting.cpp"
-
-#define CHANGE_PARAMS_DELAY_MS 500
 
 stock const FILE_PATH{} = "displayname/settings.bin";
 
@@ -43,7 +42,7 @@ main()
     new routeSwitchInputIdx[SETTING_SINGLE_DATA];
     settingSingleInit(routeSwitchInputIdx, "route_switch_input", GetVarAddr(gRouteSwitchInputIdx));
     settingSingleRestoreParam(routeSwitchInputIdx);
-    settingInit(settings, FILE_PATH, varAddr, PARAMS_AMOUNT);
+    settingInit(settings, FILE_PATH, varAddr, SETTING_PARAMS_AMOUNT);
     settingRestoreParams(settings);
     setSettingsInited();
     while (true)

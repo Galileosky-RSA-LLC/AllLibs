@@ -11,9 +11,6 @@
 #define SIDE_DISPLAY_INDEX 2
 #define SALON_DISPLAY_INDEX 3
 
-#include "..\rai.h"
-
-// что отображалось на салонном табло
 #define SHOW_UNKNOWN 0
 #define SHOW_CURRENT_STATION 1
 #define SHOW_NEXT_STATION 2
@@ -70,10 +67,10 @@ forward stock setDisplayInit(displayIndex, value);
 //! Сбросить статус инициализации всех табло
 forward stock resetAlldisplaysInit();
 
-//! Получить время показа сообщения
+//! Получить длительность показа сообщения
 forward stock getMessageShowTimeS();
 
-//! Установить время показа сообщения
+//! Установить длительность показа сообщения
 forward stock setMessageShowTimeS(value);
 
 //! Сбросить таймер показа сообщений
@@ -94,8 +91,8 @@ forward stock getRouteSwitchInputIdx();
 //! Установить индекс входа переключения маршрута
 forward stock setRouteSwitchInputIdx(value);
 
-//! Рассчитать crc маршрута
-forward stock calcRouteCrc(const route[RAI_ROUTE_DATA]);
+//! Рассчитать crc имени маршрута
+forward stock calcRouteCrc(const routeName{});
 
 //! Проверить необходимость изменения отображаемой информации
 forward stock isNeedChangeShow(const routeCurrentData[ROUTE_CURRENT_DATA]);

@@ -52,12 +52,12 @@ getRoute(route[RAI_ROUTE_DATA], routeCurData[ROUTE_CURRENT_DATA])
 
     Diagnostics("route=%s", route.name);
     restoreRouteCurrentData(routeCurData);
-    new crc = calcRouteCrc(route);
+    new crc = calcRouteCrc(route.name);
     if (routeCurData.crc != crc)
     {
         Diagnostics("init new route start");
         setAutoinformerRoute(route.name);
-        raiSetCurrentRoute(route);//!!!
+        raiSetCurrentRoute(route);
         PlayAudio(route.audioFilePath);
         raiSetRouteNameInUserArray(route);
         SavePoint();
@@ -133,11 +133,27 @@ outputToSalonDisplay(const route[RAI_ROUTE_DATA], routeCurData[ROUTE_CURRENT_DAT
     if (!res)
         return;
 
+    // если нужно - отобразим температуру на салонном табло
+    // res = ...
+    if (!res)
+        return;
+
     const textMaxSize = RAI_STRING_LENGTH_MAX + (sizeof(NEXT_STATION_PREFIX) * CELL_BYTES);
     const textMaxSizeW0 = textMaxSize + 1;
+    new text{textMaxSizeW0};
+    if (!getCurrentSalonInfo(route, routeCurData, text, textMaxSize))
+        return;
+
+    // показываем информацию на табло
+    // res = ... text
+    if (res)
+        resetShowTimer(routeCurData);
+}
+
+getCurrentSalonInfo(const route[RAI_ROUTE_DATA], routeCurData[ROUTE_CURRENT_DATA], text{}, textMaxSize)
+{
     new const currentStationPrefixLength = strLen(CURRENT_STATION_PREFIX);
     new const nextStationPrefixLength = strLen(NEXT_STATION_PREFIX);
-    new text{textMaxSizeW0};
     new nextStation{RAI_STRING_LENGTH_MAX_W0};
     new hasMessage = false;
     if (raiIsAtStation(route, text, RAI_STRING_LENGTH_MAX, nextStation, RAI_STRING_LENGTH_MAX, routeCurData.nextStationFilePos))
@@ -173,7 +189,8 @@ outputToSalonDisplay(const route[RAI_ROUTE_DATA], routeCurData[ROUTE_CURRENT_DAT
                     routeCurData.currentAdvertismentFilePos = routeCurData.nextAdvertismentFilePos;
                     for (new j = 0; j < 2; j++)
                     {
-                        hasMessage = raiGetAdvertisment(route, routeCurData.currentAdvertismentFilePos, text, RAI_STRING_LENGTH_MAX, routeCurData.nextAdvertismentFilePos);
+                        hasMessage = raiGetAdvertisment(route, routeCurData.currentAdvertismentFilePos, text, RAI_STRING_LENGTH_MAX,
+                                                        routeCurData.nextAdvertismentFilePos);
                         if (hasMessage)
                             break;
 
@@ -189,25 +206,19 @@ outputToSalonDisplay(const route[RAI_ROUTE_DATA], routeCurData[ROUTE_CURRENT_DAT
             }
         }
     }
-    if (hasMessage)
+    if (!hasMessage)
+        return false;
+
+    if (routeCurData.show == SHOW_CURRENT_STATION)
     {
-        if (routeCurData.show == SHOW_CURRENT_STATION)
-        {
-            insertArrayStr(text, currentStationPrefixLength, textMaxSize, text, strLen(text), 0, true);
-            insertArrayStr(text, 0, textMaxSize, CURRENT_STATION_PREFIX, currentStationPrefixLength);
-        }
-        else if (routeCurData.show == SHOW_NEXT_STATION)
-        {
-            insertArrayStr(text, nextStationPrefixLength, textMaxSize, routeCurData.isAtStation ? nextStation : text,
-                            strLen(routeCurData.isAtStation ? nextStation : text), 0, true);
-            insertArrayStr(text, 0, textMaxSize, NEXT_STATION_PREFIX, nextStationPrefixLength);
-        }
-        Diagnostics("show %s", routeCurData.show == SHOW_CURRENT_STATION ? "current station" : (routeCurData.show == SHOW_NEXT_STATION ? "next station" : "adv"));//!!!
-        Diagnostics("show text=\"%s\"", text);//!!!
-        
-        // показать информацию на табло
-        // res = ... text
-        if (res)
-            resetShowTimer(routeCurData);
+        strncpy(text, currentStationPrefixLength, textMaxSize, text, .fromBack = true);
+        insertArrayStr(text, 0, textMaxSize, CURRENT_STATION_PREFIX, currentStationPrefixLength);
     }
+    else if (routeCurData.show == SHOW_NEXT_STATION)
+    {
+        strncpy(text, nextStationPrefixLength, textMaxSize, routeCurData.isAtStation ? nextStation : text, .fromBack = true);
+        insertArrayStr(text, 0, textMaxSize, NEXT_STATION_PREFIX, nextStationPrefixLength);
+    }
+    Diagnostics("show text=\"%s\"", text);
+    return true;
 }

@@ -32,7 +32,7 @@ stock const RAI_AUDIO_FILE_NAME{} = "route.wav";
 forward stock raiGetCurrentRoute(route[RAI_ROUTE_DATA]);
 
 //! @brief Установить маршрут в автоинформаторе
-//! @details !!! До исправления бага с setAutoinformerRoute()
+//! @details Предварительно необходимо получить имя и пути маршрута
 //! @param[in] route маршрут
 forward stock raiSetCurrentRoute(const route[RAI_ROUTE_DATA]);
 
@@ -49,24 +49,27 @@ forward stock raiGetNewRoute(const currentRoute[RAI_ROUTE_DATA], nextRoute[RAI_R
 forward stock raiGetFinalStations(route[RAI_ROUTE_DATA]);
 
 //! @brief Проверить на присутствие в геозоне остановки
+//! @details Предварительно необходимо получить имя и пути маршрута
 //! @param[in] route маршрут
 //! @param[out] currentStation название текущей остановки, если в ее геозоне
 //! @param[in] currentStationMaxSize предельная длина для названия текущей остановки
 //! @param[out] nextStation название следующей остановки, если в геозоне текущей остановки
 //! @param[in] nextStationMaxSize предельная длина для названия следующей остановки
 //! @param[out] nextStationFilePos позиция в файле названия следующей остановки (-1 - название не найдено или не в геозоне текущей остановки)
-//! @return !=0 - в геозоне, 0 - не в геозоне
+//! @return true - в геозоне, false - не в геозоне
 forward stock raiIsAtStation(const route[RAI_ROUTE_DATA], currentStation{}, currentStationMaxSize, nextStation{}, nextStationMaxSize, &nextStationFilePos);
 
-//! Получить рекламное сообщение
-//! \param[in] route маршрут
-//! \param[in] filePos смещение сообщения в файле
-//! \param[out] advertisment сообщение
-//! \param[in] advertismentMaxSize предельная длина сообщения
-//! \param[out] nextPos позиция следующего сообщения, если найдено текущее
-//! \return true - успешно, false - ошибка
+//! @brief Получить рекламное сообщение
+//! @details Предварительно необходимо получить имя и пути маршрута
+//! @param[in] route маршрут
+//! @param[in] filePos смещение сообщения в файле
+//! @param[out] advertisment сообщение
+//! @param[in] advertismentMaxSize предельная длина сообщения
+//! @param[out] nextPos позиция следующего сообщения, если найдено текущее
+//! @return true - успешно, false - ошибка
 forward stock raiGetAdvertisment(const route[RAI_ROUTE_DATA], filePos, advertisment{}, advertismentMaxSize, &nextPos);
 
 //! @brief Установить название маршрута в тег массива пользователя
+//! @details Предварительно необходимо получить имя и пути маршрута
 //! @param[in] route маршрут
 forward stock raiSetRouteNameInUserArray(const route[RAI_ROUTE_DATA]);

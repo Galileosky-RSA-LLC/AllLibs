@@ -46,7 +46,6 @@ stock raiGetNewRoute(const currentRoute[RAI_ROUTE_DATA], nextRoute[RAI_ROUTE_DAT
 	{
 		if (NextDir("", nextRoute.name, nextRoute.name, RAI_FILE_PATH_LENGTH_MAX))
 		{
-			Diagnostics("found dir=%s", nextRoute.name);//!!!
             if (rai_getFilePaths(nextRoute))
                 return true;
 
@@ -89,7 +88,7 @@ stock raiIsAtStation(const route[RAI_ROUTE_DATA], currentStation{}, currentStati
 			return false;
 
 		// В строке файла идет:
-		// Широта;долгота;угол направления;угол разброса;внешний радиус R0;внутренний радиус R1;имя аудио файла;название остановки.
+		// Широта;долгота;угол направления;угол разброса;внешний радиус R0;внутренний радиус R1;имя аудио файла;название остановки
         // типа:
         // 51.540487;46.004783;111.00;45.00;60.00;20.00;Universitatska_.wav;Остановка ул. Университетская
 		new strPos = 0;
@@ -107,7 +106,6 @@ stock raiIsAtStation(const route[RAI_ROUTE_DATA], currentStation{}, currentStati
 
             strPos += len + RAI_PARAMS_SEPARATOR_SIZE;
         }
-		//Diagnostics("str latitude=%d,longitude=%d,directionAngle=%d,spreadAngle=%d,R0=%d,R1=%d", zoneParams[0], zoneParams[1], zoneParams[2], zoneParams[3], zoneParams[4], zoneParams[5]);//!!!
 		if (!InZone(zoneParams[0], zoneParams[1], zoneParams[2], zoneParams[3], zoneParams[4], zoneParams[5]))
         {
             filePos += readSize;
@@ -146,9 +144,8 @@ stock raiIsAtStation(const route[RAI_ROUTE_DATA], currentStation{}, currentStati
 
 stock raiGetAdvertisment(const route[RAI_ROUTE_DATA], filePos, advertisment{}, advertismentMaxSize, &nextPos)
 {
-    advertisment{0} = 0;
     new readSize = fileReadLine(route.advertismentFilePath, advertisment, advertismentMaxSize, filePos);
-    if (!readSize)
+    if (!readSize || !advertisment{0})
         return false;
 
     nextPos = filePos + readSize;
@@ -157,7 +154,7 @@ stock raiGetAdvertisment(const route[RAI_ROUTE_DATA], filePos, advertisment{}, a
 
 stock raiGetNextStation(const route[RAI_ROUTE_DATA], filePos, station{}, stationMaxSize)
 {
-    return (filePos > 0) && (fileReadLine(route.busLineFilePath, station, stationMaxSize, filePos) > 0);
+    return (filePos > 0) && (fileReadLine(route.busLineFilePath, station, stationMaxSize, filePos) > 0) && station{0};
 }
 
 stock raiSetRouteNameInUserArray(const route[RAI_ROUTE_DATA])
@@ -182,9 +179,6 @@ stock rai_generateFilePath(const route[RAI_ROUTE_DATA], const fileName{}, filePa
 	return true;
 }
 
-//! Прочитать название текущего маршрута из файла
-//! @param[out] route структура маршрута
-//! @return true - успешно, false - ошибка
 stock rai_restoreRouteName(route[RAI_ROUTE_DATA])
 {
 	new len = FileRead(RAI_CURRENT_ROUTE_FILE_PATH, route.name, RAI_FILE_PATH_LENGTH_MAX);
@@ -192,9 +186,6 @@ stock rai_restoreRouteName(route[RAI_ROUTE_DATA])
 	return len > 0;
 }
 
-//! Получить путь файла с конечными остановками
-//! @param[inout] route структура маршрута
-//! @return true - успешно, false - ошибка
 stock rai_getFinalStationsFilePath(route[RAI_ROUTE_DATA])
 {
 	return route.name{0}

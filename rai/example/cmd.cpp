@@ -3,12 +3,6 @@
 
 //#define DEBUG // включить для отладки
 
-#define ADV_TIME_S_MIN 20
-
-#define TIME_ZONE_MIN -12
-#define TIME_ZONE_MAX 14
-#define TIME_ZONE_UNKNOWN (TIME_ZONE_MIN - 1)
-
 #define CMD_SWITCH_ROUTE 1
 #define CMD_ROUTE_INPUT 2
 #define CMD_SET_ADV_TIME 3
@@ -20,12 +14,19 @@
 
 #define PARAMS_QTY_MAX 1
 
-#include "lib.h"
-#include "lib.cpp"
-#include "..\..\cmdhandle\cmdhandle.h"
-#include "..\..\cmdhandle\cmdhandle.cpp"
+#define ADV_TIME_S_MIN 20
+
+#define TIME_ZONE_MIN -12
+#define TIME_ZONE_MAX 14
+#define TIME_ZONE_UNKNOWN (TIME_ZONE_MIN - 1)
 
 #define SWITCH_TO_DIAG_WAIT_MS 2000
+
+#include "lib.h"
+#include "lib.cpp"
+#include "..\..\gdefines.h"
+#include "..\..\cmdhandle\cmdhandle.h"
+#include "..\..\cmdhandle\cmdhandle.cpp"
 
 new g_cmdhdl[CMDHANDLE_DATA];
 new g_cmdParams[PARAMS_QTY_MAX];

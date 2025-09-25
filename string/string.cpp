@@ -55,12 +55,12 @@ stock strLen(const str{}, strLength = 0, start = 0)
     return i - start;
 }
 
-stock strncpy(dest{}, destPos, destLength, const source{}, sourcePos = 0, sourceLength = 0)
+stock strncpy(dest{}, destPos, destLength, const source{}, sourcePos = 0, sourceLength = 0, fromBack = false)
 {
     if (destPos < 0)
         destPos = 0;
 
-    new endPos = destPos + insertArrayStr(dest, destPos, destLength, source, sourcePos + strLen(source, sourceLength, sourcePos), sourcePos);
+    new endPos = destPos + insertArrayStr(dest, destPos, destLength, source, sourcePos + strLen(source, sourceLength, sourcePos), sourcePos, fromBack);
 	if ((endPos >= 0) && (endPos < destLength))
         dest{endPos} = 0;
 }

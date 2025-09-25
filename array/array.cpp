@@ -1,17 +1,15 @@
-#ifndef ARRAY_LIB
-#define ARRAY_LIB
-// Функции работы с массивами
-// не рассматривается работа с конкретно строками (т.е. с завершающим \0)
+//! @file
+//! @brief Функции библиотеки для работы с массивами
 
+#ifdef ARRAY_LIB
+#endinput
+#endif
+#define ARRAY_LIB
 
 #include "..\numeric\numeric.h"
 #include "..\numeric\numeric.cpp"
 
-//! XOR элементов подмассива 1-байтных элементов
-//! \param[in] ar массив
-//! \param[in] arSize размер массива
-//! \param[in] start стартовый индекс
-arrayXorStr(const ar{}, arSize, start = 0)
+stock arrayXorStr(const ar{}, arSize, start = 0)
 {
     if (start < 0)
         start = 0;
@@ -26,11 +24,7 @@ arrayXorStr(const ar{}, arSize, start = 0)
     return res;
 }
 
-//! Суммирование элементов подмассива 1-байтных элементов
-//! \param[in] ar массив
-//! \param[in] arSize размер массива
-//! \param[in] start стартовый индекс
-arrayPlusStr(const ar{}, arSize, start = 0)
+stock arrayPlusStr(const ar{}, arSize, start = 0)
 {
     if (start < 0)
         start = 0;
@@ -42,16 +36,7 @@ arrayPlusStr(const ar{}, arSize, start = 0)
     return res;
 }
 
-//! Вставить подмассив однобайтных элементов
-//! \param[out] dest целевой массив, в который вставляется
-//! \param[in] destPos смещение в целевом
-//! \param[in] destSize размер целевого массива
-//! \param[in] source вставляемый массив
-//! \param[in] sourceSize размер вставляемого массива
-//! \param[in] sourcePos смещение в вставляемом, с которого начинать вставку
-//! \param[in] fromBack признак необходимости вставки с конца вставляемого (при совпадении вставляемого с целевым)
-//! \return количество вставленных элементов
-insertArrayStr(dest{}, destPos, destSize, const source{}, sourceSize, sourcePos = 0, fromBack = false)
+stock insertArrayStr(dest{}, destPos, destSize, const source{}, sourceSize, sourcePos = 0, fromBack = false)
 {
     if (destPos < 0)
         destPos = 0;
@@ -78,37 +63,19 @@ insertArrayStr(dest{}, destPos, destSize, const source{}, sourceSize, sourcePos 
     return i;
 }
 
-//! Проверить подмассивы на равенство соответствующих элементов
-//! \param[in] ar1 первый сравниваемый массив
-//! \param[in] ar1start индекс начала подмассива в первом массиве
-//! \param[in] ar1size длина первого сравниваемого массива
-//! \param[in] ar2 второй сравниваемый массив
-//! \param[in] ar2start индекс начала подмассива во втором массиве
-//! \param[in] ar2size длина второго сравниваемого массива
-isArraysEqual(const ar1[], ar1start, ar1size, const ar2[], ar2start, ar2size)
+stock isArraysEqual(const ar1[], ar1start, ar1size, const ar2[], ar2start, ar2size)
 {
 	new count1 = getSubSize(ar1start, ar1size);
     return (count1 == getSubSize(ar2start, ar2size)) && (countIdentical(ar1, ar1start, ar1size, ar2, ar2start, ar2size) == count1);
 }
 
-//! Проверить подмассивы однобайтных элементов на равенство соответствующих элементов
-//! \param[in] ar1 первый сравниваемый массив
-//! \param[in] ar1start индекс начала подмассива в первом массиве
-//! \param[in] ar1size длина первого сравниваемого массива
-//! \param[in] ar2 второй сравниваемый массив
-//! \param[in] ar2start индекс начала подмассива во втором массиве
-//! \param[in] ar2size длина второго сравниваемого массива
-isArraysEqualStr(const ar1{}, ar1start, ar1size, const ar2{}, ar2start, ar2size)
+stock isArraysEqualStr(const ar1{}, ar1start, ar1size, const ar2{}, ar2start, ar2size)
 {
 	new count1 = getSubSize(ar1start, ar1size);
     return (count1 == getSubSize(ar2start, ar2size)) && (countIdenticalStr(ar1, ar1start, ar1size, ar2, ar2start, ar2size) == count1);
 }
 
-//! Инвертировать подмассив
-//! \param[inout] ar исходный массив
-//! \param[in] arSize длина массива
-//! \param[in] start индекс начала подмассива
-invertArray(ar[], arSize, start = 0)
+stock invertArray(ar[], arSize, start = 0)
 {
     if (start < 0)
         start = 0;
@@ -121,11 +88,7 @@ invertArray(ar[], arSize, start = 0)
     }
 }
 
-//! Инвертировать подмассив однобайтных элементов
-//! \param[inout] ar исходный массив
-//! \param[in] arSize длина массива
-//! \param[in] start индекс начала подмассива
-invertArrayStr(ar{}, arSize, start = 0)
+stock invertArrayStr(ar{}, arSize, start = 0)
 {
     if (start < 0)
         start = 0;
@@ -138,14 +101,7 @@ invertArrayStr(ar{}, arSize, start = 0)
     }
 }
 
-//! Заменить определенные значения элементов подмассива на заданное
-//! \param[inout] ar массив
-//! \param[in] arSize длина массива
-//! \param[in] valOld заменяемое значение
-//! \param[in] valNew новое значение
-//! \param[in] start индекс начала подмассива
-//! \return кол-во выполненных замен
-replaceVal(ar[], arSize, valOld, valNew, start = 0)
+stock replaceVal(ar[], arSize, valOld, valNew, start = 0)
 {
     if (start < 0)
         start = 0;
@@ -162,14 +118,7 @@ replaceVal(ar[], arSize, valOld, valNew, start = 0)
     return count;
 }
 
-//! Заменить определенные значения в подмассиве однобайтных элементов на заданное
-//! \param[inout] ar массив
-//! \param[in] arSize длина массива
-//! \param[in] valOld заменяемое значение
-//! \param[in] valNew новое значение
-//! \param[in] start индекс начала подмассива
-//! \return кол-во выполненных замен
-replaceValStr(ar{}, arSize, valOld, valNew, start = 0)
+stock replaceValStr(ar{}, arSize, valOld, valNew, start = 0)
 {
     if (start < 0)
         start = 0;
@@ -186,11 +135,7 @@ replaceValStr(ar{}, arSize, valOld, valNew, start = 0)
     return count;
 }
 
-//! Инвертировать биты в байтах подмассива однобайтных элементов
-//! \param[inout] ar массив
-//! \param[in] arSize размер массива
-//! \param[in] start стартовый индекс подмассива
-arrayInvertBitsStr(ar{}, arSize, start = 0)
+stock arrayInvertBitsStr(ar{}, arSize, start = 0)
 {
     if (start < 0)
         start = 0;
@@ -199,16 +144,7 @@ arrayInvertBitsStr(ar{}, arSize, start = 0)
         ar{i} = invertBitsInByte(ar{i});
 }
 
-//! Получить число 32, 24, 16 или 8 бит из массива
-//! \param[in] ar массив
-//! \param[in] start стартовый индекс массива
-//! \param[in] arSize длина массива
-//! \param[in] bytes разрядность в байтах, 1..4
-//! \param[in] littleEnd порядок хранения многобайтных чисел: true - littleEndian, false - BigEndian
-//! \param[in] sign наличие знака для 8-, 16- и 24-битного числа: true - знаковое, false - беззнаковое (32-битное число всегда знаковое)
-//! \param[out] num полученное число
-//! \return false - неуспешно (некорректные входные данные), true - успешно
-array2num(const ar{}, start, arSize, bytes, littleEnd, sign, &num)
+stock array2num(const ar{}, start, arSize, bytes, littleEnd, sign, &num)
 {
     if (bytes < 1)
         bytes = 1;
@@ -237,147 +173,67 @@ array2num(const ar{}, start, arSize, bytes, littleEnd, sign, &num)
     return true;
 }
 
-//! Получить знаковое 8-битное число из массива
-//! \param[in] ar массив
-//! \param[in] start стартовый индекс массива
-//! \param[in] arSize длина массива
-//! \param[out] num полученное число
-//! \return false - неуспешно (некорректные входные данные), true - успешно
-array2num8sign(const ar{}, start, arSize, &num)
+stock array2num8sign(const ar{}, start, arSize, &num)
 {
     return array2num(ar, start, arSize, 1, true, true, num);
 }
 
-//! Получить беззнаковое 8-битное число из массива
-//! \param[in] ar массив
-//! \param[in] start стартовый индекс массива
-//! \param[in] arSize длина массива
-//! \param[out] num полученное число
-//! \return false - неуспешно (некорректные входные данные), true - успешно
-array2num8unSign(const ar{}, start, arSize, &num)
+stock array2num8unSign(const ar{}, start, arSize, &num)
 {
     return array2num(ar, start, arSize, 1, true, false, num);
 }
 
-//! Получить знаковое 16-битное littleEndian число из массива
-//! \param[in] ar массив
-//! \param[in] start стартовый индекс массива
-//! \param[in] arSize длина массива
-//! \param[out] num полученное число
-//! \return false - неуспешно (некорректные входные данные), true - успешно
-array2num16leSign(const ar{}, start, arSize, &num)
+stock array2num16leSign(const ar{}, start, arSize, &num)
 {
     return array2num(ar, start, arSize, 2, true, true, num);
 }
 
-//! Получить беззнаковое 16-битное littleEndian число из массива
-//! \param[in] ar массив
-//! \param[in] start стартовый индекс массива
-//! \param[in] arSize длина массива
-//! \param[out] num полученное число
-//! \return false - неуспешно (некорректные входные данные), true - успешно
-array2num16leUnSign(const ar{}, start, arSize, &num)
+stock array2num16leUnSign(const ar{}, start, arSize, &num)
 {
     return array2num(ar, start, arSize, 2, true, false, num);
 }
 
-//! Получить беззнаковое 16-битное BigEndian число из массива
-//! \param[in] ar массив
-//! \param[in] start стартовый индекс массива
-//! \param[in] arSize длина массива
-//! \param[out] num полученное число
-//! \return false - неуспешно (некорректные входные данные), true - успешно
-array2num16beUnSign(const ar{}, start, arSize, &num)
+stock array2num16beUnSign(const ar{}, start, arSize, &num)
 {
     return array2num(ar, start, arSize, 2, false, false, num);
 }
 
-//! Получить знаковое 16-битное BigEndian число из массива
-//! \param[in] ar массив
-//! \param[in] start стартовый индекс массива
-//! \param[in] arSize длина массива
-//! \param[out] num полученное число
-//! \return false - неуспешно (некорректные входные данные), true - успешно
-array2num16beSign(const ar{}, start, arSize, &num)
+stock array2num16beSign(const ar{}, start, arSize, &num)
 {
     return array2num(ar, start, arSize, 2, false, true, num);
 }
 
-//! Получить знаковое 24-битное littleEndian число из массива
-//! \param[in] ar массив
-//! \param[in] start стартовый индекс массива
-//! \param[in] arSize длина массива
-//! \param[out] num полученное число
-//! \return false - неуспешно (некорректные входные данные), true - успешно
-array2num24leSign(const ar{}, start, arSize, &num)
+stock array2num24leSign(const ar{}, start, arSize, &num)
 {
     return array2num(ar, start, arSize, 3, true, true, num);
 }
 
-//! Получить беззнаковое 24-битное littleEndian число из массива
-//! \param[in] ar массив
-//! \param[in] start стартовый индекс массива
-//! \param[in] arSize длина массива
-//! \param[out] num полученное число
-//! \return false - неуспешно (некорректные входные данные), true - успешно
-array2num24leUnSign(const ar{}, start, arSize, &num)
+stock array2num24leUnSign(const ar{}, start, arSize, &num)
 {
     return array2num(ar, start, arSize, 3, true, false, num);
 }
 
-//! Получить беззнаковое 24-битное BigEndian число из массива
-//! \param[in] ar массив
-//! \param[in] start стартовый индекс массива
-//! \param[in] arSize длина массива
-//! \param[out] num полученное число
-//! \return false - неуспешно (некорректные входные данные), true - успешно
-array2num24beUnSign(const ar{}, start, arSize, &num)
+stock array2num24beUnSign(const ar{}, start, arSize, &num)
 {
     return array2num(ar, start, arSize, 3, false, false, num);
 }
 
-//! Получить знаковое 24-битное BigEndian число из массива
-//! \param[in] ar массив
-//! \param[in] start стартовый индекс массива
-//! \param[in] arSize длина массива
-//! \param[out] num полученное число
-//! \return false - неуспешно (некорректные входные данные), true - успешно
-array2num24beSign(const ar{}, start, arSize, &num)
+stock array2num24beSign(const ar{}, start, arSize, &num)
 {
     return array2num(ar, start, arSize, 3, false, true, num);
 }
 
-//! Получить знаковое 32-битное BigEndian число из массива
-//! \param[in] ar массив
-//! \param[in] start стартовый индекс массива
-//! \param[in] arSize длина массива
-//! \param[out] num полученное число
-//! \return false - неуспешно (некорректные входные данные), true - успешно
-array2num32beSign(const ar{}, start, arSize, &num)
+stock array2num32beSign(const ar{}, start, arSize, &num)
 {
     return array2num(ar, start, arSize, 4, false, true, num);
 }
 
-//! Получить знаковое 32-битное littleEndian число из массива
-//! \param[in] ar массив
-//! \param[in] start стартовый индекс массива
-//! \param[in] arSize длина массива
-//! \param[out] num полученное число
-//! \return false - неуспешно (некорректные входные данные), true - успешно
-array2num32leSign(const ar{}, start, arSize, &num)
+stock array2num32leSign(const ar{}, start, arSize, &num)
 {
     return array2num(ar, start, arSize, 4, true, true, num);
 }
 
-//! Поместить число 8, 16, 24 или 32 бит в массив
-//! \param[in] num число для конвертации
-//! \param[in] bytes кол-во байт в числе, 1..4
-//! \param[in] littleEnd порядок хранения в массиве: true - littleEndian, false - BigEndian
-//! \param[out] ar массив
-//! \param[in] start стартовый индекс массива
-//! \param[in] arSize длина массива
-//! \return false - неуспешно (некорректные входные данные), true - успешно
-num2array(num, bytes, littleEnd, ar{}, start, arSize)
+stock num2array(num, bytes, littleEnd, ar{}, start, arSize)
 {
     if (bytes < 1)
         bytes = 1;
@@ -394,57 +250,27 @@ num2array(num, bytes, littleEnd, ar{}, start, arSize)
     return true;
 }
 
-//! Поместить 32-битное число в массив littleEndian
-//! \param[in] num число для конвертации
-//! \param[out] ar массив
-//! \param[in] start стартовый индекс массива
-//! \param[in] arSize длина массива
-//! \return false - неуспешно (некорректные входные данные), true - успешно
-num32bit2arrayLe(num, ar{}, start, arSize)
+stock num32bit2arrayLe(num, ar{}, start, arSize)
 {
     return num2array(num, 4, true, ar, start, arSize);
 }
 
-//! Поместить 32-битное число в массив BigEndian
-//! \param[in] num число для конвертации
-//! \param[out] ar массив
-//! \param[in] start стартовый индекс массива
-//! \param[in] arSize длина массива
-//! \return false - неуспешно (некорректные входные данные), true - успешно
-num32bit2arrayBe(num, ar{}, start, arSize)
+stock num32bit2arrayBe(num, ar{}, start, arSize)
 {
     return num2array(num, 4, false, ar, start, arSize);
 }
 
-//! Поместить 16-битное число в массив littleEndian
-//! \param[in] num число для конвертации
-//! \param[out] ar массив
-//! \param[in] start стартовый индекс массива
-//! \param[in] arSize длина массива
-//! \return false - неуспешно (некорректные входные данные), true - успешно
-num16bit2arrayLe(num, ar{}, start, arSize)
+stock num16bit2arrayLe(num, ar{}, start, arSize)
 {
     return num2array(num, 2, true, ar, start, arSize);
 }
 
-//! Поместить 16-битное число в массив BigEndian
-//! \param[in] num число для конвертации
-//! \param[out] ar массив
-//! \param[in] start стартовый индекс массива
-//! \param[in] arSize длина массива
-//! \return false - неуспешно (некорректные входные данные), true - успешно
-num16bit2arrayBe(num, ar{}, start, arSize)
+stock num16bit2arrayBe(num, ar{}, start, arSize)
 {
     return num2array(num, 2, false, ar, start, arSize);
 }
 
-//! Линейный поиск элемента в массиве
-//! \param[in] ar массив
-//! \param[in] arSize длина массива
-//! \param[in] element искомый элемент
-//! \param[in] start стартовый индекс для поиска
-//! \return >=0: меньший индекс искомого элемента, <0 - не найден
-searchLinear(const ar[], arSize, element, start = 0)
+stock searchLinear(const ar[], arSize, element, start = 0)
 {
     if (start < 0)
         start = 0;
@@ -457,13 +283,7 @@ searchLinear(const ar[], arSize, element, start = 0)
     return -1;
 }
 
-//! Линейный поиск в массиве однобайтных элементов
-//! \param[in] ar массив
-//! \param[in] arSize длина массива
-//! \param[in] element искомый элемент
-//! \param[in] start стартовый индекс для поиска
-//! \return >=0: меньший индекс искомого элемента, <0 - не найден
-searchLinearStr(const ar{}, arSize, element, start = 0)
+stock searchLinearStr(const ar{}, arSize, element, start = 0)
 {
     if (start < 0)
         start = 0;
@@ -476,13 +296,7 @@ searchLinearStr(const ar{}, arSize, element, start = 0)
     return -1;
 }
 
-//! Двоичный поиск элемента в массиве
-//! \param[in] ar массив
-//! \param[in] arSize длина массива
-//! \param[in] element искомый элемент
-//! \param[in] start стартовый индекс для поиска
-//! \return >=0: меньший индекс искомого элемента, <0 - не найден
-searchBinary(const ar[], arSize, element, start = 0)
+stock searchBinary(const ar[], arSize, element, start = 0)
 {
     if (arSize <= 0)
         return -1;
@@ -508,13 +322,7 @@ searchBinary(const ar[], arSize, element, start = 0)
     return (ar[last] == element) ? last : -1;
 }
 
-//! Двоичный поиск в массиве однобайтных элементов
-//! \param[in] ar массив
-//! \param[in] arSize длина массива
-//! \param[in] element искомый элемент
-//! \param[in] start стартовый индекс для поиска
-//! \return >=0: меньший индекс искомого элемента, <0 - не найден
-searchBinaryStr(const ar{}, arSize, element, start = 0)
+stock searchBinaryStr(const ar{}, arSize, element, start = 0)
 {
     if (arSize <= 0)
         return -1;
@@ -540,15 +348,7 @@ searchBinaryStr(const ar{}, arSize, element, start = 0)
     return (ar{last} == element) ? last : -1;
 }
 
-//! Простой поиск подмассива в массиве (brute force algorithm, naive algorithm)
-//! \param[in] ar массив
-//! \param[in] arStart стартовый индекс массива для поиска
-//! \param[in] arSize длина массива
-//! \param[in] sub массив с искомым подмассивом
-//! \param[in] subSize длина массива с искомым подмассивом
-//! \param[in] subStart стартовый индекс искомого подмассива
-//! \return >=0: индекс стартового элемента искомого подмассива в массиве для поиска, ближний к началу массива (т.е. первое вхождение), <0 - не найден
-searchSubArBruteForce(const ar[], arStart, arSize, const sub[], subSize, subStart = 0)
+stock searchSubArBruteForce(const ar[], arStart, arSize, const sub[], subSize, subStart = 0)
 {
     if (arStart < 0)
         arStart = 0;
@@ -573,15 +373,7 @@ searchSubArBruteForce(const ar[], arStart, arSize, const sub[], subSize, subStar
     return -1;
 }
 
-//! Простой поиск подмассива в массиве однобайтных элементов (brute force algorithm, naive algorithm)
-//! \param[in] ar массив
-//! \param[in] arStart стартовый индекс массива для поиска
-//! \param[in] arSize длина массива
-//! \param[in] sub массив с искомым подмассивом
-//! \param[in] subSize длина массива с искомым подмассивом
-//! \param[in] subStart стартовый индекс искомого подмассива
-//! \return >=0: индекс стартового элемента искомого подмассива в массиве для поиска, ближний к началу массива (т.е. первое вхождение), <0 - не найден
-searchSubArBruteForceStr(const ar{}, arStart, arSize, const sub{}, subSize, subStart = 0)
+stock searchSubArBruteForceStr(const ar{}, arStart, arSize, const sub{}, subSize, subStart = 0)
 {
     if (arStart < 0)
         arStart = 0;
@@ -606,11 +398,7 @@ searchSubArBruteForceStr(const ar{}, arStart, arSize, const sub{}, subSize, subS
     return -1;
 }
 
-//! Шейкер-сортировка подмассива по возрастанию (сортировка перемешиванием или двунаправленная, Cocktail sort)
-//! \param[inout] ar массив для сортировки
-//! \param[in] arSize длина массива
-//! \param[in] start индекс начала сортируемого подмассива
-shakerSort(ar[], arSize, start = 0)
+stock shakerSort(ar[], arSize, start = 0)
 {
     if (start < 0)
         start = 0;
@@ -652,11 +440,7 @@ shakerSort(ar[], arSize, start = 0)
     }
 }
 
-//! Шейкер-сортировка подмассива однобайтных элементов по возрастанию (сортировка перемешиванием или двунаправленная, Cocktail sort)
-//! \param[inout] ar массив для сортировки
-//! \param[in] arSize длина массива
-//! \param[in] start индекс начала сортируемого подмассива
-shakerSortStr(ar{}, arSize, start = 0)
+stock shakerSortStr(ar{}, arSize, start = 0)
 {
     if (start < 0)
         start = 0;
@@ -698,14 +482,7 @@ shakerSortStr(ar{}, arSize, start = 0)
     }
 }
 
-//! Получить значение бита в подмассиве
-//! \param[in] ar массив
-//! \param[in] start позиция начала подмассива
-//! \param[in] arSize размер массива
-//! \param[in] bit позиция бита относительно начала подмассива
-//! \param[out] value значение бита при успешном возврате
-//! \return false - неуспешно (ошибка входных данных), true - успешно
-getBitFromArray(const ar{}, start, arSize, bit, &value)
+stock getBitFromArray(const ar{}, start, arSize, bit, &value)
 {
     new offset = start + bit / 8;
     if ((start < 0) || (bit < 0) || (offset >= arSize))
@@ -715,14 +492,7 @@ getBitFromArray(const ar{}, start, arSize, bit, &value)
     return true;
 }
 
-//! Установить значение бита в подмассиве
-//! \param[inout] ar массив
-//! \param[in] start позиция начала подмассива
-//! \param[in] arSize размер массива
-//! \param[in] bit позиция бита относительно начала подмассива
-//! \param[in] value устанавливаемое значение бита
-//! \return false - неуспешно (ошибка входных данных), true - успешно
-setBitInArray(ar{}, start, arSize, bit, value)
+stock setBitInArray(ar{}, start, arSize, bit, value)
 {
     new offset = start + bit / 8;
     if ((start < 0) || (bit < 0) || (offset >= arSize))
@@ -736,12 +506,7 @@ setBitInArray(ar{}, start, arSize, bit, value)
     return true;
 }
 
-//! Поиск минимума в массиве
-//! \param[in] ar массив
-//! \param[in] arSize размер массива
-//! \param[in] start позиция начала подмассива
-//! \return -1 - не найден (ошибка входных данных), >=0 - успешно (индекс элемента)
-searchMin(const ar[], arSize, start = 0)
+stock searchMin(const ar[], arSize, start = 0)
 {
     if (start < 0)
         start = 0;
@@ -755,12 +520,7 @@ searchMin(const ar[], arSize, start = 0)
     return idx;
 }
 
-//! Поиск минимума в массиве однобайтных элементов
-//! \param[in] ar массив
-//! \param[in] arSize размер массива
-//! \param[in] start позиция начала подмассива
-//! \return -1 - не найден (ошибка входных данных), >=0 - успешно (индекс элемента)
-searchMinStr(const ar{}, arSize, start = 0)
+stock searchMinStr(const ar{}, arSize, start = 0)
 {
     if (start < 0)
         start = 0;
@@ -774,12 +534,7 @@ searchMinStr(const ar{}, arSize, start = 0)
     return idx;
 }
 
-//! Поиск максимума в массиве
-//! \param[in] ar массив
-//! \param[in] arSize размер массива
-//! \param[in] start позиция начала подмассива
-//! \return -1 - не найден (ошибка входных данных), >=0 - успешно (индекс элемента)
-searchMax(const ar[], arSize, start = 0)
+stock searchMax(const ar[], arSize, start = 0)
 {
     if (start < 0)
         start = 0;
@@ -793,12 +548,7 @@ searchMax(const ar[], arSize, start = 0)
     return idx;
 }
 
-//! Поиск максимума в массиве однобайтных элементов
-//! \param[in] ar массив
-//! \param[in] arSize размер массива
-//! \param[in] start позиция начала подмассива
-//! \return -1 - не найден (ошибка входных данных), >=0 - успешно (индекс элемента)
-searchMaxStr(const ar{}, arSize, start = 0)
+stock searchMaxStr(const ar{}, arSize, start = 0)
 {
     if (start < 0)
         start = 0;
@@ -812,11 +562,7 @@ searchMaxStr(const ar{}, arSize, start = 0)
     return idx;
 }
 
-//! Очистить подмассив (заменить элементы на \0)
-//! \param[in] ar массив
-//! \param[in] start позиция начала подмассива
-//! \param[in] arSize размер массива
-clearArrayStr(ar{}, arSize, start = 0)
+stock clearArrayStr(ar{}, arSize, start = 0)
 {
     if (start < 0)
         start = 0;
@@ -825,42 +571,22 @@ clearArrayStr(ar{}, arSize, start = 0)
         ar{i} = 0;
 }
 
-//! Подсчет занятых 32-битных ячеек массива по его актуальной длине в байтах
-countArrayUsedCells(currentArSizeInBytes)
+stock countArrayUsedCells(currentArSizeInBytes)
 {
     return countUsedCells(currentArSizeInBytes, 4);
 }
 
-//! Поместить 24-битное число в массив littleEndian
-//! \param[in] num число для конвертации
-//! \param[out] ar массив
-//! \param[in] start стартовый индекс массива
-//! \param[in] arSize длина массива
-//! \return false - неуспешно (некорректные входные данные), true - успешно
-num24bit2arrayLe(num, ar{}, start, arSize)
+stock num24bit2arrayLe(num, ar{}, start, arSize)
 {
     return num2array(num, 3, true, ar, start, arSize);
 }
 
-//! Поместить 24-битное число в массив BigEndian
-//! \param[in] num число для конвертации
-//! \param[out] ar массив
-//! \param[in] start стартовый индекс массива
-//! \param[in] arSize длина массива
-//! \return false - неуспешно (некорректные входные данные), true - успешно
-num24bit2arrayBe(num, ar{}, start, arSize)
+stock num24bit2arrayBe(num, ar{}, start, arSize)
 {
     return num2array(num, 3, false, ar, start, arSize);
 }
 
-//! Посчитать количество одинаковых соответствующих элементов
-//! \param[in] ar1 первый сравниваемый массив
-//! \param[in] ar1start индекс начала подмассива в первом массиве
-//! \param[in] ar1size длина первого сравниваемого массива
-//! \param[in] ar2 второй сравниваемый массив
-//! \param[in] ar2start индекс начала подмассива во втором массиве
-//! \param[in] ar2size длина второго сравниваемого массива
-countIdentical(const ar1[], ar1start, ar1size, const ar2[], ar2start, ar2size)
+stock countIdentical(const ar1[], ar1start, ar1size, const ar2[], ar2start, ar2size)
 {
 	if (ar1start < 0)
         ar1start = 0;
@@ -874,14 +600,7 @@ countIdentical(const ar1[], ar1start, ar1size, const ar2[], ar2start, ar2size)
     return i;
 }
 
-//! Посчитать количество одинаковых соответствующих однобайтных элементов
-//! \param[in] ar1 первый сравниваемый массив
-//! \param[in] ar1start индекс начала подмассива в первом массиве
-//! \param[in] ar1size длина первого сравниваемого массива
-//! \param[in] ar2 второй сравниваемый массив
-//! \param[in] ar2start индекс начала подмассива во втором массиве
-//! \param[in] ar2size длина второго сравниваемого массива
-countIdenticalStr(const ar1{}, ar1start, ar1size, const ar2{}, ar2start, ar2size)
+stock countIdenticalStr(const ar1{}, ar1start, ar1size, const ar2{}, ar2start, ar2size)
 {
 	if (ar1start < 0)
         ar1start = 0;
@@ -895,10 +614,7 @@ countIdenticalStr(const ar1{}, ar1start, ar1size, const ar2{}, ar2start, ar2size
     return i;
 }
 
-//! Посчитать длину подмассива
-//! \param[in] arStart индекс начала подмассива
-//! \param[in] arSize длина массива
-getSubSize(arStart, arSize)
+stock getSubSize(arStart, arSize)
 {
     if (arStart < 0)
         arStart = 0;
@@ -909,13 +625,7 @@ getSubSize(arStart, arSize)
     return arSize > arStart ? arSize - arStart : 0;
 }
 
-//! Кольцевой сдвиг элементов подмассива
-//! \param[in] ar изменяемый массив
-//! \param[in] arSize длина массива
-//! \param[in] toRight признак необходимости сдвига вправо: true - вправо, false - влево
-//! \param[in] arStart индекс начала подмассива
-//! \param[in] count величина сдвига
-arrayRingShift(ar[], arSize, toRight, arStart = 0, count = 1)
+stock arrayRingShift(ar[], arSize, toRight, arStart = 0, count = 1)
 {
     if (arStart < 0)
         arStart = 0;
@@ -936,13 +646,7 @@ arrayRingShift(ar[], arSize, toRight, arStart = 0, count = 1)
     }
 }
 
-//! Кольцевой сдвиг однобайтных элементов подмассива
-//! \param[in] ar изменяемый массив
-//! \param[in] arSize длина массива
-//! \param[in] toRight признак необходимости сдвига вправо: true - вправо, false - влево
-//! \param[in] arStart индекс начала подмассива
-//! \param[in] count величина сдвига
-arrayRingShiftStr(ar{}, arSize, toRight, arStart = 0, count = 1)
+stock arrayRingShiftStr(ar{}, arSize, toRight, arStart = 0, count = 1)
 {
     if (arStart < 0)
         arStart = 0;
@@ -963,16 +667,7 @@ arrayRingShiftStr(ar{}, arSize, toRight, arStart = 0, count = 1)
     }
 }
 
-//! Вставить подмассив
-//! \param[out] dest целевой массив, в который вставляется
-//! \param[in] destPos смещение в целевом
-//! \param[in] destSize размер целевого массива
-//! \param[in] source вставляемый массив
-//! \param[in] sourceSize размер вставляемого массива
-//! \param[in] sourcePos смещение в вставляемом, с которого начинать вставку
-//! \param[in] fromBack признак необходимости вставки с конца вставляемого (при совпадении вставляемого с целевым)
-//! \return количество вставленных элементов
-insertArray(dest[], destPos, destSize, const source[], sourceSize, sourcePos = 0, fromBack = false)
+stock insertArray(dest[], destPos, destSize, const source[], sourceSize, sourcePos = 0, fromBack = false)
 {
     if (destPos < 0)
         destPos = 0;
@@ -998,5 +693,3 @@ insertArray(dest[], destPos, destSize, const source[], sourceSize, sourcePos = 0
     }
     return i;
 }
-
-#endif // ARRAY_LIB
