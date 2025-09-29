@@ -29,9 +29,9 @@ stock const FILE_PATH{} = "displayname/settings.bin";
 
 main()
 {
-    #ifdef DEBUG
+#ifdef DEBUG
     Delay(DEBUG_INIT_WAIT_MS);
-    #endif
+#endif
     new advTime[SETTING_SINGLE_DATA];
     settingSingleInit(advTime, "advtime", GetVarAddr(gMessageShowTimeS));
     settingSingleRestoreParam(advTime);

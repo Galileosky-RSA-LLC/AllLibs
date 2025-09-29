@@ -44,9 +44,9 @@ main()
         sendTextAnswer("wait init");
         return;
     }
-    #ifdef DEBUG
+#ifdef DEBUG
     Delay(SWITCH_TO_DIAG_WAIT_MS);
-    #endif
+#endif
     if (cmd >= CMD_DISPLAY)
         getCmdParams();
 
