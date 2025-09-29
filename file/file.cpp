@@ -61,14 +61,14 @@ stock fileWriteWrap(const fileName{}, const buf{}, bufSize, fileOffset, bufPos =
 
 stock fileReadLine(const fileFullPath{}, buf{}, bufMaxSize, fileOffset)
 {
-	new size = FileRead(fileFullPath, buf, bufMaxSize, fileOffset);
+    new size = FileRead(fileFullPath, buf, bufMaxSize, fileOffset);
     if (size <= 0)
-		return 0;
+        return 0;
 
-	new i;
+    new i;
     new hasCrSymbol = false;
     new hasLfSymbol = false;
-    for (i = 0; (i < size) && !(hasLfSymbol = buf{i} == SYMBOL_LF); i++)
+    for (i = 0; (i < size) && (i < bufMaxSize) && !(hasLfSymbol = buf{i} == SYMBOL_LF); i++)
         hasCrSymbol = buf{i} == SYMBOL_CR;
     
     if (i < bufMaxSize)

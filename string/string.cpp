@@ -61,7 +61,7 @@ stock strncpy(dest{}, destPos, destLength, const source{}, sourcePos = 0, source
         destPos = 0;
 
     new endPos = destPos + insertArrayStr(dest, destPos, destLength, source, sourcePos + strLen(source, sourceLength, sourcePos), sourcePos, fromBack);
-	if ((endPos >= 0) && (endPos < destLength))
+    if ((endPos >= 0) && (endPos < destLength))
         dest{endPos} = 0;
 }
 
@@ -289,7 +289,7 @@ stock isDigit(byte)
 
 stock atofi(const str{}, pos, length, separator, precision, &value)
 {
-	if (pos < 0)
+    if (pos < 0)
         pos = 0;
 
     new startPos = pos;
@@ -304,12 +304,12 @@ stock atofi(const str{}, pos, length, separator, precision, &value)
         value = -value;
 
     new i;
-	if (str{pos} == separator)
-	{
+    if (str{pos} == separator)
+    {
         pos++;
-		for (; (i < precision) && (pos < length); i++, pos++)
-		{
-			if (!isDigit(str{pos}))
+        for (; (i < precision) && (pos < length); i++, pos++)
+        {
+            if (!isDigit(str{pos}))
                 break;
 
             new newVal;
@@ -318,17 +318,17 @@ stock atofi(const str{}, pos, length, separator, precision, &value)
                 return 0;
 
             value = newVal;
-		}
-	}
-	for (; i < precision; i++) // оставшуюся точность дополняем нулями
-	{	
+        }
+    }
+    for (; i < precision; i++) // оставшуюся точность дополняем нулями
+    {    
         if (((value * 10) / 10) != value) // переполнение
             return 0;
 
         value *= 10;
     }
-	for (; pos < length; pos++) // оставшиеся цифры пропускаем
-	{
+    for (; pos < length; pos++) // оставшиеся цифры пропускаем
+    {
         if (!isDigit(str{pos}))
             break;
     }

@@ -17,11 +17,11 @@ stock const NEXT_STATION_PREFIX{} = "Следующая остановка: ";
 
 main()
 {
-	if (!isSettingsInited() || !isTimerExpired(GetVar(gMainUptime), PERIOD_MS))
-    	return;
+    if (!isSettingsInited() || !isTimerExpired(GetVar(gMainUptime), PERIOD_MS))
+        return;
 
-	SetVar(gMainUptime, GetVar(UPTIME));
-	new route[RAI_ROUTE_DATA];
+    SetVar(gMainUptime, GetVar(UPTIME));
+    new route[RAI_ROUTE_DATA];
     new routeCurData[ROUTE_CURRENT_DATA];
     if (!getRoute(route, routeCurData))
         return;
@@ -45,7 +45,7 @@ getRoute(route[RAI_ROUTE_DATA], routeCurData[ROUTE_CURRENT_DATA])
             Diagnostics("new route?");
             return false;
         }
-		setNeedSwithRoute(false);
+        setNeedSwithRoute(false);
     }
     if (!route.name{0})
         return false;
@@ -63,9 +63,9 @@ getRoute(route[RAI_ROUTE_DATA], routeCurData[ROUTE_CURRENT_DATA])
         SavePoint();
         initRouteCurrentData(crc, routeCurData);
         storeRouteCurrentData(routeCurData);
-		resetAlldisplaysInit();
+        resetAlldisplaysInit();
         Diagnostics("init new route done");
-	}
+    }
     return true;
 }
 
@@ -74,7 +74,7 @@ checkAndInitDisplays(route[RAI_ROUTE_DATA])
     new isFrontDisplayInited = isDisplayInited(FRONT_DISPLAY_INDEX);
     new isSideDisplayInited = isDisplayInited(SIDE_DISPLAY_INDEX);
     new hasFinalStations = false;
-	if (!isFrontDisplayInited || !isSideDisplayInited)
+    if (!isFrontDisplayInited || !isSideDisplayInited)
     {
         if (hasFinalStations = raiGetFinalStations(route))
             Diagnostics("final stations:\"%s\"-\"%s\"", route.startStation, route.endStation);
@@ -83,42 +83,42 @@ checkAndInitDisplays(route[RAI_ROUTE_DATA])
     }
     new res = true; // для шаблона - положительный результат, в реальных применениях - сначала отрицательный
     if (!isFrontDisplayInited)
-	{
+    {
         Diagnostics("init front display start");
         // res = ... route.name, route.startStation, route.endStation
-		if (res)
-			setDisplayInit(FRONT_DISPLAY_INDEX, true);
-    	
+        if (res)
+            setDisplayInit(FRONT_DISPLAY_INDEX, true);
+        
         Diagnostics("init front display %s", res ? "done" : "error");
-	}
-	if (!isSideDisplayInited)
-	{
-		Diagnostics("init side display start");
+    }
+    if (!isSideDisplayInited)
+    {
+        Diagnostics("init side display start");
         // res = ... route.name, route.startStation, route.endStation
-		if (res)
-			setDisplayInit(FRONT_DISPLAY_INDEX, true);
-    	
+        if (res)
+            setDisplayInit(FRONT_DISPLAY_INDEX, true);
+        
         Diagnostics("init side display %s", res ? "done" : "error");
-	}
-	if (!isDisplayInited(REAR_DISPLAY_INDEX))
-	{
-		Diagnostics("init rear display start");
+    }
+    if (!isDisplayInited(REAR_DISPLAY_INDEX))
+    {
+        Diagnostics("init rear display start");
         // res = ... route.name
-		if (res)
-			setDisplayInit(FRONT_DISPLAY_INDEX, true);
-    	
+        if (res)
+            setDisplayInit(FRONT_DISPLAY_INDEX, true);
+        
         Diagnostics("init rear display %s", res ? "done" : "error");
-	}
-	if (!isDisplayInited(SALON_DISPLAY_INDEX))
-	{
-		Diagnostics("init salon display start");
+    }
+    if (!isDisplayInited(SALON_DISPLAY_INDEX))
+    {
+        Diagnostics("init salon display start");
         // res = ... route.name, route.startStation, route.endStation
         Diagnostics("init salon display %s", res ? "done" : "error");
         if (!res)
             return false;
 
-		setDisplayInit(FRONT_DISPLAY_INDEX, true);
-	}
+        setDisplayInit(FRONT_DISPLAY_INDEX, true);
+    }
     return true;
 }
 

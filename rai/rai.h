@@ -10,6 +10,7 @@
 #define RAI_FILE_PATH_LENGTH_MAX_W0 (RAI_FILE_PATH_LENGTH_MAX + 1)
 #define RAI_STRING_LENGTH_MAX 255
 #define RAI_STRING_LENGTH_MAX_W0 (RAI_STRING_LENGTH_MAX + 1)
+
 stock const RAI_CURRENT_ROUTE_FILE_PATH{} = "route_name";
 stock const RAI_FINAL_STATIONS_FILE_NAME{} = "stations.txt";
 stock const RAI_BUSLINE_FILE_NAME{} = "BusLine.txt";
@@ -19,7 +20,7 @@ stock const RAI_AUDIO_FILE_NAME{} = "route.wav";
 #define RAI_ROUTE_DATA [\
     .name{RAI_FILE_PATH_LENGTH_MAX_W0},\
     .busLineFilePath{RAI_FILE_PATH_LENGTH_MAX_W0},\
-	.finalStationsFilePath{RAI_FILE_PATH_LENGTH_MAX_W0},\
+    .finalStationsFilePath{RAI_FILE_PATH_LENGTH_MAX_W0},\
     .advertismentFilePath{RAI_FILE_PATH_LENGTH_MAX_W0},\
     .audioFilePath{RAI_FILE_PATH_LENGTH_MAX_W0},\
     .startStation{RAI_STRING_LENGTH_MAX_W0},\
