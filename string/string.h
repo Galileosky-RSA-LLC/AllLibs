@@ -10,10 +10,14 @@
 #define NUM_VALUE_MIN_STR_LENGTH 11
 #define NUM_VALUE_MAX_STR "2147483647"
 #define NUM_VALUE_MAX_STR_LENGTH 10
+
 #define BASE64_BLOCK_SIZE 4
 #define BASE64_PADDING '='
 #define BASE64_ALPHABET_SIZE 64
 stock const BASE64_ALPHABET{} ="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+
+#define SYMBOL_CR 0x0D
+#define SYMBOL_LF 0x0A
 
 //! @defgroup general Общие функции
 //! @{
@@ -52,7 +56,8 @@ forward stock strLen(const str{}, strLength = 0, start = 0);
 //! @param[in] source массив строки-источника
 //! @param[in] sourcePos начальная позиция в строке-источнике
 //! @param[in] sourceLength длина массива строки-источника (если <=0, то будет вычислена)
-forward stock strncpy(dest{}, destPos, destLength, const source{}, sourcePos = 0, sourceLength = 0);
+//! @param[in] fromBack признак необходимости вставки с конца источника (при совпадении источника с приемником)
+forward stock strncpy(dest{}, destPos, destLength, const source{}, sourcePos = 0, sourceLength = 0, fromBack = false);
 
 //! @}
 
