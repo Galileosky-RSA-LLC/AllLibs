@@ -1,10 +1,8 @@
-#ifdef SETTING_LIB
-#endinput
-#endif
+#ifndef SETTING_LIB
 #define SETTING_LIB
-
-//! @file
-//! @brief Реализация библиотеки файловых настроек
+//{ ============================================================================
+//{ Библиотека работы с настройками ============================================
+//{ ============================================================================
 
 #include "setting.h"
 #include "..\array\array.h"
@@ -12,9 +10,9 @@
 #include "..\string\string.h"
 #include "..\string\string.cpp"
 
-//! @publicsection
+// Публичные функции
 
-stock settingInit(obj[SETTING_DATA], const fileName{}, const varAddresses[], varAddressesSize)
+settingInit(obj[SETTING_DATA], const fileName{}, const varAddresses[], varAddressesSize)
 {
 	insertArrayStr(obj.fileName, 0, SETTING_FILENAME_SIZE_MAX, fileName, strLen(fileName, SETTING_FILENAME_SIZE_MAX));
     for (new i = 0; (i < varAddressesSize) && (i < SETTING_PARAMS_AMOUNT); i++)
@@ -27,7 +25,8 @@ stock settingInit(obj[SETTING_DATA], const fileName{}, const varAddresses[], var
     }
 }
 
-stock settingStoreParamsByChange(obj[SETTING_DATA])
+//! Сохранить параметры по их изменению
+settingStoreParamsByChange(obj[SETTING_DATA])
 {
     for (new i = 0; i < SETTING_PARAMS_AMOUNT; i++)
 	{
@@ -46,7 +45,8 @@ stock settingStoreParamsByChange(obj[SETTING_DATA])
 	}
 }
 
-stock settingRestoreParams(obj[SETTING_DATA])
+//! Загрузить сохраненные параметры
+settingRestoreParams(obj[SETTING_DATA])
 {
     new size = FileRead(obj.fileName, obj.oldValue, SETTING_BUF_SIZE);
     new i;
@@ -61,7 +61,8 @@ stock settingRestoreParams(obj[SETTING_DATA])
         obj.oldValue[i] = GetVar(obj.varAddr[i]); // т.к. параметры были не все, вернем
 }
 
-stock settingSingleInit(obj[SETTING_SINGLE_DATA], const fileName{}, varAddress)
+//! Инициализировать изолированный параметр
+settingSingleInit(obj[SETTING_SINGLE_DATA], const fileName{}, varAddress)
 {
 	insertArrayStr(obj.fileName, 0, SETTING_FILENAME_SIZE_MAX, fileName, strLen(fileName, SETTING_FILENAME_SIZE_MAX));
     obj.varAddr = varAddress;
@@ -71,7 +72,8 @@ stock settingSingleInit(obj[SETTING_SINGLE_DATA], const fileName{}, varAddress)
     #endif
 }
 
-stock settingSingleRestoreParam(obj[SETTING_SINGLE_DATA])
+//! Восстановить значение изолированного параметра из файла
+settingSingleRestoreParam(obj[SETTING_SINGLE_DATA])
 {
     new buf{NUM_VALUE_MIN_STR_LENGTH};
     new readSize = FileRead(obj.fileName, buf, NUM_VALUE_MIN_STR_LENGTH, 0);
@@ -88,7 +90,7 @@ stock settingSingleRestoreParam(obj[SETTING_SINGLE_DATA])
     #endif
 }
 
-stock settingSingleStoreParamByChange(obj[SETTING_SINGLE_DATA])
+settingSingleStoreParamByChange(obj[SETTING_SINGLE_DATA])
 {
     new actualValue = GetVar(obj.varAddr);
     if (actualValue == obj.oldValue)
@@ -104,10 +106,10 @@ stock settingSingleStoreParamByChange(obj[SETTING_SINGLE_DATA])
     obj.oldValue = actualValue;
 }
 
-//! @privatesection
+// Приватные функции
 
-//! @brief Сохранить параметр и все несохраненные до него
-stock setting_storeParam(obj[SETTING_DATA], idx)
+//! Сохранить параметр и все несохраненные до него
+setting_storeParam(obj[SETTING_DATA], idx)
 {
 	if ((idx < 0) || (idx >= SETTING_PARAMS_AMOUNT))
 		return false;
@@ -121,3 +123,7 @@ stock setting_storeParam(obj[SETTING_DATA], idx)
     buf[0] = obj.oldValue[idx];
     return FileWrite(obj.fileName, buf, SETTING_PARAM_SIZE, idx * SETTING_PARAM_SIZE) == SETTING_PARAM_SIZE;
 }
+
+//!} Библиотека работы с настройками ===========================================
+//!} ===========================================================================
+#endif // SETTING_LIB
