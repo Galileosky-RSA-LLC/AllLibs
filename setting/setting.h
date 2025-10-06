@@ -1,26 +1,21 @@
-#ifdef SETTING_H
-#endinput
-#endif
+#ifndef SETTING_H
 #define SETTING_H
+//{ ============================================================================
+//{ Заголовок библиотеки работы с настройками ==================================
+//{ ============================================================================
 
-//! @file
-//! @brief Заголовок библиотеки файловых настроек
+//#define SETTING_DEBUG // режим отладки
 
-#include "..\numeric\numeric.h"
-#include "..\file\file.h"
-
-//#define SETTING_DEBUG // включить для отладки
-
-#define SETTING_CONF_CMD_WAIT_MS 5000 //!< время ожидания конфигурационных команд при отсутствии доступа к файловой системе
+#define SETTING_CONF_CMD_WAIT_MS 5000 // время ожидания конфигурационных команд при отсутствии доступа к файловой системе
 
 #ifndef SETTING_PARAMS_AMOUNT
-#define SETTING_PARAMS_AMOUNT 1 //!< общее количество сохраняемых параметров
+#define SETTING_PARAMS_AMOUNT 1 // общее количество сохраняемых параметров
 #endif
 
-#define SETTING_FILENAME_SIZE_MAX FILE_FULL_PATH_SIZE_MAX
+#define SETTING_FILENAME_SIZE_MAX 255
 #define SETTING_FILENAME_SIZE_MAX_WITH_0 (SETTING_FILENAME_SIZE_MAX + 1)
 
-#define SETTING_PARAM_SIZE CELL_BYTES
+#define SETTING_PARAM_SIZE 4
 #define SETTING_BUF_SIZE (SETTING_PARAMS_AMOUNT * SETTING_PARAM_SIZE)
 
 #define SETTING_DATA [\
@@ -35,29 +30,13 @@
     .oldValue,\
 ]
 
-//! @brief Инициализировать объект настроек
-//! @param[out] obj инициализируемая структура данных
-//! @param[in] fileName имя файла с настройками, должно оканчиваться \0
-//! @param[in] varAddresses адреса глобальных переменных с настройками
-//! @param[in] varAddressesSize количество адресов
-forward stock settingInit(obj[SETTING_DATA], const fileName{}, const varAddresses[], varAddressesSize);
+settingInit(obj[SETTING_DATA], const fileName{}, const varAddresses[], varAddressesSize);
+settingRestoreParams(obj[SETTING_DATA]);
+settingStoreParamsByChange(obj[SETTING_DATA]);
+settingSingleInit(obj[SETTING_SINGLE_DATA], const fileName{}, varAddress);
+settingSingleRestoreParam(obj[SETTING_SINGLE_DATA]);
+settingSingleStoreParamByChange(obj[SETTING_SINGLE_DATA]);
 
-//! @brief Загрузить сохраненные параметры из файла в глобальные переменные
-forward stock settingRestoreParams(obj[SETTING_DATA]);
-
-//! @brief Сохранить параметры по их изменению
-//! @details Сначала проверяется изменение текущих значений глобальных переменных по отношению к предыдущему вызову
-forward stock settingStoreParamsByChange(obj[SETTING_DATA]);
-
-//! @brief Инициализировать изолированный параметр, хранящийся в отдельном файле
-//! @param[out] obj инициализируемая структура данных
-//! @param[in] fileName имя файла с настройкой, должно оканчиваться \0
-//! @param[in] varAddresses адрес глобальной переменной для данной настройки
-forward stock settingSingleInit(obj[SETTING_SINGLE_DATA], const fileName{}, varAddress);
-
-//! @brief Восстановить значение изолированного параметра из файла
-forward stock settingSingleRestoreParam(obj[SETTING_SINGLE_DATA]);
-
-//! @brief Сохранить параметр при его изменении
-//! @details Текущее значение сравнивается со значением с предыдущего вызова
-forward stock settingSingleStoreParamByChange(obj[SETTING_SINGLE_DATA]);
+//!} Конец заголовка библиотеки работы с настройками ===========================
+//!} ===========================================================================
+#endif // SETTING_H

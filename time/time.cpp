@@ -1,38 +1,48 @@
-#ifdef TIME_LIB
-#endinput
-#endif
+#ifndef TIME_LIB
 #define TIME_LIB
-
-//! @file
-//! @brief Реализация библиотеки времени
+// Библиотека функций времени
 
 #include "time.h"
 #include "..\numeric\numeric.h"
 
-stock isTimerExpired(fixedUptime, timer)
+//! Истек ли таймер с зафиксированного времени UPTIME
+//! \param[in] fixedTime зафиксированное время от запуска операционной системы в мс
+//! \param[in] timer таймер в мс
+isTimerExpired(fixedTime, timer)
 {
     new gUpt = GetVar(UPTIME);
     if (timer < 0)
         timer = 0;
 
-	if (gUpt == fixedUptime)
+	if (gUpt == fixedTime)
 		return timer == 0;
     
-    return (gUpt - fixedUptime) >= 0 ? (gUpt - fixedUptime) >= timer : true;
+    return (gUpt - fixedTime) >= 0 ? (gUpt - fixedTime) >= timer : true;
 }
 
-stock wait(timer)
+//! Задержать выполнение, 
+//! более точно, чем Delay(), шаг 10 мс
+wait(timer)
 {
     waitFrom(GetVar(UPTIME), timer);
 }
 
-stock waitFrom(fixedUptime, timer)
+//! Задержать выполнение с зафиксированного времени
+waitFrom(fixedTime, timer)
 {
-    while (!isTimerExpired(fixedUptime, timer))
+    while (!isTimerExpired(fixedTime, timer))
         Delay(10);
 }
 
-stock unixTime2dateTime(time, &year, &month, &day, &hour, &minute, &second)
+//! Разделить метку времени Unixtime на дату и время в отдельные переменные
+//! \param[in] time метка времени Unixtime
+//! \param[out] day день
+//! \param[out] month месяц
+//! \param[out] year год
+//! \param[out] hour час
+//! \param[out] minute минута
+//! \param[out] second секунда
+unixTime2dateTime(time, &year, &month, &day, &hour, &minute, &second)
 {
     new i = 0;
     new thisYearSeconds = NONLEAP_YEAR_SECONDS;
@@ -67,7 +77,8 @@ stock unixTime2dateTime(time, &year, &month, &day, &hour, &minute, &second)
     second = secondsFromHour - minute * SECONDS_PER_MINUTE;
 }
 
-stock uptimeLess(uptime1, uptime2)
+//! Проверить, что uptime1 < uptime2
+uptimeLess(uptime1, uptime2)
 {
     if (uptime1 == uptime2)
         return false;
@@ -78,7 +89,16 @@ stock uptimeLess(uptime1, uptime2)
     return (uptime1 >= 0) && (uptime2 < 0);
 }
 
-stock dateTime2unixTime(year, month, day, hour, minute, second, &unixtime)
+//! Преобразовать компоненты времени (UTC без смещения) в Unixtime
+//! \param[in] day день
+//! \param[in] month месяц
+//! \param[in] year год
+//! \param[in] hour час
+//! \param[in] minute минута
+//! \param[in] second секунда
+//! \param[out] unixtime метка времени Unixtime
+//! \return true - успешно, false - ошибка входных данных
+dateTime2unixTime(year, month, day, hour, minute, second, &unixtime)
 {
     new monthDays[] = [JANUARY_DAYS, FEBRUARY_NONLEAP_DAYS, MARCH_DAYS, APRIL_DAYS, MAY_DAYS, JUNE_DAYS, JULY_DAYS, AUGUST_DAYS, SEPTEMBER_DAYS, OCTOBER_DAYS,
                         NOVEMBER_DAYS, DECEMBER_DAYS];
@@ -117,12 +137,19 @@ stock dateTime2unixTime(year, month, day, hour, minute, second, &unixtime)
     return true;
 }
 
-stock isLeapYear(year)
+//! Проверка года на високосность
+isLeapYear(year)
 {
     return (((year % 4 == 0) && (year % 100 != 0)) || (year % 400 == 0));
 }
 
-stock duration(uptimeStart, uptimeEnd)
+//! Определить длительность в мс 
+//! \param[in] uptimeStart время старта
+//! \param[in] uptimeEnd время окончания
+//! \return длительность в мс
+duration(uptimeStart, uptimeEnd)
 {
     return uptimeStart <= uptimeEnd ? uptimeEnd - uptimeStart : cellmax - uptimeStart + uptimeEnd;
 }
+
+#endif // TIME_LIB
