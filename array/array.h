@@ -383,7 +383,7 @@ forward stock searchSubArBruteForce(const ar[], arStart, arSize, const sub[], su
 //! @param[in] subSize длина массива с искомым подмассивом
 //! @param[in] subStart стартовый индекс искомого подмассива
 //! @return >=0: индекс стартового элемента искомого подмассива в массиве для поиска, ближний к началу массива (т.е. первое вхождение), <0 - не найден
-searchSubArBruteForceStr(const ar{}, arStart, arSize, const sub{}, subSize, subStart = 0);
+forward stock searchSubArBruteForceStr(const ar{}, arStart, arSize, const sub{}, subSize, subStart = 0);
 
 //! @}
 
