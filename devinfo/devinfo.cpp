@@ -394,5 +394,7 @@ stock getInStatus(index)
         case 7: return GetVar(STATUS_OF_IN7);
         case 8: return GetVar(STATUS_OF_IN8);
         case 9: return GetVar(STATUS_OF_IN9);
+        default: return false;
     }
+    return false;
 }

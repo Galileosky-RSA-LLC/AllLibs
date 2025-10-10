@@ -89,29 +89,29 @@ stock crc(const data{}, dataSize, polyWidth, poly, pos = 0, init = 0, bool:isRev
     if (pos < 0)
         pos = 0;
 
-    new crc = init;
+    new result = init;
     new topBit = (1 << (polyWidth - 1));
     for (; pos < dataSize; pos++)
     {
         new byte = data{pos};
-        crc ^= (isRevert ? reverseBits(byte, 8) : byte) << (polyWidth - 8);
+        result ^= (isRevert ? reverseBits(byte, 8) : byte) << (polyWidth - 8);
         for (new i = 0; i < 8; i++)
-            crc = crc & topBit ? (crc << 1) ^ poly : (crc << 1);
+            result = result & topBit ? (result << 1) ^ poly : (result << 1);
     }
     if (isFinish)
     {
         if (isRevert)
         {
-            crc = reverseBits(crc, polyWidth);
+            result = reverseBits(result, polyWidth);
         }
         else
         {
             new mask = (topBit << 1) - 1;
-            crc &= mask;
+            result &= mask;
         }
-        crc ^= xorOut;
+        result ^= xorOut;
     }
-    return crc;
+    return result;
 }
 
 //! @privatesection
