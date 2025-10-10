@@ -1,17 +1,19 @@
-#ifndef DEVINFO_LIB
+#ifdef DEVINFO_LIB
+#endinput
+#endif
 #define DEVINFO_LIB
-// Определение информации о приборе
 
-#include "devinfo.h"
+//! @file
+//! @brief Реализация библиотеки определения информации о приборе
+
 #include "..\array\array.h"
 #include "..\array\array.cpp"
 #include "..\string\string.h"
 #include "..\string\string.cpp"
 #include "..\gdefines.h"
+#include "devinfo.h"
 
-
-//! Получить модель прибора DEVINFO_MODEL_
-getModel()
+stock getModel()
 {
     const bufLength = 64;
     new buf{bufLength} = "SPECS";
@@ -30,11 +32,7 @@ getModel()
     return (searchSubArBruteForceStr(buf, 0, bufLength, "galileosky baseblock", 20) >= 0) ? DEVINFO_MODEL_BB : DEVINFO_MODEL_UNKNOWN;
 }
 
-//! Получить версию прошивки прибора
-//! \param[out] softMaj мажорная версия
-//! \param[out] softMin минорная версия
-//! \return !=0 - успешно, 0 - ошибка
-getSoftVersion(&softMaj, &softMin)
+stock getSoftVersion(&softMaj, &softMin)
 {
     softMaj = 0;
     softMin = 0;
@@ -56,9 +54,7 @@ getSoftVersion(&softMaj, &softMin)
     return atoi(buf, pos, bufLength, softMin);
 }
 
-//! Получить текущий уровень диагностики
-//! \return DEVINFO_DEBUGLEVEL_
-getDebugLevel()
+stock getDebugLevel()
 {
     const bufLength = 16;
     new buf{bufLength} = "DEBUGLEVEL";
@@ -72,11 +68,7 @@ getDebugLevel()
     return DEVINFO_DEBUGLEVEL_UNKNOWN;
 }
 
-//! Проверить по модели прибора и версии прошивки существование возврата для функции PortInit()
-//! \param[in] devModel модель прибора DEVINFO_MODEL_
-//! \param[in] softMaj мажорная версия прошивки
-//! \param[in] softMin минорная версия прошивки
-isPortInitHasResult(devModel, softMaj, softMin)
+stock isPortInitHasResult(devModel, softMaj, softMin)
 {
     return ((devModel == DEVINFO_MODEL_7X)
             && (((softMaj == 32) && (softMin >= 9)) || ((softMaj == 37) && (softMin >= 3)) || ((softMaj == 38) && (softMin >= 2)) || (softMaj >= 39)))
@@ -86,43 +78,26 @@ isPortInitHasResult(devModel, softMaj, softMin)
             || (devModel >= DEVINFO_MODEL_10);
 }
 
-//! Проверить по модели прибора и версии прошивки доступность функций ROM (сохранение параметров в ПЗУ)
-//! \param[in] devModel модель прибора DEVINFO_MODEL_
-//! \param[in] softMaj мажорная версия прошивки
-//! \param[in] softMin минорная версия прошивки
-isRomAvailable(devModel, softMaj, softMin)
+stock isRomAvailable(devModel, softMaj, softMin)
 {
     return ((devModel == DEVINFO_MODEL_7X) && (((softMaj == 43) && (softMin >= 3)) || (softMaj > 43)))
             || (devModel >= DEVINFO_MODEL_10);
 }
 
-//! Проверить по модели прибора и версии прошивки доступность функций отложенной записи тегов
-//! \param[in] devModel модель прибора DEVINFO_MODEL_
-//! \param[in] softMaj мажорная версия прошивки
-//! \param[in] softMin минорная версия прошивки
-isTagWriteBeginAvailable(devModel, softMaj, softMin)
+stock isTagWriteBeginAvailable(devModel, softMaj, softMin)
 {
     return ((devModel == DEVINFO_MODEL_7X) && (((softMaj == 47) && (softMin >= 13)) || (softMaj > 47)))
             || ((devModel == DEVINFO_MODEL_10) && (((softMaj == 2) && (softMin >= 7)) || (softMaj > 2)))
             || (devModel > DEVINFO_MODEL_10);
 }
 
-//! Проверить по модели прибора и версии прошивки доступность тегов колесных датчиков
-//! \param[in] devModel модель прибора DEVINFO_MODEL_
-//! \param[in] softMaj мажорная версия прошивки
-//! \param[in] softMin минорная версия прошивки
-isWheelTagsAvailable(devModel, softMaj, softMin)
+stock isWheelTagsAvailable(devModel, softMaj, softMin)
 {
     return ((devModel == DEVINFO_MODEL_7X) && (((softMaj == 43) && (softMin >= 3)) || (softMaj > 43)))
             || (devModel >= DEVINFO_MODEL_10);
 }
 
-//! Получить размеры свободной оперативной памяти в байтах
-//! \param[out] firmware для основной прошивки и алгоритмов Easy Logic (в Galileosky 10 Pro - только для прошивки)
-//! \param[out] zip для распаковки файлов и прошивок
-//! \param[out] easyLogic для алгоритмов Easy Logic в Galileosky 10 Pro
-//! \return !=0 - количество полученных значений, 0 - ошибка (команда не поддерживается, изменился формат и пр.)
-getFreeRam(&firmware, &zip = 0, &easyLogic = 0)
+stock getFreeRam(&firmware, &zip = 0, &easyLogic = 0)
 {
     ExecCommand("FREEMEM");
     const bufMaxSize = 56;
@@ -143,8 +118,7 @@ getFreeRam(&firmware, &zip = 0, &easyLogic = 0)
     return valuesActualSize;
 }
 
-//! Получить максимальный размер данных тега
-getTagMaxSize(tagId)
+stock getTagMaxSize(tagId)
 {
     if (((tagId >= TAG_CAN32BITR_0) && (tagId <= TAG_CAN32BITR_4))
         || ((tagId >= TAG_CAN32BITR_5) && (tagId <= TAG_CAN32BITR_14))
@@ -184,11 +158,7 @@ getTagMaxSize(tagId)
     return 0;
 }
 
-//! Получить значение числового тега по его идентификатору
-//! \param[in] tagId идентификатор тега
-//! \param[out] value полученное значение при успешном возврате
-//! \return true - успешно, false - ошибка идентификатора тега
-getTagValue(tagId, &value)
+stock getTagValue(tagId, &value)
 {
     switch (tagId)
     {
@@ -400,25 +370,17 @@ getTagValue(tagId, &value)
     return true;
 }
 
-//! Проверить наличие внешнего питания прибора
-//! \param[in] devStatus значение статуса из глобальной переменной STATUS
-//! \return true - есть внешнее питание, false - нет внешнего питания
-hasExtPower(devStatus)
+stock hasExtPower(devStatus)
 {
     return !((devStatus >>> DEVINFO_STATUS_EXTPOWERFAIL_BIT) & 1);
 }
 
-//! Проверить, что двигатель заведен (== зажигание включено)
-//! \param[in] devStatus значение статуса из глобальной переменной STATUS
-//! \return true - двигатель заведен, false - остановлен
-isEngineOn(devStatus)
+stock isEngineOn(devStatus)
 {
     return (devStatus >>> DEVINFO_STATUS_ENGINEON_BIT) & 1;
 }
 
-//! Получить дискретный статус дискретно-аналогового входа
-//! \param[in] index индекс входа
-getInStatus(index)
+stock getInStatus(index)
 {
     switch (index)
     {
@@ -434,5 +396,3 @@ getInStatus(index)
         case 9: return GetVar(STATUS_OF_IN9);
     }
 }
-
-#endif // DEVINFO_LIB

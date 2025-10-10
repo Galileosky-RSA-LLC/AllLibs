@@ -1,10 +1,16 @@
-#ifndef GDEFINES_H
+#ifdef GDEFINES_H
+#endinput
+#endif
 #define GDEFINES_H
-// Общие определения
 
-// Идентификаторы тегов
+//! @file
+//! @brief Общие определения
 
-// CAN
+//! @defgroup tagIds Идентификаторы тегов
+
+//! @defgroup canTagIds CAN теги
+//! @ingroup tagIds
+//! @{
 #define TAG_CAN8BITR_0 0x02
 #define TAG_CAN8BITR_1 0x03
 #define TAG_CAN8BITR_2 0x04
@@ -75,8 +81,11 @@
 #define TAG_CAN_A_1 0x6D
 #define TAG_CAN_B_0 0x6E
 #define TAG_CAN_B_1 0x6F
+//! @}
 
-// User
+//! @defgroup userTagIds Числовые пользовательские теги
+//! @ingroup tagIds
+//! @{
 #define TAG_USER_0 0x62
 #define TAG_USER_1 0x63
 #define TAG_USER_2 0x64
@@ -85,8 +94,11 @@
 #define TAG_USER_5 0x67
 #define TAG_USER_6 0x68
 #define TAG_USER_7 0x69
+//! @}
 
-// BLUETOOTH
+//! @defgroup btTagIds Bluetooth теги
+//! @ingroup tagIds
+//! @{
 #define TAG_BLUETOOTH_0 0x70
 #define TAG_BLUETOOTH_1 0x71
 #define TAG_BLUETOOTH_2 0x72
@@ -157,14 +169,21 @@
 #define TAG_BLUETOOTH_61 0xAD
 #define TAG_BLUETOOTH_62 0xAE
 #define TAG_BLUETOOTH_63 0xAF
+//! @}
 
-// ports
+//! @defgroup rs232tagIds Теги портов RS-232
+//! @ingroup tagIds
+//! @{
 #define TAG_RS232_0_VALUE 0x00
 #define TAG_RS232_1_VALUE 0x01
 
 #define TAG_RS232_0_TEMP 0x2B
 #define TAG_RS232_1_TEMP 0x2C
+//! @}
 
+//! @defgroup rs485tagIds Теги порта RS-485
+//! @ingroup tagIds
+//! @{
 #define TAG_RS485_FLS0_VALUE 0x1B
 #define TAG_RS485_FLS1_VALUE 0x1C
 #define TAG_RS485_FLS2_VALUE 0x1D
@@ -198,13 +217,19 @@
 #define TAG_RS485_FLS13_TEMP 0x3A
 #define TAG_RS485_FLS14_TEMP 0x3B
 #define TAG_RS485_FLS15_TEMP 0x3C
+//! @}
 
-// arrays
+//! @defgroup arrayTagIds Теги массивов
+//! @ingroup tagIds
+//! @{
 #define TAG_TPMS 0x61
 #define TAG_USER_ARRAY 0x6A
 #define TAG_REFRIGERATOR 0x6B
+//! @}
 
-// Modbus
+//! @defgroup modbusTagIds Теги Modbus
+//! @ingroup tagIds
+//! @{
 #define TAG_MODBUS_0 0xB0
 #define TAG_MODBUS_1 0xB1
 #define TAG_MODBUS_2 0xB2
@@ -275,8 +300,11 @@
 #define TAG_MODBUS_61 0xED
 #define TAG_MODBUS_62 0xEE
 #define TAG_MODBUS_63 0xEF
+//! @}
 
-// Wheels
+//! @defgroup wheelTagIds Колесные теги
+//! @ingroup tagIds
+//! @{
 #define TAG_WHEEL_0 0x100
 #define TAG_WHEEL_1 0x101
 #define TAG_WHEEL_2 0x102
@@ -314,29 +342,28 @@
 #define TAG_WHEEL_31 0x11F
 #define TAG_WHEEL_32 0x120
 #define TAG_WHEEL_33 0x121
+//! @}
 
-// iButton
+//! @defgroup iButtonTagIds Теги iButton
+//! @ingroup tagIds
+//! @{
 #define TAG_IBUTTON_0 0xF0
 #define TAG_IBUTTON_1 0xF1
+//! @}
 
-
-// коды возврата BLE API
-#define BLE_SUCCESS 1 // и более
-#define BLE_ERROR_TIMEOUT 0
-#define BLE_ERROR_ARGS -1
-#define BLE_ERROR_STATE -2
-#define BLE_ERROR_GENERAL -3
-#define BLE_ERROR_REJECT -4
-
-// размеры тегов
+//! @defgroup tagSizes Размеры тегов
+//! @{
 #define TAG_TPMS_SIZE 72
+
 #define TAG_USER_ARRAY_MAX_SIZE 180
+
 #define TAG_REFRIGERATOR_MIN_SIZE 7
 #define TAG_REFRIGERATOR_MAX_SIZE 117
+//! @}
 
-// дискретно-аналоговые входы
+//! @defgroup inputs Дискретно-аналоговые входы
+//! @{
 #define ADC_INPUTS_AMOUNT_MAX 10
 #define ADC_INPUT_IDX_MIN 0
 #define ADC_INPUT_IDX_MAX (ADC_INPUTS_AMOUNT_MAX - 1)
-
-#endif // GDEFINES_H
+//! @}
