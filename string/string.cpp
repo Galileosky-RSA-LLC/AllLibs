@@ -558,3 +558,15 @@ stock isAsciiHex(byte)
 {
     return ((byte >= '0') && (byte <= '9')) || ((byte >= 'A') && (byte <= 'F')) || ((byte >= 'a') && (byte <= 'f'));
 }
+
+stock getStrFromGlobalVars(const dataInVarAddresses[], dataInVarAddressesSize, str{}, strMaxSize, pos = 0)
+{
+    return getArrayFromGlobalVars(dataInVarAddresses, dataInVarAddressesSize, str, strMaxSize, .useDataInSize = false, .dataInSizeVarAddr = 0,
+                                    .dataOutPos = pos);
+}
+
+stock setStrToGlobalVars(const dataOutVarAddresses[], dataOutVarAddressesSize, const str{}, pos = 0)
+{
+    return setArrayToGlobalVars(dataOutVarAddresses, dataOutVarAddressesSize, str, pos + strLen(str, .pos = pos), .useDataOutSize = false,
+                                .dataOutActualSizeVarAddr = 0, .dataInPos = pos);
+}

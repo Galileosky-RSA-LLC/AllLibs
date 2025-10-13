@@ -92,7 +92,6 @@ forward stock countIdenticalStr(const ar1{}, ar1start, ar1size, const ar2{}, ar2
 //! @param[in] arStart индекс начала подмассива
 //! @param[in] arSize длина массива
 forward stock getSubSize(arStart, arSize);
-
 //! @}
 
 //! @defgroup similarElementsOperations Однотипные операции над элементами
@@ -150,7 +149,6 @@ forward stock arrayRingShift(ar[], arSize, toRight, arStart = 0, count = 1);
 //! @param[in] arStart индекс начала подмассива
 //! @param[in] count величина сдвига
 forward stock arrayRingShiftStr(ar{}, arSize, toRight, arStart = 0, count = 1);
-
 //! @}
 
 //! @defgroup ar2num Преобразование массив <-> число
@@ -320,7 +318,6 @@ forward stock num32bit2arrayLe(num, ar{}, start, arSize);
 //! @param[in] arSize длина массива
 //! @return false - неуспешно (некорректные входные данные), true - успешно
 forward stock num32bit2arrayBe(num, ar{}, start, arSize);
-
 //! @}
 
 //! @defgroup ar2num Поиск элемента
@@ -357,7 +354,6 @@ forward stock searchBinary(const ar[], arSize, element, start = 0);
 //! @param[in] start стартовый индекс для поиска
 //! @return >=0: меньший индекс искомого элемента, <0 - не найден
 forward stock searchBinaryStr(const ar{}, arSize, element, start = 0);
-
 //! @}
 
 //! @defgroup searchSubAr Поиск подмассива
@@ -384,7 +380,6 @@ forward stock searchSubArBruteForce(const ar[], arStart, arSize, const sub[], su
 //! @param[in] subStart стартовый индекс искомого подмассива
 //! @return >=0: индекс стартового элемента искомого подмассива в массиве для поиска, ближний к началу массива (т.е. первое вхождение), <0 - не найден
 forward stock searchSubArBruteForceStr(const ar{}, arStart, arSize, const sub{}, subSize, subStart = 0);
-
 //! @}
 
 //! @defgroup minMax Поиск экстремумов
@@ -417,7 +412,6 @@ forward stock searchMax(const ar[], arSize, start = 0);
 //! @param[in] start позиция начала подмассива
 //! @return -1 - не найден (ошибка входных данных), >=0 - успешно (индекс элемента)
 forward stock searchMaxStr(const ar{}, arSize, start = 0);
-
 //! @}
 
 //! @defgroup sort Сортировки
@@ -436,7 +430,6 @@ forward stock shakerSort(ar[], arSize, start = 0);
 //! @param[in] arSize длина массива
 //! @param[in] start индекс начала сортируемого подмассива
 forward stock shakerSortStr(ar{}, arSize, start = 0);
-
 //! @}
 
 //! @defgroup bitOperations Битовые операции
@@ -459,5 +452,34 @@ forward stock getBitFromArray(const ar{}, start, arSize, bit, &value);
 //! @param[in] value устанавливаемое значение бита
 //! @return false - неуспешно (ошибка входных данных), true - успешно
 forward stock setBitInArray(ar{}, start, arSize, bit, value);
+//! @}
 
+//! @defgroup globVarsStore Хранение в глобальных переменных
+//! @{
+
+//! Получить массив из глобальных переменных
+//! \param[in] dataInVarAddresses адреса глобальных переменных массива исходных данных
+//! \param[in] dataInVarAddressesSize количество адресов глобальных переменных массива исходных данных
+//! \param[out] dataOut массив выходных данных
+//! \param[in] dataOutMaxSize предельный размер массива выходных данных
+//! \param[in] useDataInSize признак использования глобальной переменной с текущим размером исходных данных: true - используется, false - нет
+//! (для массивов с \0 окончанием - например, для строк)
+//! \param[in] dataInSizeVarAddr адрес глобальной переменной с текущим размером исходных данных
+//! \param[in] dataOutPos позиция вставки в массив выходных данных
+//! \return количество вставленных байт
+forward stock getArrayFromGlobalVars(const dataInVarAddresses[], dataInVarAddressesSize, dataOut{}, dataOutMaxSize, useDataInSize = false, dataInSizeVarAddr = 0,
+                            dataOutPos = 0);
+
+//! Записать массив в глобальные переменные
+//! \param[in] dataOutVarAddresses адреса глобальных переменных для хранения массива
+//! \param[in] dataOutVarAddressesSize количество адресов глобальных переменных для хранения массива
+//! \param[in] dataIn записываемые данные
+//! \param[in] dataInSize размер массива записываемых данных
+//! \param[in] useDataOutSize признак использования глобальной переменной с текущим размером выходных данных: true - используется, false - нет
+//! (для массивов с \0 окончанием - например, для строк)
+//! \param[in] dataOutActualSizeVarAddr адрес глобальной переменной с актуальной длиной массива данных
+//! \param[in] dataInPos позиция начала записываемых данных
+//! \return количество записанных байт
+forward stock setArrayToGlobalVars(const dataOutVarAddresses[], dataOutVarAddressesSize, const dataIn{}, dataInSize, useDataOutSize = false,
+                            dataOutActualSizeVarAddr = 0, dataInPos = 0);
 //! @}

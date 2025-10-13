@@ -693,3 +693,60 @@ stock insertArray(dest[], destPos, destSize, const source[], sourceSize, sourceP
     }
     return i;
 }
+
+stock getArrayFromGlobalVars(const dataInVarAddresses[], dataInVarAddressesSize, dataOut{}, dataOutMaxSize, useDataInSize = false, dataInSizeVarAddr = 0,
+                            dataOutPos = 0)
+{
+    if (dataOutPos < 0)
+        dataOutPos = 0;
+
+    new const startPos = dataOutPos;
+    new const dataInSize = useDataInSize ? GetVar(dataInSizeVarAddr) : dataInVarAddressesSize * CELL_BYTES;
+    for (new i = 0; (i < dataInVarAddressesSize) && (dataOutPos < dataOutMaxSize); i++)
+    {
+        new const buf[1] = [GetVar(dataInVarAddresses[i])];
+        for (new j = 0; (j < CELL_BYTES) && (((i*CELL_BYTES) + j) < dataInSize) && (dataOutPos < dataOutMaxSize); j++, dataOutPos++)
+        {    
+            new const byte = buf{j % CELL_BYTES};
+            dataOut{dataOutPos} = byte;
+            if (!useDataInSize && !byte)
+                return dataOutPos - startPos;
+        }
+    }
+    return dataOutPos - startPos;
+}
+
+stock setArrayToGlobalVars(const dataOutVarAddresses[], dataOutVarAddressesSize, const dataIn{}, dataInSize, useDataOutSize = false,
+                            dataOutActualSizeVarAddr = 0, dataInPos = 0)
+{
+    if (dataInPos < 0)
+        dataInPos = 0;
+
+    new const startPos = dataInPos;
+    new finish = false;
+    for (new i = 0; (dataInPos < dataInSize) && (i < dataOutVarAddressesSize) && !finish; i++)
+    {    
+        new num = 0;
+        for (new j = 0; (j < CELL_BYTES) && (dataInPos < dataInSize); j++, dataInPos++)
+        {    
+            new const byte = dataIn{dataInPos};
+            num += byte << BYTE_BITS*(CELL_LAST_BYTE_INDEX - j);
+            if (!useDataOutSize && !byte)
+            {
+                finish = true;
+                break;
+            }
+        }
+        SetVar(dataOutVarAddresses[i], num);
+    }
+    new length = dataInPos - startPos;
+    new needAddZero = !useDataOutSize && !finish && !(length % CELL_BYTES) && (i < dataOutVarAddressesSize);
+    if (needAddZero)
+        SetVar(dataOutVarAddresses[i], 0);
+
+    new res = length + (needAddZero ? 1 : 0);
+    if (useDataOutSize)
+        SetVar(dataOutActualSizeVarAddr, res);
+
+    return res;
+}
