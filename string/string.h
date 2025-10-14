@@ -238,14 +238,15 @@ forward stock fromBase64StrMinSize(base64Size);
 //! \param[out] str выходная строка
 //! \param[in] strMaxSize предельный размер массива для строки
 //! \param[in] pos позиция вставки в строку
-//! \return количество вставленных байт, включая \0 (если есть)
+//! \return длина вставленной подстроки
 forward stock getStrFromGlobalVars(const dataInVarAddresses[], dataInVarAddressesSize, str{}, strMaxSize, pos = 0);
 
 //! Записать строку в глобальные переменные
 //! \param[in] dataOutVarAddresses адреса глобальных переменных для хранения строки
 //! \param[in] dataOutVarAddressesSize количество адресов глобальных переменных для хранения строки
 //! \param[in] str записываемая строка
-//! \param[in] pos позиция начала записываемых строки
-//! \return количество записанных байт, включая \0 (если вместился)
-forward stock setStrToGlobalVars(const dataOutVarAddresses[], dataOutVarAddressesSize, const str{}, pos = 0);
+//! \param[in] strMaxSize предельный размер массива для строки
+//! \param[in] pos позиция начала в записываемой строке
+//! \return длина записанной подстроки
+forward stock setStrToGlobalVars(const dataOutVarAddresses[], dataOutVarAddressesSize, const str{}, strMaxSize, pos = 0);
 //! @}
