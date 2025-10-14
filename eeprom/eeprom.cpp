@@ -1,14 +1,16 @@
-#ifndef EEPROM_LIB
+#ifdef EEPROM_LIB
+#endinput
+#endif
 #define EEPROM_LIB
-//{ ============================================================================
-//{ Библиотека работы с EEPROM =================================================
-//{ ============================================================================
+
+//! @file
+//! @brief Реализация библиотеки работы с EEPROM
 
 #include "eeprom.h"
 
-// Публичные функции
+//! @publicsection
 
-eepromInitParamValues(obj[EEPROM_DATA], const addr[], addrSize)
+stock eepromInitParamValues(obj[EEPROM_DATA], const addr[], addrSize)
 {
 	for (new i = 0; (i < addrSize) && (i < EEPROM_PARAMS_COUNT); i++)
     {    
@@ -17,8 +19,7 @@ eepromInitParamValues(obj[EEPROM_DATA], const addr[], addrSize)
     }
 }
 
-//! Сохранить параметры по их изменению
-eepromStoreParamsByChange(obj[EEPROM_DATA])
+stock eepromStoreParamsByChange(obj[EEPROM_DATA])
 {
 	new id;
     new needWrite = false;
@@ -46,8 +47,7 @@ eepromStoreParamsByChange(obj[EEPROM_DATA])
 	}
 }
 
-//! Загрузить сохраненные параметры
-eepromRestoreParams(obj[EEPROM_DATA])
+stock eepromRestoreParams(obj[EEPROM_DATA])
 {
     new id;
     for (new i = 0; i < EEPROM_KEYS_COUNT; i++)
@@ -66,74 +66,12 @@ eepromRestoreParams(obj[EEPROM_DATA])
 	}
 }
 
-/*
-// Шаблон использования
+//! @privatesection
 
-#define DEBUG // режим отладки
-
-#ifdef DEBUG
-#define EEPROM_DEBUG
-#endif
-
-#define EEPROM_PARAMS_COUNT 5 // указать требуемое количество сохраняемых параметров
-#include "eeprom.h"
-#include "eeprom.cpp"
-#include "devinfo.h"
-#include "devinfo.cpp"
-
-#define CONF_CMD_WAIT_MS 5000 // время ожидания конфигурационных команд при отсутствии доступа к ROM
-#define CHANGE_PARAMS_DELAY_MS 500 // время ожидания изменения параметров
-
-mainT()
-{
-    #ifdef DEBUG
-    SetVar(gDiag, 1); // устанавливаем расширенную диагностику
-    #endif
-    new devModel = getModel();
-    new softMaj;
-    new softMin;
-    getSoftVersion(softMaj, softMin);
-    #ifdef DEBUG
-    Delay(20000); // чтобы успеть после перезагрузки увидеть начальную диагностику
-    #endif
-    if (!isRomAvailable(devModel, softMaj, softMin))
-    {
-        #ifdef DEBUG
-        Diagnostics("ROM-");
-        #endif
-        #ifndef DEBUG
-        Delay(CONF_CMD_WAIT_MS); // т.к. нет поддержки сохранения параметров в ПЗУ, даем время на прием настроечных конфигурационных команд
-        #endif
-        SetVar(gParamsInited, 1);
-        return;
-    }
-    new eeprom[EEPROM_DATA];
-    new varAddr[EEPROM_PARAMS_COUNT] = [
-        GetVarAddr(gPortNum),
-        GetVarAddr(gPortBaudRate),
-        GetVarAddr(gPortStopBits),
-        GetVarAddr(gPortParity),
-        GetVarAddr(gTimeout)
-        ];
-    eepromInitParamValues(eeprom, varAddr, sizeof varAddr);
-    eepromRestoreParams(eeprom);
-    SetVar(gParamsInited, 1);
-    while (true)
-    {
-        eepromStoreParamsByChange(eeprom);
-        Delay(CHANGE_PARAMS_DELAY_MS);
-    }
-}
-
-// Конец шаблона использования */
-
-
-// Приватные функции
-
-//! Сохранить параметры группы по ключу, в котором они хранятся
-//! \param[in] key идентификатор ключа
-//! \return !=0 - успешно, ==0 - ошибка
-eeprom_storeParams(obj[EEPROM_DATA], key)
+//! @brief Сохранить параметры группы по ключу, в котором они хранятся
+//! @param[in] key идентификатор ключа
+//! @return true - успешно, false - ошибка
+stock eeprom_storeParams(obj[EEPROM_DATA], key)
 {
 	if ((key < 0) || (key >= EEPROM_KEYS_COUNT))
 		return false;
@@ -147,7 +85,3 @@ eeprom_storeParams(obj[EEPROM_DATA], key)
 
 	return ROMWrite(1 + key, obj.keyBuf, i*EEPROM_PARAM_SIZE);
 }
-
-//!} Библиотека работы с EEPROM ================================================
-//!} ===========================================================================
-#endif // EEPROM_LIB
