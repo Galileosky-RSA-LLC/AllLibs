@@ -565,8 +565,8 @@ stock getStrFromGlobalVars(const dataInVarAddresses[], dataInVarAddressesSize, s
                                     .dataOutPos = pos);
 }
 
-stock setStrToGlobalVars(const dataOutVarAddresses[], dataOutVarAddressesSize, const str{}, strMaxSize, pos = 0)
+stock setStrToGlobalVars(const dataOutVarAddresses[], dataOutVarAddressesSize, const str{}, strMaxSize = 0, pos = 0)
 {
-    return setArrayToGlobalVars(dataOutVarAddresses, dataOutVarAddressesSize, str, pos + strLen(str, strMaxSize, pos), .useDataOutSize = false,
+    return setArrayToGlobalVars(dataOutVarAddresses, dataOutVarAddressesSize, str, (pos > 0 ? pos : 0) + strLen(str, strMaxSize, pos), .useDataOutSize = false,
                                 .dataOutActualSizeVarAddr = 0, .dataInPos = pos);
 }

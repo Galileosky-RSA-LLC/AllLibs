@@ -245,8 +245,8 @@ forward stock getStrFromGlobalVars(const dataInVarAddresses[], dataInVarAddresse
 //! \param[in] dataOutVarAddresses адреса глобальных переменных для хранения строки
 //! \param[in] dataOutVarAddressesSize количество адресов глобальных переменных для хранения строки
 //! \param[in] str записываемая строка
-//! \param[in] strMaxSize предельный размер массива для строки
+//! \param[in] strMaxSize предельный размер массива для строки (если не указан или <=0, то будет вычислена длина)
 //! \param[in] pos позиция начала в записываемой строке
 //! \return длина записанной подстроки
-forward stock setStrToGlobalVars(const dataOutVarAddresses[], dataOutVarAddressesSize, const str{}, strMaxSize, pos = 0);
+forward stock setStrToGlobalVars(const dataOutVarAddresses[], dataOutVarAddressesSize, const str{}, strMaxSize = 0, pos = 0);
 //! @}
