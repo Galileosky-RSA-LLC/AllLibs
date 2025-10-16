@@ -1,14 +1,23 @@
-#ifndef CRYPT_LIB
+#ifdef CRYPT_LIB
+#endinput
+#endif
 #define CRYPT_LIB
-// Библиотека шифрования
 
-#include "crypt.h"
+//! @file
+//! @brief Реализация библиотеки шифрования
+
 #include "..\numeric\numeric.h"
 #include "..\numeric\numeric.cpp"
 #include "..\array\array.h"
 #include "..\array\array.cpp"
+#include "crypt.h"
 
-xtea3encrypt(const dataIn[XTEA3_DATA_CELLS_AMOUNT], const key[XTEA3_KEY_CELLS_AMOUNT], dataOut[XTEA3_DATA_CELLS_AMOUNT], numRounds = XTEA3_NUM_ROUNDS_DEFAULT)
+#define XTEA3_DELTA 0x9E3779B9
+#define XTEA3_KEY_HALF_CELLS_AMOUNT (XTEA3_KEY_CELLS_AMOUNT / 2)
+
+//! @publicsection
+
+stock xtea3encrypt(const dataIn[XTEA3_DATA_CELLS_AMOUNT], const key[XTEA3_KEY_CELLS_AMOUNT], dataOut[XTEA3_DATA_CELLS_AMOUNT], numRounds = XTEA3_NUM_ROUNDS_DEFAULT)
 {
     new keyMod[XTEA3_KEY_CELLS_AMOUNT];
     for (new i = 0; i < XTEA3_KEY_CELLS_AMOUNT; i++)
@@ -30,7 +39,7 @@ xtea3encrypt(const dataIn[XTEA3_DATA_CELLS_AMOUNT], const key[XTEA3_KEY_CELLS_AM
         dataOut[i] = reverse(abcd[i] ^ keyMod[XTEA3_KEY_HALF_CELLS_AMOUNT + i]);
 }
 
-xtea3decrypt(const dataIn[XTEA3_DATA_CELLS_AMOUNT], const key[XTEA3_KEY_CELLS_AMOUNT], dataOut[XTEA3_DATA_CELLS_AMOUNT], numRounds = XTEA3_NUM_ROUNDS_DEFAULT)
+stock xtea3decrypt(const dataIn[XTEA3_DATA_CELLS_AMOUNT], const key[XTEA3_KEY_CELLS_AMOUNT], dataOut[XTEA3_DATA_CELLS_AMOUNT], numRounds = XTEA3_NUM_ROUNDS_DEFAULT)
 {
     new keyMod[XTEA3_KEY_CELLS_AMOUNT];
     for (new i = 0; i < XTEA3_KEY_CELLS_AMOUNT; i++)
@@ -52,16 +61,14 @@ xtea3decrypt(const dataIn[XTEA3_DATA_CELLS_AMOUNT], const key[XTEA3_KEY_CELLS_AM
         dataOut[i] = reverse(abcd[i] - keyMod[i]);
 }
 
-// Приватные функции
+//! @privatesection
 
-xtea3crypt_roundCalcModA(b, d, sum, const key[XTEA3_KEY_CELLS_AMOUNT])
+stock xtea3crypt_roundCalcModA(b, d, sum, const key[XTEA3_KEY_CELLS_AMOUNT])
 {
     return ((b<<4) + rol(key[(sum % 4) + 4], b)) ^ (d + sum) ^ ((b>>>5) + rol(key[sum % 4], b>>>27));
 }
 
-xtea3crypt_roundCalcModC(b, d, sum, const key[XTEA3_KEY_CELLS_AMOUNT])
+stock xtea3crypt_roundCalcModC(b, d, sum, const key[XTEA3_KEY_CELLS_AMOUNT])
 {
     return ((d<<4) + rol(key[((sum>>>11) % 4) + 4], d)) ^ (b + sum) ^ ((d>>>5) + rol(key[(sum>>>11) % 4], d>>>27));
 }
-
-#endif
