@@ -64,7 +64,7 @@ stock unixTime2dateTime(time, &year, &month, &day, &hour, &minute, &second)
     hour = secondsFromMidnight / SECONDS_PER_HOUR;
     new secondsFromHour = secondsFromMidnight - (hour * SECONDS_PER_HOUR);
     minute = secondsFromHour / SECONDS_PER_MINUTE;
-    second = secondsFromHour -( minute * SECONDS_PER_MINUTE);
+    second = secondsFromHour - (minute * SECONDS_PER_MINUTE);
 }
 
 stock uptimeLess(uptime1, uptime2)

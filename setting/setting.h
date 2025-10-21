@@ -14,9 +14,11 @@
 #define SETTING_CONF_CMD_WAIT_MS 5000 //!< время ожидания конфигурационных команд при отсутствии доступа к файловой системе
 
 #ifndef SETTING_PARAMS_AMOUNT
-#define SETTING_PARAMS_AMOUNT 1 //!< общее количество сохраняемых параметров
+#define SETTING_PARAMS_AMOUNT 0 //!< общее количество сохраняемых параметров, определить на верхнем уровне
 #endif
-
+if (SETTING_PARAMS_AMOUNT < 1)
+#error "SETTING_PARAMS_AMOUNT wrong"
+#endif
 #define SETTING_FILENAME_SIZE_MAX FILE_FULL_PATH_SIZE_MAX
 #define SETTING_FILENAME_SIZE_MAX_WITH_0 (SETTING_FILENAME_SIZE_MAX + 1)
 
