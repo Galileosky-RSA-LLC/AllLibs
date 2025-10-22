@@ -9,17 +9,21 @@
 #define FILE_FULL_PATH_SIZE_MAX 255
 #define FILE_FULL_PATH_SIZE_MAX_W0 (FILE_FULL_PATH_SIZE_MAX + 1)
 
+//! @defgroup pathSeparators Разделители в путях
+//! @{
 #define SYMBOL_PATH_SEPARATOR_PRIME '/'
 stock const PATH_SEPARATOR_PRIME{} = {SYMBOL_PATH_SEPARATOR_PRIME};
 
 #define SYMBOL_PATH_SEPARATOR_SECOND '\\'
 stock const PATH_SEPARATOR_SECOND{} = {SYMBOL_PATH_SEPARATOR_SECOND};
 
+#define SYMBOL_FILE_EXTENTION_SEPARATOR '.'
+stock const FILE_EXTENTION_SEPARATOR{} = {SYMBOL_FILE_EXTENTION_SEPARATOR};
+//! @}
+
 //! @defgroup reservedFiles Зарезервированные файлы
 //! @{
-
-#define FILE_TIME_ZONE "time_zone" // файл с текущим часовым поясом в строковом виде: "-5" -> UTC-5
-
+#define FILE_TIME_ZONE "time_zone" //!< файл с текущим часовым поясом в строковом виде: "-5" -> UTC-5
 //! @}
 
 //! @brief Переименовать файл 
