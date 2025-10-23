@@ -327,17 +327,19 @@ forward stock num32bit2arrayBe(num, ar{}, start, arSize);
 //! @param[in] ar массив
 //! @param[in] arSize длина массива
 //! @param[in] element искомый элемент
-//! @param[in] start стартовый индекс для поиска
-//! @return >=0: меньший индекс искомого элемента, <0 - не найден
-forward stock searchLinear(const ar[], arSize, element, start = 0);
+//! @param[in] start индекс начала подмассива
+//! @param[in] fromEnd признак начала поиска с конца: true - с конца подмассива, false - с начала
+//! @return >=0: индекс первого найденного элемента, <0 - не найден
+forward stock searchLinear(const ar[], arSize, element, start = 0, fromEnd = false);
 
 //! @brief Линейный поиск в массиве однобайтных элементов
 //! @param[in] ar массив
 //! @param[in] arSize длина массива
 //! @param[in] element искомый элемент
-//! @param[in] start стартовый индекс для поиска
-//! @return >=0: меньший индекс искомого элемента, <0 - не найден
-forward stock searchLinearStr(const ar{}, arSize, element, start = 0);
+//! @param[in] start индекс начала подмассива
+//! @param[in] fromEnd признак начала поиска с конца: true - с конца подмассива, false - с начала
+//! @return >=0: индекс первого найденного элемента, <0 - не найден
+forward stock searchLinearStr(const ar{}, arSize, element, start = 0, fromEnd = false);
 
 //! @brief Двоичный поиск элемента в массиве
 //! @param[in] ar массив

@@ -270,12 +270,12 @@ stock num16bit2arrayBe(num, ar{}, start, arSize)
     return num2array(num, 2, false, ar, start, arSize);
 }
 
-stock searchLinear(const ar[], arSize, element, start = 0)
+stock searchLinear(const ar[], arSize, element, start = 0, fromEnd = false)
 {
     if (start < 0)
         start = 0;
 
-    for (new i = start; i < arSize; i++)
+    for (new i = fromEnd ? arSize - 1 : start; fromEnd ? i >= start : i < arSize; i += fromEnd ? -1 : 1)
     {    
         if (ar[i] == element)
             return i;
@@ -283,12 +283,12 @@ stock searchLinear(const ar[], arSize, element, start = 0)
     return -1;
 }
 
-stock searchLinearStr(const ar{}, arSize, element, start = 0)
+stock searchLinearStr(const ar{}, arSize, element, start = 0, fromEnd = false)
 {
     if (start < 0)
         start = 0;
 
-    for (new i = start; i < arSize; i++)
+    for (new i = fromEnd ? arSize - 1 : start; fromEnd ? i >= start : i < arSize; i += fromEnd ? -1 : 1)
     {    
         if (ar{i} == element)
             return i;
