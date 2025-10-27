@@ -23,7 +23,7 @@ stock const FILE_EXTENTION_SEPARATOR{} = {SYMBOL_FILE_EXTENTION_SEPARATOR};
 
 //! @defgroup reservedFiles Зарезервированные файлы
 //! @{
-#define FILE_TIME_ZONE "time_zone" //!< файл с текущим часовым поясом в строковом виде: "-5" -> UTC-5
+stock const TIME_ZONE_FILE_PATH{} = "time_zone"; //!< файл с текущим часовым поясом в строковом виде: "-5" -> UTC-5
 //! @}
 
 //! @brief Переименовать файл 
