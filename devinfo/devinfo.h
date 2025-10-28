@@ -26,27 +26,46 @@
 
 //! @defgroup statusBits Биты статуса устройства
 //! @{
-#define DEVINFO_STATUS_MOTION_BIT 0
-#define DEVINFO_STATUS_INCLINE_BIT 1
-#define DEVINFO_STATUS_IBUTTON_BIT 2
-#define DEVINFO_STATUS_NOSIM_BIT 3
-#define DEVINFO_STATUS_GEOFENCE_BIT 4
-#define DEVINFO_STATUS_UINTLOW_BIT 5
-#define DEVINFO_STATUS_GPSANTOFF_BIT 6
-#define DEVINFO_STATUS_UINTBUSFAIL_BIT 7
-#define DEVINFO_STATUS_EXTPOWERFAIL_BIT 8
-#define DEVINFO_STATUS_ENGINEON_BIT 9
-#define DEVINFO_STATUS_SHOCK_BIT 10
-#define DEVINFO_STATUS_COORDS_BIT 11
-#define DEVINFO_STATUS_SIGNALING_BIT 14
-#define DEVINFO_STATUS_ALARM_BIT 15
-#define DEVINFO_STATUS_MAINSRV_BIT 16
-#define DEVINFO_STATUS_GPRS_BIT 17
-#define DEVINFO_STATUS_GSMJAMMING_BIT 18
-#define DEVINFO_STATUS_SECONDSRV_BIT 19
-#define DEVINFO_STATUS_GNSSJAMMING_BIT 20
-#define DEVINFO_STATUS_USB_BIT 21
-#define DEVINFO_STATUS_SD_BIT 22
+#define DEVINFO_STATUS_BIT_MOTION 0
+#define DEVINFO_STATUS_BIT_INCLINE 1
+#define DEVINFO_STATUS_BIT_IBUTTON 2
+#define DEVINFO_STATUS_BIT_NOSIM 3
+#define DEVINFO_STATUS_BIT_GEOFENCE 4
+#define DEVINFO_STATUS_BIT_UINTLOW 5
+#define DEVINFO_STATUS_BIT_GPSANTOFF 6
+#define DEVINFO_STATUS_BIT_UINTBUSFAIL 7
+#define DEVINFO_STATUS_BIT_EXTPOWERFAIL 8
+#define DEVINFO_STATUS_BIT_ENGINEON 9
+#define DEVINFO_STATUS_BIT_SHOCK 10
+#define DEVINFO_STATUS_BIT_COORDS 11
+#define DEVINFO_STATUS_BIT_SIGNALING 14
+#define DEVINFO_STATUS_BIT_ALARM 15
+#define DEVINFO_STATUS_BIT_MAINSRV 16
+#define DEVINFO_STATUS_BIT_GPRS 17
+#define DEVINFO_STATUS_BIT_GSMJAMMING 18
+#define DEVINFO_STATUS_BIT_SECONDSRV 19
+#define DEVINFO_STATUS_BIT_GNSSJAMMING 20
+#define DEVINFO_STATUS_BIT_USB 21
+#define DEVINFO_STATUS_BIT_SD 22
+//! @}
+
+//! @defgroup userspecBits Биты спецификации пользователя
+//! @{
+#define DEVINFO_USERSPEC_BIT_GNSS 0
+#define DEVINFO_USERSPEC_BIT_OUTS 1
+#define DEVINFO_USERSPEC_BIT_BLUETOOTH 2
+#define DEVINFO_USERSPEC_BIT_WIFI 3
+#define DEVINFO_USERSPEC_BIT_RS232 4
+#define DEVINFO_USERSPEC_BIT_RS485 5
+#define DEVINFO_USERSPEC_BIT_CAN 6
+#define DEVINFO_USERSPEC_BIT_1WIRE 7
+#define DEVINFO_USERSPEC_BIT_ARCHIVE 8
+#define DEVINFO_USERSPEC_BIT_WEBDAV 9
+#define DEVINFO_USERSPEC_BIT_SIGNALING 10
+#define DEVINFO_USERSPEC_BIT_GEOFENCES 11
+#define DEVINFO_USERSPEC_BIT_AUTOINFORMER 12
+#define DEVINFO_USERSPEC_BIT_TRANSMESSYS 13
+#define DEVINFO_USERSPEC_BIT_BLECONFIG 14
 //! @}
 
 //! @brief Получить модель прибора
@@ -114,3 +133,20 @@ forward stock isEngineOn(devStatus);
 //! @brief Получить дискретный статус дискретно-аналогового входа
 //! @param[in] index индекс входа
 forward stock getInStatus(index);
+
+//! @brief Проверить поддержку спецификации пользователя
+//! @param[in] devModel модель прибора DEVINFO_MODEL_
+//! @param[in] softMaj мажорная версия прошивки
+//! @param[in] softMin минорная версия прошивки
+forward stock hasUserspec(devModel, softMaj, softMin);
+
+//! @brief Получить спецификацию пользователя по ответу на команду
+//! @note Предварительно нужно проверить доступность спецификации пользователя с помощью hasUserspec()
+//! @param[out] userSpec Полученная спецификация при успешном возврате
+//! @return true - успешно, false - ошибка
+forward stock getUserspec(&userSpec);
+
+//! @brief Проверить включение модуля прошивки по спецификации пользователя
+//! @param[in] userSpec спецификация пользователя, можно получить с помощью getUserspec()
+//! @param[in] userSpecBit бит модуля @ref userspecBits
+forward stock isModuleOn(userSpec, userSpecBit);

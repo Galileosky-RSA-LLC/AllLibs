@@ -11,6 +11,8 @@
 #include "..\string\string.h"
 #include "..\string\string.cpp"
 #include "..\gdefines.h"
+#include "..\numeric\numeric.h"
+#include "..\numeric\numeric.cpp"
 #include "devinfo.h"
 
 stock getModel()
@@ -372,12 +374,12 @@ stock getTagValue(tagId, &value)
 
 stock hasExtPower(devStatus)
 {
-    return !((devStatus >>> DEVINFO_STATUS_EXTPOWERFAIL_BIT) & 1);
+    return !((devStatus >>> DEVINFO_STATUS_BIT_EXTPOWERFAIL) & 1);
 }
 
 stock isEngineOn(devStatus)
 {
-    return (devStatus >>> DEVINFO_STATUS_ENGINEON_BIT) & 1;
+    return (devStatus >>> DEVINFO_STATUS_BIT_ENGINEON) & 1;
 }
 
 stock getInStatus(index)
@@ -397,4 +399,41 @@ stock getInStatus(index)
         default: return false;
     }
     return false;
+}
+
+stock hasUserspec(devModel, softMaj, softMin)
+{
+    return ((devModel == DEVINFO_MODEL_7X) && (((softMaj == 38) && (softMin >= 20)) || ((softMaj == 44) && (softMin >= 2)) || (softMaj > 44)))
+            || (devModel >= DEVINFO_MODEL_10);
+}
+
+stock getUserspec(&userSpec)
+{
+    new cmdText{} = "USERSPEC";
+    ExecCommand(cmdText);
+    const bufMaxSize = 44;
+    new buf{bufMaxSize};
+    new const bufSize = GetBinaryDataFromCommand(buf, bufMaxSize);
+    new pos = searchLinearStr(buf, bufSize, 'b', .fromEnd = true);
+    new const cmdTextLength = strLen(cmdText);
+    if (!isArraysEqualStr(buf, 0, min(cmdTextLength, bufSize), cmdText, 0, cmdTextLength) || (pos < 0) || (pos >= bufMaxSize))
+        return false;
+
+    userSpec = 0;
+    pos--;
+    for (new i = 0; pos >= 0; i++, pos--)
+    {
+        new const moduleOn = buf{pos} == '1';
+        if (!moduleOn && (buf{pos} != '0'))
+            break;
+
+        userSpec += moduleOn << i;
+    }
+    return true;
+}
+
+stock isModuleOn(userSpec, userSpecBit)
+{
+    coerce(userSpecBit, 0, CELL_LAST_BIT_INDEX);
+    return (userSpec >>> userSpecBit) & 1;
 }
