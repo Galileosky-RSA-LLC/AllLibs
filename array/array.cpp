@@ -270,12 +270,12 @@ stock num16bit2arrayBe(num, ar{}, start, arSize)
     return num2array(num, 2, false, ar, start, arSize);
 }
 
-stock searchLinear(const ar[], arSize, element, start = 0)
+stock searchLinear(const ar[], arSize, element, start = 0, fromEnd = false)
 {
     if (start < 0)
         start = 0;
 
-    for (new i = start; i < arSize; i++)
+    for (new i = fromEnd ? arSize - 1 : start; fromEnd ? i >= start : i < arSize; i += fromEnd ? -1 : 1)
     {    
         if (ar[i] == element)
             return i;
@@ -283,12 +283,12 @@ stock searchLinear(const ar[], arSize, element, start = 0)
     return -1;
 }
 
-stock searchLinearStr(const ar{}, arSize, element, start = 0)
+stock searchLinearStr(const ar{}, arSize, element, start = 0, fromEnd = false)
 {
     if (start < 0)
         start = 0;
 
-    for (new i = start; i < arSize; i++)
+    for (new i = fromEnd ? arSize - 1 : start; fromEnd ? i >= start : i < arSize; i += fromEnd ? -1 : 1)
     {    
         if (ar{i} == element)
             return i;
@@ -692,4 +692,59 @@ stock insertArray(dest[], destPos, destSize, const source[], sourceSize, sourceP
             dest[destPos + i] = source[sourcePos + i];
     }
     return i;
+}
+
+stock getArrayFromGlobalVars(const dataInVarAddresses[], dataInVarAddressesSize, dataOut{}, dataOutMaxSize, useDataInSize = false, dataInSizeVarAddr = 0,
+                            dataOutPos = 0)
+{
+    if (dataOutPos < 0)
+        dataOutPos = 0;
+
+    new const startPos = dataOutPos;
+    new const dataInSize = useDataInSize ? GetVar(dataInSizeVarAddr) : dataInVarAddressesSize * CELL_BYTES;
+    for (new i = 0; (i < dataInVarAddressesSize) && (dataOutPos < dataOutMaxSize); i++)
+    {
+        new buf[1];
+        buf[0] = GetVar(dataInVarAddresses[i]);
+        for (new j = 0; (j < CELL_BYTES) && (((i*CELL_BYTES) + j) < dataInSize) && (dataOutPos < dataOutMaxSize); j++, dataOutPos++)
+        {
+            new const byte = buf{j % CELL_BYTES};
+            dataOut{dataOutPos} = byte;
+            if (!useDataInSize && !byte)
+                return dataOutPos - startPos;
+        }
+    }
+    return dataOutPos - startPos;
+}
+
+stock setArrayToGlobalVars(const dataOutVarAddresses[], dataOutVarAddressesSize, const dataIn{}, dataInSize, useDataOutSize = false,
+                            dataOutActualSizeVarAddr = 0, dataInPos = 0)
+{
+    if (dataInPos < 0)
+        dataInPos = 0;
+
+    new const startPos = dataInPos;
+    new finish = false;
+    new i = 0;
+    for (; (dataInPos < dataInSize) && (i < dataOutVarAddressesSize) && !finish; i++)
+    {
+        new buf[1];
+        for (new j = 0; (j < CELL_BYTES) && (dataInPos < dataInSize); j++, dataInPos++)
+        {
+            buf{j} = dataIn{dataInPos};
+            if (!useDataOutSize && !buf{j})
+            {
+                finish = true;
+                break;
+            }
+        }
+        SetVar(dataOutVarAddresses[i], buf[0]);
+    }
+    new length = dataInPos - startPos;
+    if (useDataOutSize)
+        SetVar(dataOutActualSizeVarAddr, length);
+    else if (!finish && !(length % CELL_BYTES) && (i < dataOutVarAddressesSize))
+        SetVar(dataOutVarAddresses[i], 0);
+
+    return length;
 }

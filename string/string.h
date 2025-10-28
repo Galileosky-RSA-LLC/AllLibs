@@ -58,7 +58,6 @@ forward stock strLen(const str{}, strLength = 0, start = 0);
 //! @param[in] sourceLength длина массива строки-источника (если <=0, то будет вычислена)
 //! @param[in] fromBack признак необходимости вставки с конца источника (при совпадении источника с приемником)
 forward stock strncpy(dest{}, destPos, destLength, const source{}, sourcePos = 0, sourceLength = 0, fromBack = false);
-
 //! @}
 
 
@@ -88,7 +87,6 @@ forward stock toUpperCase(str{}, strLength, start = 0, ignoreNull = false);
 //! @param[in] ignoreNull признак необходимости игнорирования \0: false - преобразование заканчивается на \0, true - продолжается до конца массива
 //! @return кол-во преобразований
 forward stock unread2space(str{}, strLength, start = 0, ignoreNull = false);
-
 //! @}
 
 
@@ -155,7 +153,6 @@ forward stock itoaw(num, str{}, pos, length, width);
 //! @param[out] valuesActualSize найденное кол-во чисел
 //! @return кол-во обработанных символов в строке
 forward stock strSplitNums(const str{}, strSize, pos, separator, values[], valuesMaxSize, &valuesActualSize);
-
 //! @}
 
 
@@ -193,7 +190,6 @@ forward stock num2asciiHexHalfByte(num);
 //! @param[in] start стартовый индекс подмассива
 //! @return true - успешно, false - ошибка (недостаточная длина массива)
 forward stock toAsciiHex(ar{}, arLength, subLength, start = 0);
-
 //! @}
 
 
@@ -231,5 +227,26 @@ forward stock fromBase64StrMaxSize(base64Size);
 
 //! @brief Вычислить минимальную длину для декодированной строки из base64 по длине кодированной
 forward stock fromBase64StrMinSize(base64Size);
+//! @}
 
+//! @defgroup globVarsStore Хранение строки в глобальных переменных
+//! @{
+
+//! Получить строку из глобальных переменных
+//! \param[in] dataInVarAddresses адреса глобальных переменных для хранения строки
+//! \param[in] dataInVarAddressesSize количество адресов глобальных переменных для хранения строки
+//! \param[out] str выходная строка
+//! \param[in] strMaxSize предельный размер массива для строки
+//! \param[in] pos позиция вставки в строку
+//! \return длина вставленной подстроки
+forward stock getStrFromGlobalVars(const dataInVarAddresses[], dataInVarAddressesSize, str{}, strMaxSize, pos = 0);
+
+//! Записать строку в глобальные переменные
+//! \param[in] dataOutVarAddresses адреса глобальных переменных для хранения строки
+//! \param[in] dataOutVarAddressesSize количество адресов глобальных переменных для хранения строки
+//! \param[in] str записываемая строка
+//! \param[in] strMaxSize предельный размер массива для строки (если не указан или <=0, то будет вычислена длина)
+//! \param[in] pos позиция начала в записываемой строке
+//! \return длина записанной подстроки
+forward stock setStrToGlobalVars(const dataOutVarAddresses[], dataOutVarAddressesSize, const str{}, strMaxSize = 0, pos = 0);
 //! @}

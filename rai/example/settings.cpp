@@ -24,8 +24,9 @@ new const varAddr[] =
 #include "lib.cpp"
 #include "..\..\setting\setting.h"
 #include "..\..\setting\setting.cpp"
+#include "..\..\file\file.h"
 
-stock const FILE_PATH{} = "displayname/settings.bin";
+stock const DISPLAY_SETTINGS_FILE_PATH{} = "displayname/settings.bin";
 
 main()
 {
@@ -37,7 +38,7 @@ main()
     settingSingleRestoreParam(advTime);
 
     new timeZone[SETTING_SINGLE_DATA];
-    settingSingleInit(timeZone, "time_zone", GetVarAddr(gTimeZone));
+    settingSingleInit(timeZone, TIME_ZONE_FILE_PATH, GetVarAddr(gTimeZone));
     settingSingleRestoreParam(timeZone);
 
     new routeSwitchInputIdx[SETTING_SINGLE_DATA];
@@ -45,7 +46,7 @@ main()
     settingSingleRestoreParam(routeSwitchInputIdx);
     
     new settings[SETTING_DATA];
-    settingInit(settings, FILE_PATH, varAddr, SETTING_PARAMS_AMOUNT);
+    settingInit(settings, DISPLAY_SETTINGS_FILE_PATH, varAddr, SETTING_PARAMS_AMOUNT);
     settingRestoreParams(settings);
 
     setSettingsInited();

@@ -1,7 +1,13 @@
-#ifndef TIME_H
+#ifdef TIME_H
+#endinput
+#endif
 #define TIME_H
-// Библиотека функций времени
 
+//! @file
+//! @brief Заголовок библиотеки времени
+
+//! @defgroup timeIntervalDurations Длительности временных промежутков
+//! @{
 #define MS_PER_SECOND 1000
 #define SECONDS_PER_MINUTE 60
 #define MS_PER_MINUTE (SECONDS_PER_MINUTE * MS_PER_SECOND)
@@ -12,7 +18,10 @@
 #define MINUTES_PER_DAY (HOURS_PER_DAY * MINUTES_PER_HOUR)
 #define SECONDS_PER_DAY (MINUTES_PER_DAY * SECONDS_PER_MINUTE)
 #define MONTHS_PER_YEAR 12
+//! @}
 
+//! @defgroup timeStampParams Параметры временных меток
+//! @{
 #define HOUR_MIN 0
 #define HOUR_MAX (HOURS_PER_DAY - 1)
 #define MINUTE_MIN 0
@@ -22,7 +31,10 @@
 #define MONTH_MIN 1
 #define MONTH_MAX MONTHS_PER_YEAR
 #define DAY_MIN 1
+//! @}
 
+//! @defgroup monthYearDurations Длительности месяцев и лет
+//! @{
 #define LEAP_YEAR_ADD_DAY 1
 
 #define JANUARY_DAYS 31
@@ -44,7 +56,10 @@
 #define LEAP_YEAR_DAYS (NONLEAP_YEAR_DAYS + LEAP_YEAR_ADD_DAY)
 
 #define NONLEAP_YEAR_SECONDS (NONLEAP_YEAR_DAYS * SECONDS_PER_DAY)
+//! @}
 
+//! @defgroup unixEpoch Эпоха Unix
+//! @{
 #define UNIX_EPOCH_YEAR_START 1970
 #define UNIX_EPOCH_YEAR_END_32 2038
 #define UNIX_EPOCH_MONTH_END_32 1
@@ -52,15 +67,49 @@
 #define UNIX_EPOCH_HOUR_END_32 3
 #define UNIX_EPOCH_MINUTE_END_32 14
 #define UNIX_EPOCH_SECOND_END_32 7
+//! @}
 
+//! @brief Истек ли таймер с зафиксированного времени UPTIME
+//! @param[in] fixedUptime зафиксированное время от запуска операционной системы в мс
+//! @param[in] timer таймер в мс
+forward stock isTimerExpired(fixedUptime, timer);
 
-isTimerExpired(fixedTime, timer);
-uptimeLess(uptime1, uptime2);
-wait(timer);
-waitFrom(fixedTime, timer);
-unixTime2dateTime(time, &year, &month, &day, &hour, &minute, &second);
-dateTime2unixTime(year, month, day, hour, minute, second, &unixtime);
-isLeapYear(year);
-duration(uptimeStart, uptimeEnd);
+//! @brief Проверить, что uptime1 < uptime2
+forward stock uptimeLess(uptime1, uptime2);
 
-#endif // TIME_LIB
+//! @brief Задержать выполнение
+//! @details Более точно, чем Delay() - шаг 10 мс
+forward stock wait(timer);
+
+//! @brief Задержать выполнение с зафиксированного времени
+forward stock waitFrom(fixedUptime, timer);
+
+//! @brief Разделить метку времени Unixtime на дату и время в отдельные переменные
+//! @param[in] time метка времени Unixtime
+//! @param[out] day день
+//! @param[out] month месяц
+//! @param[out] year год
+//! @param[out] hour час
+//! @param[out] minute минута
+//! @param[out] second секунда
+forward stock unixTime2dateTime(time, &year, &month, &day, &hour, &minute, &second);
+
+//! @brief Преобразовать компоненты времени (UTC без смещения) в Unixtime
+//! @param[in] day день
+//! @param[in] month месяц
+//! @param[in] year год
+//! @param[in] hour час
+//! @param[in] minute минута
+//! @param[in] second секунда
+//! @param[out] unixtime метка времени Unixtime
+//! @return true - успешно, false - ошибка входных данных
+forward stock dateTime2unixTime(year, month, day, hour, minute, second, &unixtime);
+
+//! @brief Проверить год на високосность
+forward stock isLeapYear(year);
+
+//! @brief Определить длительность в мс
+//! @param[in] uptimeStart время старта
+//! @param[in] uptimeEnd время окончания
+//! @return длительность в мс
+forward stock duration(uptimeStart, uptimeEnd);
