@@ -401,13 +401,13 @@ stock getInStatus(index)
     return false;
 }
 
-stock hasUserspec(devModel, softMaj, softMin)
+stock hasUserSpec(devModel, softMaj, softMin)
 {
     return ((devModel == DEVINFO_MODEL_7X) && (((softMaj == 38) && (softMin >= 20)) || ((softMaj == 44) && (softMin >= 2)) || (softMaj > 44)))
             || (devModel >= DEVINFO_MODEL_10);
 }
 
-stock getUserspec(&userSpec)
+stock getUserSpec(&userSpec)
 {
     new cmdText{} = "USERSPEC";
     ExecCommand(cmdText);

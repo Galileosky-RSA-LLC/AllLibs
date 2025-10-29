@@ -138,15 +138,15 @@ forward stock getInStatus(index);
 //! @param[in] devModel модель прибора DEVINFO_MODEL_
 //! @param[in] softMaj мажорная версия прошивки
 //! @param[in] softMin минорная версия прошивки
-forward stock hasUserspec(devModel, softMaj, softMin);
+forward stock hasUserSpec(devModel, softMaj, softMin);
 
 //! @brief Получить спецификацию пользователя по ответу на команду
-//! @note Предварительно нужно проверить доступность спецификации пользователя с помощью hasUserspec()
+//! @note Предварительно нужно проверить доступность спецификации пользователя с помощью hasUserSpec()
 //! @param[out] userSpec Полученная спецификация при успешном возврате
 //! @return true - успешно, false - ошибка
-forward stock getUserspec(&userSpec);
+forward stock getUserSpec(&userSpec);
 
 //! @brief Проверить включение модуля прошивки по спецификации пользователя
-//! @param[in] userSpec спецификация пользователя, можно получить с помощью getUserspec()
+//! @param[in] userSpec спецификация пользователя, можно получить с помощью getUserSpec()
 //! @param[in] userSpecBit бит модуля @ref userspecBits
 forward stock isModuleOn(userSpec, userSpecBit);
