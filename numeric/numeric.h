@@ -24,6 +24,7 @@
 #define BYTE_BITS 8
 #define CELL_BYTES (cellbits / BYTE_BITS)
 #define CELL_LAST_BYTE_INDEX (CELL_BYTES - 1)
+#define CELL_LAST_BIT_INDEX (cellbits - 1)
 
 //! @defgroup general Общие функции
 //! @{
