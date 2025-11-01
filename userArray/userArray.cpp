@@ -119,6 +119,6 @@ stock userArrayAddPasCounting(userArray{}, userArrayMaxSize, const sensor[USERAR
 stock setTextInUserArray(const text{})
 {
     new userArray{USERARRAY_MAX_SIZE} = {USERARRAY_TEXT_TYPE};
-    new size = insertArrayStr(userArray, USERARRAY_TEXT_PAYLOAD_POS, USERARRAY_MAX_SIZE, text, strLen(text));
+    new size = USERARRAY_TEXT_TYPE_LEN + insertArrayStr(userArray, USERARRAY_TEXT_PAYLOAD_POS, USERARRAY_MAX_SIZE, text, strLen(text));
     TagWriteArray(TAG_USER_ARRAY, size, userArray);
 }
