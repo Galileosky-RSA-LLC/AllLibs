@@ -91,6 +91,16 @@ forward stock ustructMakeDescriptorStr(strSize);
 //! @return количество вставленных байт (0 - ошибка)
 forward stock ustructInsertEmpty(userArray{}, userArrayMaxSize, &pos, emptyCount);
 
+//! @brief Вставить числа в массив пользователя универсальной структуры
+//! @param[inout] userArray массив пользователя
+//! @param[in] userArrayMaxSize предельный размер массива пользователя
+//! @param[inout] pos позиция в массиве пользователя
+//! @param[in] dimension размерность вставляемых чисел: 1,2,4
+//! @param[in] numbers вставляемые числа
+//! @param[in] numbersSize количество вставляемых чисел
+//! @return количество вставленных байт (0 - ошибка)
+forward stock ustructInsertNumbers(userArray{}, userArrayMaxSize, &pos, dimension, const numbers[], numbersSize = 1);
+
 //! @}
 
 //! @brief Отправить файл с помощью массива пользователя
