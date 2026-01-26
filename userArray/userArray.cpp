@@ -125,10 +125,7 @@ stock setTextInUserArray(const text{})
 
 stock ustructInsertNumbers(userArray{}, userArrayMaxSize, &pos, dimension, const numbers[], numbersSize = 1)
 {
-    if (dimension == 3)
-        dimension = 4;
-
-    if ((pos < USERARRAY_USTRUCT_TYPE_SIZE) || (numbersSize < 1) || (dimension < 1) || (dimension > 4)
+    if ((pos < USERARRAY_USTRUCT_TYPE_SIZE) || (numbersSize < 1) || (dimension < 1)|| (dimension == 3)  || (dimension > 4)
         || ((pos + countUsedCells(numbersSize, USERARRAY_USTRUCT_DESCR_NUMBERS_MAX) + (dimension * numbersSize)) > userArrayMaxSize))
         return 0;
 
