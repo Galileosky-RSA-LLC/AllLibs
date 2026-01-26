@@ -122,3 +122,25 @@ stock setTextInUserArray(const text{})
     new size = USERARRAY_TEXT_TYPE_LEN + insertArrayStr(userArray, USERARRAY_TEXT_PAYLOAD_POS, USERARRAY_MAX_SIZE, text, strLen(text));
     TagWriteArray(TAG_USER_ARRAY, size, userArray);
 }
+
+stock ustructInsertNumbers(userArray{}, userArrayMaxSize, &pos, dimension, const numbers[], numbersSize = 1)
+{
+    if ((pos < USERARRAY_USTRUCT_TYPE_SIZE) || (numbersSize < 1) || (dimension < 1) || (dimension == 3) || (dimension > 4)
+        || ((pos + countUsedCells(numbersSize, USERARRAY_USTRUCT_DESCR_NUMBERS_MAX) + (dimension * numbersSize)) > userArrayMaxSize))
+        return 0;
+
+    new startPos = pos;
+    new numbersPos = 0;
+    while ((numbersPos < numbersSize) && (pos < userArrayMaxSize))
+    {
+        new amount = min(numbersSize - numbersPos, USERARRAY_USTRUCT_DESCR_NUMBERS_MAX);
+        userArray{pos++} = ustructMakeDescriptorNum(amount, dimension);
+        for (new i = 0; i < amount; i++)
+        {
+            num2array(numbers[numbersPos], dimension, true, userArray, pos, userArrayMaxSize);
+            numbersPos++;
+            pos += dimension;
+        }
+    }
+    return pos - startPos;
+}
