@@ -27,10 +27,17 @@
 //! @}
 
 //! @defgroup stopBits Стоповые биты
+
+//! @defgroup stopBitsPortInit Значения стоповых бит при инициализации порта
+//! @ingroup stopBits
 //! @{
 #define PORTINIT_STOP_BITS_ONE 0
 #define PORTINIT_STOP_BITS_TWO 1
+//! @}
 
+//! @defgroup stopBitsQuantity Количество стоповых бит
+//! @ingroup stopBits
+//! @{
 #define RSPORT_STOP_BITS_QTY_MIN 1
 #define RSPORT_STOP_BITS_QTY_MAX 2
 //! @}
