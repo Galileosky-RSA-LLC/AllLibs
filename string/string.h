@@ -57,7 +57,7 @@ forward stock strLen(const str{}, strLength = 0, start = 0);
 //! @param[in] sourcePos начальная позиция в строке-источнике
 //! @param[in] sourceLength длина массива строки-источника (если <=0, то будет вычислена)
 //! @param[in] fromBack признак необходимости вставки с конца источника (при совпадении источника с приемником)
-//! @return количество вставленных символов
+//! @return длина вставленной строки
 forward stock strncpy(dest{}, destPos, destLength, const source{}, sourcePos = 0, sourceLength = 0, fromBack = false);
 //! @}
 
