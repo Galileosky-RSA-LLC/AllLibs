@@ -48,7 +48,7 @@ forward stock insertArray(dest[], destPos, destSize, const source[], sourceSize,
 //! @param[in] source вставляемый массив
 //! @param[in] sourceSize размер вставляемого массива
 //! @param[in] sourcePos смещение в вставляемом, с которого начинать вставку
-//! @param[in] fromBack признак необходимости вставки с конца вставляемого (при совпадении вставляемого с целевым)
+//! @param[in] fromBack признак необходимости вставки с конца вставляемого (например, при совпадении вставляемого с целевым)
 //! @return количество вставленных элементов
 forward stock insertArrayStr(dest{}, destPos, destSize, const source{}, sourceSize, sourcePos = 0, fromBack = false);
 
