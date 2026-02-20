@@ -573,7 +573,7 @@ stock clearArrayStr(ar{}, arSize, start = 0)
 
 stock countArrayUsedCells(currentArSizeInBytes)
 {
-    return countUsedCells(currentArSizeInBytes, 4);
+    return countUsedCells(currentArSizeInBytes, CELL_BYTES);
 }
 
 stock num24bit2arrayLe(num, ar{}, start, arSize)

@@ -9,7 +9,7 @@
 //! @defgroup general Общие функции
 //! @{
 
-//! @brief Подсчет занятых 32-битных ячеек массива по его актуальной длине в байтах
+//! @brief Подсчет занятых ячеек массива по его актуальной длине в байтах
 forward stock countArrayUsedCells(currentArSizeInBytes);
 
 //! @brief Проверить подмассивы на равенство соответствующих элементов
@@ -37,7 +37,7 @@ forward stock isArraysEqualStr(const ar1{}, ar1start, ar1size, const ar2{}, ar2s
 //! @param[in] source вставляемый массив
 //! @param[in] sourceSize размер вставляемого массива
 //! @param[in] sourcePos смещение в вставляемом, с которого начинать вставку
-//! @param[in] fromBack признак необходимости вставки с конца вставляемого (при совпадении вставляемого с целевым)
+//! @param[in] fromBack признак необходимости вставки с конца вставляемого (например, при совпадении вставляемого с целевым)
 //! @return количество вставленных элементов
 forward stock insertArray(dest[], destPos, destSize, const source[], sourceSize, sourcePos = 0, fromBack = false);
 
