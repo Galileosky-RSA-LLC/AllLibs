@@ -92,6 +92,13 @@ forward stock countIdenticalStr(const ar1{}, ar1start, ar1size, const ar2{}, ar2
 //! @param[in] arStart индекс начала подмассива
 //! @param[in] arSize длина массива
 forward stock getSubSize(arStart, arSize);
+
+//! @brief Удалить последовательные дубликаты заданного значения в массиве однобайтных элементов
+//! @param[inout] ar массив
+//! @param[inout] arSize длина массива
+//! @param[in] value искомое значение
+//! @param[in] start стартовая позиция начала поиска
+forward stock removeConsecutiveDuplicatesStr(ar{}, &arSize, value, start = 0);
 //! @}
 
 //! @defgroup similarElementsOperations Однотипные операции над элементами

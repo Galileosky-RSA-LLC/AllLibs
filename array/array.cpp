@@ -748,3 +748,23 @@ stock setArrayToGlobalVars(const dataOutVarAddresses[], dataOutVarAddressesSize,
 
     return length;
 }
+
+stock removeConsecutiveDuplicatesStr(ar{}, &arSize, value, start = 0)
+{
+    if (start < 0)
+        start = 0;
+
+    if ((arSize - start) <= 1)
+        return;
+
+    new newArSize = start;
+    ar{newArSize++} = ar{start};
+    for (new i = start + 1; i < arSize; i++)
+    {
+        if ((ar{i} == ar{i - 1}) && (ar{i} == value))
+            continue;
+
+        ar{newArSize++} = ar{i};
+    }
+    arSize = newArSize;
+}

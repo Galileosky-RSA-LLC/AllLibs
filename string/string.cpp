@@ -63,6 +63,8 @@ stock strncpy(dest{}, destPos, destLength, const source{}, sourcePos = 0, source
     new endPos = destPos + insertArrayStr(dest, destPos, destLength, source, sourcePos + strLen(source, sourceLength, sourcePos), sourcePos, fromBack);
     if ((endPos >= 0) && (endPos < destLength))
         dest{endPos} = 0;
+
+    return endPos - destPos;
 }
 
 stock unread2space(str{}, strLength, start = 0, ignoreNull = false)
