@@ -36,7 +36,7 @@ stock arrayPlusStr(const ar{}, arSize, start = 0)
     return res;
 }
 
-stock insertArrayStr(dest{}, destPos, destSize, const source{}, sourceSize, sourcePos = 0, fromBack = false)
+stock insertArrayStr(dest{}, destPos, destSize, const source{}, sourceSize, sourcePos = 0, bool:fromBack = false)
 {
     if (destPos < 0)
         destPos = 0;
@@ -63,13 +63,13 @@ stock insertArrayStr(dest{}, destPos, destSize, const source{}, sourceSize, sour
     return i;
 }
 
-stock isArraysEqual(const ar1[], ar1start, ar1size, const ar2[], ar2start, ar2size)
+stock bool:isArraysEqual(const ar1[], ar1start, ar1size, const ar2[], ar2start, ar2size)
 {
 	new count1 = getSubSize(ar1start, ar1size);
     return (count1 == getSubSize(ar2start, ar2size)) && (countIdentical(ar1, ar1start, ar1size, ar2, ar2start, ar2size) == count1);
 }
 
-stock isArraysEqualStr(const ar1{}, ar1start, ar1size, const ar2{}, ar2start, ar2size)
+stock bool:isArraysEqualStr(const ar1{}, ar1start, ar1size, const ar2{}, ar2start, ar2size)
 {
 	new count1 = getSubSize(ar1start, ar1size);
     return (count1 == getSubSize(ar2start, ar2size)) && (countIdenticalStr(ar1, ar1start, ar1size, ar2, ar2start, ar2size) == count1);
@@ -82,9 +82,9 @@ stock invertArray(ar[], arSize, start = 0)
     
     for (new i = 0; i < (arSize - start) / 2; i++)
     {
-        new ch = ar[start + i];
+        new tmp = ar[start + i];
         ar[start + i] = ar[arSize - 1 - i];
-        ar[arSize - 1 - i] = ch;
+        ar[arSize - 1 - i] = tmp;
     }
 }
 
@@ -95,9 +95,9 @@ stock invertArrayStr(ar{}, arSize, start = 0)
 
     for (new i = 0; i < (arSize - start) / 2; i++)
     {
-        new ch = ar{start + i};
+        new tmp = ar{start + i};
         ar{start + i} = ar{arSize - 1 - i};
-        ar{arSize - 1 - i} = ch;
+        ar{arSize - 1 - i} = tmp;
     }
 }
 
@@ -144,7 +144,7 @@ stock arrayInvertBitsStr(ar{}, arSize, start = 0)
         ar{i} = invertBitsInByte(ar{i});
 }
 
-stock array2num(const ar{}, start, arSize, bytes, littleEnd, sign, &num)
+stock bool:array2num(const ar{}, start, arSize, bytes, bool:littleEnd, bool:sign, &num)
 {
     if (bytes < 1)
         bytes = 1;
@@ -173,67 +173,67 @@ stock array2num(const ar{}, start, arSize, bytes, littleEnd, sign, &num)
     return true;
 }
 
-stock array2num8sign(const ar{}, start, arSize, &num)
+stock bool:array2num8sign(const ar{}, start, arSize, &num)
 {
     return array2num(ar, start, arSize, 1, true, true, num);
 }
 
-stock array2num8unSign(const ar{}, start, arSize, &num)
+stock bool:array2num8unSign(const ar{}, start, arSize, &num)
 {
     return array2num(ar, start, arSize, 1, true, false, num);
 }
 
-stock array2num16leSign(const ar{}, start, arSize, &num)
+stock bool:array2num16leSign(const ar{}, start, arSize, &num)
 {
     return array2num(ar, start, arSize, 2, true, true, num);
 }
 
-stock array2num16leUnSign(const ar{}, start, arSize, &num)
+stock bool:array2num16leUnSign(const ar{}, start, arSize, &num)
 {
     return array2num(ar, start, arSize, 2, true, false, num);
 }
 
-stock array2num16beUnSign(const ar{}, start, arSize, &num)
+stock bool:array2num16beUnSign(const ar{}, start, arSize, &num)
 {
     return array2num(ar, start, arSize, 2, false, false, num);
 }
 
-stock array2num16beSign(const ar{}, start, arSize, &num)
+stock bool:array2num16beSign(const ar{}, start, arSize, &num)
 {
     return array2num(ar, start, arSize, 2, false, true, num);
 }
 
-stock array2num24leSign(const ar{}, start, arSize, &num)
+stock bool:array2num24leSign(const ar{}, start, arSize, &num)
 {
     return array2num(ar, start, arSize, 3, true, true, num);
 }
 
-stock array2num24leUnSign(const ar{}, start, arSize, &num)
+stock bool:array2num24leUnSign(const ar{}, start, arSize, &num)
 {
     return array2num(ar, start, arSize, 3, true, false, num);
 }
 
-stock array2num24beUnSign(const ar{}, start, arSize, &num)
+stock bool:array2num24beUnSign(const ar{}, start, arSize, &num)
 {
     return array2num(ar, start, arSize, 3, false, false, num);
 }
 
-stock array2num24beSign(const ar{}, start, arSize, &num)
+stock bool:array2num24beSign(const ar{}, start, arSize, &num)
 {
     return array2num(ar, start, arSize, 3, false, true, num);
 }
 
-stock array2num32beSign(const ar{}, start, arSize, &num)
+stock bool:array2num32beSign(const ar{}, start, arSize, &num)
 {
     return array2num(ar, start, arSize, 4, false, true, num);
 }
 
-stock array2num32leSign(const ar{}, start, arSize, &num)
+stock bool:array2num32leSign(const ar{}, start, arSize, &num)
 {
     return array2num(ar, start, arSize, 4, true, true, num);
 }
 
-stock num2array(num, bytes, littleEnd, ar{}, start, arSize)
+stock bool:num2array(num, bytes, bool:littleEnd, ar{}, start, arSize)
 {
     if (bytes < 1)
         bytes = 1;
@@ -250,27 +250,27 @@ stock num2array(num, bytes, littleEnd, ar{}, start, arSize)
     return true;
 }
 
-stock num32bit2arrayLe(num, ar{}, start, arSize)
+stock bool:num32bit2arrayLe(num, ar{}, start, arSize)
 {
     return num2array(num, 4, true, ar, start, arSize);
 }
 
-stock num32bit2arrayBe(num, ar{}, start, arSize)
+stock bool:num32bit2arrayBe(num, ar{}, start, arSize)
 {
     return num2array(num, 4, false, ar, start, arSize);
 }
 
-stock num16bit2arrayLe(num, ar{}, start, arSize)
+stock bool:num16bit2arrayLe(num, ar{}, start, arSize)
 {
     return num2array(num, 2, true, ar, start, arSize);
 }
 
-stock num16bit2arrayBe(num, ar{}, start, arSize)
+stock bool:num16bit2arrayBe(num, ar{}, start, arSize)
 {
     return num2array(num, 2, false, ar, start, arSize);
 }
 
-stock searchLinear(const ar[], arSize, element, start = 0, fromEnd = false)
+stock searchLinear(const ar[], arSize, element, start = 0, bool:fromEnd = false)
 {
     if (start < 0)
         start = 0;
@@ -283,7 +283,7 @@ stock searchLinear(const ar[], arSize, element, start = 0, fromEnd = false)
     return -1;
 }
 
-stock searchLinearStr(const ar{}, arSize, element, start = 0, fromEnd = false)
+stock searchLinearStr(const ar{}, arSize, element, start = 0, bool:fromEnd = false)
 {
     if (start < 0)
         start = 0;
@@ -317,8 +317,6 @@ stock searchBinary(const ar[], arSize, element, start = 0)
         else
             first = mid + 1;
     }
-    // After the end of the loop, lastIndex can point to the search item. 
-    // Otherwise the element is missing in the array.
     return (ar[last] == element) ? last : -1;
 }
 
@@ -343,8 +341,6 @@ stock searchBinaryStr(const ar{}, arSize, element, start = 0)
         else
             first = mid + 1;
     }
-    // After the end of the loop, lastIndex can point to the search item. 
-    // Otherwise the element is missing in the array.
     return (ar{last} == element) ? last : -1;
 }
 
@@ -407,7 +403,7 @@ stock shakerSort(ar[], arSize, start = 0)
     left = start;
     new right; // правая граница сортируемой области
     right = arSize - 1;
-    new move = true;  // признак перемещений
+    new bool:move = true;  // признак перемещений
     new i; //счетчик
     new t; // для обмена
     while ((left < right) && move)
@@ -449,7 +445,7 @@ stock shakerSortStr(ar{}, arSize, start = 0)
     left = start;
     new right; // правая граница сортируемой области
     right = arSize - 1;
-    new move = true;  // признак перемещений
+    new bool:move = true;  // признак перемещений
     new i; //счетчик
     new t; // для обмена
     while ((left < right) && move)
@@ -482,7 +478,7 @@ stock shakerSortStr(ar{}, arSize, start = 0)
     }
 }
 
-stock getBitFromArray(const ar{}, start, arSize, bit, &value)
+stock bool:getBitFromArray(const ar{}, start, arSize, bit, &value)
 {
     new offset = start + bit / 8;
     if ((start < 0) || (bit < 0) || (offset >= arSize))
@@ -492,7 +488,7 @@ stock getBitFromArray(const ar{}, start, arSize, bit, &value)
     return true;
 }
 
-stock setBitInArray(ar{}, start, arSize, bit, value)
+stock bool:setBitInArray(ar{}, start, arSize, bit, value)
 {
     new offset = start + bit / 8;
     if ((start < 0) || (bit < 0) || (offset >= arSize))
@@ -625,7 +621,7 @@ stock getSubSize(arStart, arSize)
     return arSize > arStart ? arSize - arStart : 0;
 }
 
-stock arrayRingShift(ar[], arSize, toRight, arStart = 0, count = 1)
+stock arrayRingShift(ar[], arSize, bool:toRight, arStart = 0, count = 1)
 {
     if (arStart < 0)
         arStart = 0;
@@ -646,7 +642,7 @@ stock arrayRingShift(ar[], arSize, toRight, arStart = 0, count = 1)
     }
 }
 
-stock arrayRingShiftStr(ar{}, arSize, toRight, arStart = 0, count = 1)
+stock arrayRingShiftStr(ar{}, arSize, bool:toRight, arStart = 0, count = 1)
 {
     if (arStart < 0)
         arStart = 0;
@@ -667,7 +663,7 @@ stock arrayRingShiftStr(ar{}, arSize, toRight, arStart = 0, count = 1)
     }
 }
 
-stock insertArray(dest[], destPos, destSize, const source[], sourceSize, sourcePos = 0, fromBack = false)
+stock insertArray(dest[], destPos, destSize, const source[], sourceSize, sourcePos = 0, bool:fromBack = false)
 {
     if (destPos < 0)
         destPos = 0;
@@ -694,7 +690,7 @@ stock insertArray(dest[], destPos, destSize, const source[], sourceSize, sourceP
     return i;
 }
 
-stock getArrayFromGlobalVars(const dataInVarAddresses[], dataInVarAddressesSize, dataOut{}, dataOutMaxSize, useDataInSize = false, dataInSizeVarAddr = 0,
+stock getArrayFromGlobalVars(const dataInVarAddresses[], dataInVarAddressesSize, dataOut{}, dataOutMaxSize, bool:useDataInSize = false, dataInSizeVarAddr = 0,
                             dataOutPos = 0)
 {
     if (dataOutPos < 0)
@@ -717,14 +713,14 @@ stock getArrayFromGlobalVars(const dataInVarAddresses[], dataInVarAddressesSize,
     return dataOutPos - startPos;
 }
 
-stock setArrayToGlobalVars(const dataOutVarAddresses[], dataOutVarAddressesSize, const dataIn{}, dataInSize, useDataOutSize = false,
+stock setArrayToGlobalVars(const dataOutVarAddresses[], dataOutVarAddressesSize, const dataIn{}, dataInSize, bool:useDataOutSize = false,
                             dataOutActualSizeVarAddr = 0, dataInPos = 0)
 {
     if (dataInPos < 0)
         dataInPos = 0;
 
     new const startPos = dataInPos;
-    new finish = false;
+    new bool:finish = false;
     new i = 0;
     for (; (dataInPos < dataInSize) && (i < dataOutVarAddressesSize) && !finish; i++)
     {
@@ -740,7 +736,7 @@ stock setArrayToGlobalVars(const dataOutVarAddresses[], dataOutVarAddressesSize,
         }
         SetVar(dataOutVarAddresses[i], buf[0]);
     }
-    new length = dataInPos - startPos;
+    new const length = dataInPos - startPos;
     if (useDataOutSize)
         SetVar(dataOutActualSizeVarAddr, length);
     else if (!finish && !(length % CELL_BYTES) && (i < dataOutVarAddressesSize))
