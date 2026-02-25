@@ -1,7 +1,7 @@
 //! @file
-//! @brief Функции для работы со строками
+//! @brief Реализация библиотеки для работы со строками
 
-#ifdef STRING_LIB
+#if defined STRING_LIB
 #endinput
 #endif
 #define STRING_LIB
@@ -12,35 +12,35 @@
 #include "..\numeric\numeric.h"
 #include "..\numeric\numeric.cpp"
 
-stock toLowerCase(str{}, strLength, start = 0, ignoreNull = false)
+#define SYMBOL_LATIN_LETTER_CASE_OFFSET 0x20
+
+stock toLowerCase(str{}, strLength, start = 0, bool:ignoreNull = false)
 {
     if (start < 0)
         start = 0;
 
-    for (new i = start; i < strLength; i++)
+    for (new i = start; (i < strLength) && ((str{i} != SYMBOL_NUL) || ignoreNull); i++)
     {    
-        if ((str{i} >= 0x41) && (str{i} <= 0x5A) || (str{i} >= 0xC0) && (str{i} <= 0xDF))
-            str{i} += 0x20; // латиница или А..Е, Ж..Я
-        else if (str{i} == 0xA8)
-            str{i} = 0xB8; // Ё
-        else if ((str{i} == 0) && !ignoreNull)
-            break;
+        if ((str{i} >= SYMBOL_LATIN_CAPITAL_LETTER_A) && (str{i} <= SYMBOL_LATIN_CAPITAL_LETTER_Z)
+            || (str{i} >= SYMBOL_CYRILLIC_CAPITAL_LETTER_A) && (str{i} <= SYMBOL_CYRILLIC_CAPITAL_LETTER_YA))
+            str{i} += SYMBOL_LATIN_LETTER_CASE_OFFSET;
+        else if (str{i} == SYMBOL_CYRILLIC_CAPITAL_LETTER_IO)
+            str{i} = SYMBOL_CYRILLIC_SMALL_LETTER_IO;
     }
 }
 
-stock toUpperCase(str{}, strLength, start = 0, ignoreNull = false)
+stock toUpperCase(str{}, strLength, start = 0, bool:ignoreNull = false)
 {
     if (start < 0)
         start = 0;
 
-    for (new i = start; i < strLength; i++)
+    for (new i = start; (i < strLength) && ((str{i} != SYMBOL_NUL) || ignoreNull); i++)
     {    
-        if ((str{i} >= 0x61) && (str{i} <= 0x7A) || (str{i} >= 0xE0) && (str{i} <= 0xFF))
-            str{i} -= 0x20; // латиница или а..е, ж..я
-        else if (str{i} == 0xB8)
-            str{i} = 0xA8; // ё
-        else if ((str{i} == 0) && !ignoreNull)
-            break;
+        if ((str{i} >= SYMBOL_LATIN_SMALL_LETTER_A) && (str{i} <= SYMBOL_LATIN_SMALL_LETTER_Z)
+            || (str{i} >= SYMBOL_CYRILLIC_SMALL_LETTER_A) && (str{i} <= SYMBOL_CYRILLIC_SMALL_LETTER_YA))
+            str{i} -= SYMBOL_LATIN_LETTER_CASE_OFFSET;
+        else if (str{i} == SYMBOL_CYRILLIC_SMALL_LETTER_IO)
+            str{i} = SYMBOL_CYRILLIC_CAPITAL_LETTER_IO;
     }
 }
 
@@ -50,37 +50,34 @@ stock strLen(const str{}, strLength = 0, start = 0)
         start = 0;
 
     new i;
-    for (i = start; (strLength > 0 ? i < strLength : i >= 0) && (str{i} != 0); i++)
+    for (i = start; (strLength > 0 ? i < strLength : i >= 0) && (str{i} != SYMBOL_NUL); i++)
     {}
     return i - start;
 }
 
-stock strncpy(dest{}, destPos, destLength, const source{}, sourcePos = 0, sourceLength = 0, fromBack = false)
+stock strncpy(dest{}, destPos, destLength, const source{}, sourcePos = 0, sourceLength = 0, bool:fromBack = false)
 {
     if (destPos < 0)
         destPos = 0;
 
     new endPos = destPos + insertArrayStr(dest, destPos, destLength, source, sourcePos + strLen(source, sourceLength, sourcePos), sourcePos, fromBack);
     if ((endPos >= 0) && (endPos < destLength))
-        dest{endPos} = 0;
+        dest{endPos} = SYMBOL_NUL;
 
     return endPos - destPos;
 }
 
-stock unread2space(str{}, strLength, start = 0, ignoreNull = false)
+stock unread2space(str{}, strLength, start = 0, bool:ignoreNull = false)
 {
     if (start < 0)
         start = 0;
 
     new count;
-    for (new i = start; i < strLength; i++)
+    for (new i = start; (i < strLength) && ((str{i} != SYMBOL_NUL) || ignoreNull); i++)
     {
-        if ((str{i} == 0x00) && !ignoreNull)
-            break;
-
-        if (((str{i} >= 0x00) && (str{i} <= 0x1F)) || (str{i} == 0x7F))
+        if (((str{i} >= SYMBOL_NUL) && (str{i} <= SYMBOL_US)) || (str{i} == SYMBOL_DEL))
         {    
-            str{i} = ' ';
+            str{i} = SYMBOL_SPACE;
             count++;
         }
     }
@@ -99,11 +96,11 @@ stock decfractoa(num, exp, str{}, pos, length, separator)
         return 0;
 
     new divider = pow(10, exp);
-    new isMinus = num < 0;
-    if (isMinus)
+    new isNegative = num < 0;
+    if (isNegative)
         str{pos++} = '-';
 
-    new len = itoa((num == cellmin ? -(num + 1) : (isMinus ? -num : num)) / divider, str, pos, length);
+    new len = itoa((num == cellmin ? -(num + 1) : (isNegative ? -num : num)) / divider, str, pos, length);
     if (len == 0)
         return 0;
 
@@ -113,24 +110,24 @@ stock decfractoa(num, exp, str{}, pos, length, separator)
 
     str{pos++} = separator;
     num %= divider;
-    if (isMinus)
+    if (isNegative)
         num = divider - num;
 
     new zeros = exp - digits(num);
     for (new i = 0; (i < zeros) && (pos < length); i++)
         str{pos++} = '0';
 
-    return (isMinus ? 1 : 0) + len + 1 + zeros + itoa(num, str, pos, length);
+    return (isNegative ? 1 : 0) + len + 1 + zeros + itoa(num, str, pos, length);
 }
 
 stock itoa(num, str{}, pos, length)
 {
     new countDigits = digits(num);
-    new isMinus = num < 0;
+    new isNegative = num < 0;
     if (pos < 0)
         pos = 0;
     
-    if ((pos + countDigits + (isMinus ? 1 : 0)) > length)
+    if ((pos + countDigits + (isNegative ? 1 : 0)) > length)
         return 0;
 
     if (num == 0)
@@ -141,7 +138,7 @@ stock itoa(num, str{}, pos, length)
     if (num == cellmin)
         return insertArrayStr(str, pos, length, NUM_VALUE_MIN_STR, NUM_VALUE_MIN_STR_LENGTH);
     
-    if (isMinus) 
+    if (isNegative) 
     {
         num *= -1;
         str{pos++} = '-';
@@ -157,14 +154,14 @@ stock itoa(num, str{}, pos, length)
         num -= c * divider;
         divider /= 10;
     }
-    return countDigits + (isMinus ? 1 : 0);
+    return countDigits + (isNegative ? 1 : 0);
 }
 
 stock itoaw(num, str{}, pos, length, width)
 {
-    new isMinus = num < 0;
+    new isNegative = num < 0;
     new numDigits = digits(num);
-    new numSymbols = numDigits + (isMinus ? 1 : 0);
+    new numSymbols = numDigits + (isNegative ? 1 : 0);
     if (width < 0)
         width = 0;
 
@@ -175,13 +172,13 @@ stock itoaw(num, str{}, pos, length, width)
     if ((pos + totalSymbols) > length)
         return 0;
 
-    if (isMinus)
+    if (isNegative)
         str{pos++} = '-';
 
     for (new i = 0; i < (totalSymbols - numSymbols); i++)
         str{pos++} = '0';
 
-    if (isMinus)
+    if (isNegative)
     {
         if (num == cellmin)
         {    
@@ -240,8 +237,8 @@ stock atoi(const str{}, pos, length, &value)
 
     new startPos = pos;
     pos += skipSpaces(str, length, pos);
-    new isMinus = str{pos} == '-';
-    if (isMinus || (str{pos} == '+'))
+    new isNegative = str{pos} == '-';
+    if (isNegative || (str{pos} == '+'))
         pos++;
 
     value = 0;
@@ -256,7 +253,7 @@ stock atoi(const str{}, pos, length, &value)
 
         new newVal;
         newVal = (value * 10) + (str{pos} - '0');
-        if ((((value * 10) / 10) != value) || ((newVal < 0) && ((newVal != cellmin) || !isMinus))) // переполнение
+        if ((((value * 10) / 10) != value) || ((newVal < 0) && ((newVal != cellmin) || !isNegative))) // переполнение
             return 0;
 
         value = newVal;
@@ -264,29 +261,26 @@ stock atoi(const str{}, pos, length, &value)
     if (!digitFound)
         return 0;
 
-    if (isMinus)
+    if (isNegative)
         value = -value;
 
     return pos - startPos;
 }
 
-stock skipSpaces(const str{}, length, pos = 0)
+stock skipSpaces(const str{}, strLength, pos = 0)
 {
     if (pos < 0)
         pos = 0;
 
     new startPos = pos;
-    for (; pos < length; pos++)
-    {
-        if ((str{pos} != ' ') && (str{pos} != '\t'))
-            break;
-    }
+    for (; (pos < strLength) && ((str{pos} == SYMBOL_SPACE) || (str{pos} == SYMBOL_HT)); pos++)
+    {}
     return pos - startPos;
 }
 
-stock isDigit(byte)
+stock bool:isDigit(byte)
 {
-    return ((byte >= '0') && (byte <= '9'));
+    return ((byte >= SYMBOL_0) && (byte <= SYMBOL_9));
 }
 
 stock atofi(const str{}, pos, length, separator, precision, &value)
@@ -296,13 +290,13 @@ stock atofi(const str{}, pos, length, separator, precision, &value)
 
     new startPos = pos;
     pos += skipSpaces(str, length, pos);
-    new isMinus = str{pos} == '-';
+    new isNegative = str{pos} == SYMBOL_MINUS;
     new added = atoi(str, pos, length, value);
     if (added == 0)
         return 0;
 
     pos += added;
-    if (isMinus)
+    if (isNegative)
         value = -value;
 
     new i;
@@ -316,7 +310,7 @@ stock atofi(const str{}, pos, length, separator, precision, &value)
 
             new newVal;
             newVal = (value * 10) + (str{pos} - '0');
-            if ((((value * 10) / 10) != value) || ((newVal < 0) && ((newVal != cellmin) || !isMinus))) // переполнение
+            if ((((value * 10) / 10) != value) || ((newVal < 0) && ((newVal != cellmin) || !isNegative))) // переполнение
                 return 0;
 
             value = newVal;
@@ -334,7 +328,7 @@ stock atofi(const str{}, pos, length, separator, precision, &value)
         if (!isDigit(str{pos}))
             break;
     }
-    if (isMinus)
+    if (isNegative)
         value = -value;
 
     return pos - startPos;
@@ -359,8 +353,7 @@ stock getHexString(const ar{}, arStart, arSize, str{}, strSize, strPos = 0)
 
 stock numLength(num)
 {
-    new d = digits(num);
-    return num < 0 ? d + 1 : d;
+    return digits(num) + (num < 0 ? 1 : 0);
 }
 
 stock base64Encode(const in{}, inSize, inPos, out{}, outSize, outPos = 0)
@@ -545,7 +538,7 @@ stock asciiHexStr2array(const asciiStr{}, asciiStrSize, asciiStrPos, hex{}, hexM
 
 stock getDigit(byte)
 {
-    return byte - 0x30;
+    return byte - SYMBOL_0;
 }
 
 stock asciiHex2num(byte)

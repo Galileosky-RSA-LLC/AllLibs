@@ -1,7 +1,7 @@
 //! @file
-//! @brief Функции библиотеки работы с числами
+//! @brief Реализация библиотеки работы с числами
 
-#ifdef NUMERIC_LIB
+#if defined NUMERIC_LIB
 #endinput
 #endif
 #define NUMERIC_LIB
@@ -13,7 +13,7 @@
 stock invertBitsInByte(byte)
 {
     new tmp = 0;
-    for (new j = 0; j < 8; j++)
+    for (new i = 0; i < BYTE_BITS; i++)
     {
         tmp <<= 1;
         tmp |= byte & 1;
@@ -24,11 +24,13 @@ stock invertBitsInByte(byte)
 
 stock getBit(num, bit)
 {
+    coerce(bit, 0, CELL_LAST_BIT_INDEX);
     return (num >> bit) & 1;
 }
 
 stock setBit(num, bit, bitValue)
 {
+    coerce(bit, 0, CELL_LAST_BIT_INDEX);
     new tmp = 1 << bit;
     if (bitValue)
         num |= tmp;
@@ -38,7 +40,7 @@ stock setBit(num, bit, bitValue)
     return num;
 }
 
-stock coerce(&num, rangeMin, rangeMax)
+stock bool:coerce(&num, rangeMin, rangeMax)
 {
     if (rangeMin > rangeMax)
     {
@@ -186,12 +188,14 @@ stock reverseBits(value, bits)
 
 stock setByte(number, byteId, newByteValue)
 {
+    coerce(byteId, 0, CELL_LAST_BYTE_INDEX);
     new shift = byteId * BYTE_BITS;
     return (number & (~(0xFF << shift))) | ((newByteValue & 0xFF) << shift);
 }
 
 stock getByte(number, byteId)
 {
+    coerce(byteId, 0, CELL_LAST_BYTE_INDEX);
     return (number >> (byteId * BYTE_BITS)) & 0xFF;
 }
 

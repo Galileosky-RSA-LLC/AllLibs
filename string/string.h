@@ -1,51 +1,90 @@
 //! @file
 //! @brief Заголовок библиотеки для работы со строками
 
-#ifdef STRING_H
+#if defined STRING_H
 #endinput
 #endif
 #define STRING_H
 
+//! @defgroup strnum Конвертация строка <-> число
+//! @{
 #define NUM_VALUE_MIN_STR "-2147483648"
 #define NUM_VALUE_MIN_STR_LENGTH 11
 #define NUM_VALUE_MAX_STR "2147483647"
 #define NUM_VALUE_MAX_STR_LENGTH 10
+//! @}
 
+//! @defgroup base64 Base64
+//! @{
 #define BASE64_BLOCK_SIZE 4
 #define BASE64_PADDING '='
 #define BASE64_ALPHABET_SIZE 64
 stock const BASE64_ALPHABET{} ="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+//! @}
 
-#define SYMBOL_CR 0x0D
+//! @defgroup symbols Символы
+
+//! @defgroup symbolsASCII ASCII (ISO 8859-1)
+//! @ingroup symbols
+//! @{
+#define SYMBOL_NUL 0x00
+#define SYMBOL_HT '\t'
 #define SYMBOL_LF 0x0A
+#define SYMBOL_CR 0x0D
+#define SYMBOL_US 0x1F
+
+#define SYMBOL_SPACE ' '
+#define SYMBOL_MINUS '-'
+
+#define SYMBOL_0 0x30
+#define SYMBOL_9 0x39
+
+#define SYMBOL_LATIN_CAPITAL_LETTER_A 0x41
+#define SYMBOL_LATIN_CAPITAL_LETTER_Z 0x5A
+#define SYMBOL_LATIN_SMALL_LETTER_A 0x61
+#define SYMBOL_LATIN_SMALL_LETTER_Z 0x7A
+
+#define SYMBOL_DEL 0x7F
+//! @}
+
+//! @defgroup symbolsCpWin1251 Windows CP-1251
+//! @ingroup symbols
+//! @{
+#define SYMBOL_CYRILLIC_CAPITAL_LETTER_IO 0xA8
+#define SYMBOL_CYRILLIC_SMALL_LETTER_IO 0xB8
+#define SYMBOL_CYRILLIC_CAPITAL_LETTER_A 0xC0
+#define SYMBOL_CYRILLIC_CAPITAL_LETTER_YA 0xDF
+#define SYMBOL_CYRILLIC_SMALL_LETTER_A 0xE0
+#define SYMBOL_CYRILLIC_SMALL_LETTER_YA 0xFF
+//! @}
 
 //! @defgroup general Общие функции
 //! @{
 
-//! @brief Вернуть цифру из ее кода символа ASCII
+//! @brief Вернуть цифру из кода символа ASCII
 forward stock getDigit(byte);
 
-//! @brief Проверяет, является ли символ цифрой в кодировке ASCII
-//! @param[in] byte предполагаемый символ цифры в ASCII
-forward stock isDigit(byte);
+//! @brief Проверить, является ли символ цифрой в кодировке ASCII
+//! @param[in] byte анализируемый байт
+forward bool:stock isDigit(byte);
 
 //! @brief Посчитать длину символов числа
-//! @details Например -1 -> 2
+//! @details Например "-1" -> 2
 //! @param[in] num исходное число
 //! @return кол-во символов в строковом представлении числа
 forward stock numLength(num);
 
 //! @brief Пропустить последовательные пустоты в строке (пробел, табуляция)
 //! @param[in] str массив со строкой
-//! @param[in] length длина массива со строкой
+//! @param[in] strLength длина массива со строкой
 //! @param[in] pos позиция начала
 //! @return кол-во пропущенных символов
-forward stock skipSpaces(const str{}, length, pos = 0);
+forward stock skipSpaces(const str{}, strLength, pos = 0);
 
 //! @brief Вычисление длины подстроки символов
 //! @details до \0 или до конца массива
 //! @param[in] str массив со строкой
-//! @param[in] strLength длина массива, если <=0, то игнорируется
+//! @param[in] strLength длина массива; если <=0, то игнорируется
 //! @param[in] start индекс начала подстроки
 forward stock strLen(const str{}, strLength = 0, start = 0);
 
@@ -56,30 +95,30 @@ forward stock strLen(const str{}, strLength = 0, start = 0);
 //! @param[in] source массив строки-источника
 //! @param[in] sourcePos начальная позиция в строке-источнике
 //! @param[in] sourceLength длина массива строки-источника (если <=0, то будет вычислена)
-//! @param[in] fromBack признак необходимости вставки с конца источника (при совпадении источника с приемником)
+//! @param[in] fromBack признак необходимости вставки с конца источника (например, при совпадении источника с приемником)
 //! @return длина вставленной строки
-forward stock strncpy(dest{}, destPos, destLength, const source{}, sourcePos = 0, sourceLength = 0, fromBack = false);
+forward stock strncpy(dest{}, destPos, destLength, const source{}, sourcePos = 0, sourceLength = 0, bool:fromBack = false);
 //! @}
 
 
 //! @defgroup sym2anotherSym Преобразование символ <-> другой символ
 //! @{
 
-//! @brief Переводит подстроку к нижнему регистру символов
+//! @brief Перевести подстроку к нижнему регистру символов
 //! @details в т.ч. кириллические
 //! @param[inout] str массив со строкой
 //! @param[in] strLength длина массива
 //! @param[in] start индекс начала подстроки
 //! @param[in] ignoreNull признак необходимости игнорирования \0: false - преобразование заканчивается на \0, true - продолжается до конца массива
-forward stock toLowerCase(str{}, strLength, start = 0, ignoreNull = false);
+forward stock toLowerCase(str{}, strLength, start = 0, bool:ignoreNull = false);
 
-//! @brief Переводит подстроку к верхнему регистру символов
+//! @brief Перевести подстроку к верхнему регистру символов
 //! @details в т.ч. кириллические
 //! @param[inout] str массив со строкой
 //! @param[in] strLength длина массива
 //! @param[in] start индекс начала подстроки
 //! @param[in] ignoreNull признак необходимости игнорирования \0: false - преобразование заканчивается на \0, true - продолжается до конца массива
-forward stock toUpperCase(str{}, strLength, start = 0, ignoreNull = false);
+forward stock toUpperCase(str{}, strLength, start = 0, bool:ignoreNull = false);
 
 //! @brief Преобразовать нечитаемые символы в пробелы
 //! @param[inout] str массив со строкой для преобразования
@@ -87,15 +126,15 @@ forward stock toUpperCase(str{}, strLength, start = 0, ignoreNull = false);
 //! @param[in] start стартовый индекс начала преобразования
 //! @param[in] ignoreNull признак необходимости игнорирования \0: false - преобразование заканчивается на \0, true - продолжается до конца массива
 //! @return кол-во преобразований
-forward stock unread2space(str{}, strLength, start = 0, ignoreNull = false);
+forward stock unread2space(str{}, strLength, start = 0, bool:ignoreNull = false);
 //! @}
 
 
-//! @defgroup strnum Конвертация строка <-> число
+//! @addtogroup strnum
 //! @{
 
 //! @brief Преобразование подстроки ASCII дробного числа в целое число
-//! @details Пробельные символы в начале строки пропускаются
+//! @details Пустое пространство в начале строки пропускается
 //! @param[in] str массив со строкой
 //! @param[in] pos позиция начала числа
 //! @param[in] length длина массива со строкой
@@ -194,10 +233,11 @@ forward stock toAsciiHex(ar{}, arLength, subLength, start = 0);
 //! @}
 
 
-//! @defgroup base64 Base64 
+//! @addtogroup base64
 //! @{
 
-//! @brief Закодировать в Base64 (RFC 4648)
+//! @brief Закодировать в Base64
+//! @details RFC 4648
 //! @param[in] in массив для кодирования
 //! @param[in] inSize длина массива для кодирования
 //! @param[in] inPos позиция начала в массиве для кодирования
@@ -210,7 +250,8 @@ forward stock base64Encode(const in{}, inSize, inPos, out{}, outSize, outPos = 0
 //! @brief Проверка символа на принадлежность алфавиту base64
 forward stock isBase64(ch);
 
-//! @brief Декодировать из Base64 (RFC 4648)
+//! @brief Декодировать из Base64
+//! @details RFC 4648
 //! @param[in] in массив закодированных данных
 //! @param[in] inSize длина массива закодированных данных
 //! @param[in] inPos позиция начала в массиве закодированных данных

@@ -1,7 +1,7 @@
 //! @file
-//! @brief Функции библиотеки для работы с массивами
+//! @brief Реализация библиотеки для работы с массивами
 
-#ifdef ARRAY_LIB
+#if defined ARRAY_LIB
 #endinput
 #endif
 #define ARRAY_LIB

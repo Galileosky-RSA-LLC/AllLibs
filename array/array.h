@@ -1,7 +1,7 @@
 //! @file
 //! @brief Заголовок библиотеки для работы с массивами
 
-#ifdef ARRAY_H
+#if defined ARRAY_H
 #endinput
 #endif
 #define ARRAY_H

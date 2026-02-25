@@ -1,23 +1,20 @@
 //! @file
 //! @brief Заголовок библиотеки работы с числами
 
-#ifdef NUMERIC_H
+#if defined NUMERIC_H
 #endinput
 #endif
 #define NUMERIC_H
 
-#define NUM_VALUE_MAX cellmax // 2 147 483 647, устаревшее определение, использовать cellmax
-#define NUM_VALUE_MIN cellmin // -2 147 483 648, устаревшее определение, использовать cellmin
-
-#ifndef MIN
+#if !defined MIN
 #define MIN(%1,%2) ((%1) < (%2) ? (%1) : (%2)) // при многих вложенных таких же - ЗАВИСАЕТ КОМПИЛЯЦИЯ
 #endif
 
-#ifndef MAX
+#if !defined MAX
 #define MAX(%1,%2) ((%1) > (%2) ? (%1) : (%2)) // при многих вложенных таких же - ЗАВИСАЕТ КОМПИЛЯЦИЯ
 #endif
 
-#ifndef COUNT_USED_CELLS
+#if !defined COUNT_USED_CELLS
 #define COUNT_USED_CELLS(%1,%2) ((%1) / (%2) + (((%1) % (%2)) != 0))
 #endif
 
@@ -37,7 +34,7 @@ forward stock abs(num);
 //! @param[in] rangeMin минимум диапазона
 //! @param[in] rangeMax максимум диапазона
 //! @return false - число не корректировалось, true - число корректировалось
-forward stock coerce(&num, rangeMin, rangeMax);
+forward bool:stock coerce(&num, rangeMin, rangeMax);
 
 //! @brief Получить количество занятых ячеек по актуальной длине параметра
 forward stock countUsedCells(size, cellSize);
@@ -50,7 +47,7 @@ forward stock digits(val);
 
 //! @brief Получить байт из числа
 //! @param[in] number исходное число
-//! @param[in] byteId номер байта в числе, 0..3
+//! @param[in] byteId позиция байта в числе, 0..3
 forward stock getByte(number, byteId);
 
 //! @brief Возвести число в неотрицательную степень
