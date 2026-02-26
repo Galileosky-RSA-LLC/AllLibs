@@ -34,14 +34,18 @@ stock const BASE64_ALPHABET{} ="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuv
 #define SYMBOL_US 0x1F
 
 #define SYMBOL_SPACE ' '
+#define SYMBOL_PLUS '+'
 #define SYMBOL_MINUS '-'
 
-#define SYMBOL_0 0x30
-#define SYMBOL_9 0x39
+#define SYMBOL_0 '0'
+#define SYMBOL_7 '7'
+#define SYMBOL_9 '9'
 
 #define SYMBOL_LATIN_CAPITAL_LETTER_A 0x41
+#define SYMBOL_LATIN_CAPITAL_LETTER_F 0x46
 #define SYMBOL_LATIN_CAPITAL_LETTER_Z 0x5A
 #define SYMBOL_LATIN_SMALL_LETTER_A 0x61
+#define SYMBOL_LATIN_SMALL_LETTER_F 0x66
 #define SYMBOL_LATIN_SMALL_LETTER_Z 0x7A
 
 #define SYMBOL_DEL 0x7F
@@ -61,7 +65,7 @@ stock const BASE64_ALPHABET{} ="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuv
 //! @defgroup general Общие функции
 //! @{
 
-//! @brief Вернуть цифру из кода символа ASCII
+//! @brief Вернуть цифру из ее кода символа ASCII
 forward stock getDigit(byte);
 
 //! @brief Проверить, является ли символ цифрой в кодировке ASCII
@@ -81,14 +85,14 @@ forward stock numLength(num);
 //! @return кол-во пропущенных символов
 forward stock skipSpaces(const str{}, strLength, pos = 0);
 
-//! @brief Вычисление длины подстроки символов
+//! @brief Вычислить длину подстроки символов
 //! @details до \0 или до конца массива
 //! @param[in] str массив со строкой
 //! @param[in] strLength длина массива; если <=0, то игнорируется
 //! @param[in] start индекс начала подстроки
 forward stock strLen(const str{}, strLength = 0, start = 0);
 
-//! @brief Копирование одной подстроки в другую с ее завершением (если позволяет длина)
+//! @brief Копировать одну подстроку в другую строку с ее завершением (если позволяет длина)
 //! @param[out] dest массив строки-приемника
 //! @param[in] destPos позиция начала вставки в строку-приемник
 //! @param[in] destLength длина массива строки-приемника
@@ -133,54 +137,55 @@ forward stock unread2space(str{}, strLength, start = 0, bool:ignoreNull = false)
 //! @addtogroup strnum
 //! @{
 
-//! @brief Преобразование подстроки ASCII дробного числа в целое число
-//! @details Пустое пространство в начале строки пропускается
+//! @brief Преобразовать подстроку ASCII дробного числа в целое число
+//! @details Пробелы и табуляции в начале строки пропускаются
 //! @param[in] str массив со строкой
 //! @param[in] pos позиция начала числа
-//! @param[in] length длина массива со строкой
+//! @param[in] strLength длина массива со строкой
 //! @param[in] separator символ-разделитель целой и дробной частей числа
 //! @param[in] precision требуемая точность - кол-во цифр после разделителя целой и дробной частей
 //! @param[out] value преобразованное число
 //! @return кол-во преобразованных символов подстроки, т.е. если 0 - ошибка
-forward stock atofi(const str{}, pos, length, separator, precision, &value);
+forward stock atofi(const str{}, pos, strLength, separator, precision, &value);
 
-//! @brief Преобразование подстроки в целое число
+//! @brief Преобразовать подстроку в целое число
 //! @details Если встречается нечисловой символ (после начальных "-" или "+", если они есть), преобразование прекращается
 //! @param[in] str массив со строкой
 //! @param[in] pos позиция начала числа
-//! @param[in] length длина массива со строкой
+//! @param[in] strLength длина массива со строкой
 //! @param[out] value преобразованное число
 //! @return кол-во преобразованных символов подстроки, т.е. если 0 - ошибка (неверные входные данные, нет числа или неверный формат)
-forward stock atoi(const str{}, pos, length, &value);
+forward stock atoi(const str{}, pos, strLength, &value);
 
-//! @brief Конвертация десятичной дроби в строку
+//! @brief Преобразовать десятичную дробь в строку
 //! @details Незначащие нули справа также вставляются
 //! @param[in] num исходное целое число
 //! @param[in] exp степень числа 10, на которое нужно разделить исходное число (= кол-во знаков, на которое нужно переместить дес. точку влево), 0..9
 //! @param[out] str массив со строкой
 //! @param[in] pos позиция в строке для вставки
-//! @param[in] length длина массива со строкой
+//! @param[in] strLength длина массива со строкой
 //! @param[in] separator символ-разделитель целой и дробной частей
 //! @return кол-во вставленных в строку символов (0 - ошибка: недостаточная длина строки, недопустимая позиция вставки или большая степень)
-forward stock decfractoa(num, exp, str{}, pos, length, separator);
+forward stock decfractoa(num, exp, str{}, pos, strLength, separator);
 
-//! @brief Конвертация числа в строку символов
+//! @brief Преобразовать число в строку
 //! @details завершающий \0 не добавляется
 //! @param[in] num число для конвертации
 //! @param[out] str массив со строкой
 //! @param[in] pos позиция в строке для вставки
-//! @param[in] length длина массива со строкой
+//! @param[in] strLength длина массива со строкой
 //! @return кол-во вставленных в строку символов (0 - ошибка: недостаточная длина строки или неверная позиция вставки)
-forward stock itoa(num, str{}, pos, length);
+forward stock itoa(num, str{}, pos, strLength);
 
 //! @brief Преобразовать число в строку и дополнить слева незначащими нулями
+//! @details завершающий \0 не добавляется
 //! @param[in] num число для конвертации
 //! @param[out] str массив со строкой
 //! @param[in] pos позиция в строке для вставки
-//! @param[in] length длина массива со строкой
-//! @param[in] width ширина числа, если больше строкового представления, то будет дополнена справа нулями; если меньше, чем символов в числе, то игнорируется
+//! @param[in] strLength длина массива со строкой
+//! @param[in] width ширина числа; если больше строкового представления, то будет дополнена слева нулями, если меньше, чем символов в числе, то игнорируется
 //! @return кол-во вставленных в строку символов (0 - ошибка: недостаточная длина строки или неверная позиция вставки)
-forward stock itoaw(num, str{}, pos, length, width);
+forward stock itoaw(num, str{}, pos, strLength, width = 0);
 
 //! @brief Разобрать целые числа из строки с заданными разделителями вида [<разделитель>]<число>[<разделитель><число>... ]
 //! @details Несколько разделителей подряд не допускаются, преобразование прекращается на нечисловом символе (+, -, пробельные символы перед числом допускаются)
@@ -203,6 +208,12 @@ forward stock strSplitNums(const str{}, strSize, pos, separator, values[], value
 forward stock asciiHex2num(byte);
 
 //! @brief Получить значения из их ASCII-hex строкового представления
+//! @details (например, "0001ABFF" -> {0, 1, 171, 255})
+//! @param[in] asciiStr строка ASCII-hex символов
+//! @param[in] asciiStrSize длина строки ASCII-hex символов
+//! @param[in] asciiStrPos начало подстроки
+//! @param[out] hex массив полученных значений
+//! @param[in] hexMaxSize предельный размер массива полученных значений
 //! @return кол-во вставленных байт
 forward stock asciiHexStr2array(const asciiStr{}, asciiStrSize, asciiStrPos, hex{}, hexMaxSize);
 
@@ -220,18 +231,17 @@ forward stock getHexString(const ar{}, arStart, arSize, str{}, strSize, strPos =
 //! @brief Проверить символ на принадлежность к ASCII-hex (0..9,A..F,a..f)
 forward stock isAsciiHex(byte);
 
-//! @brief Преобразует последний полубайт числа в его ASCII-hex символ
+//! @brief Преобразовать последний полубайт числа в его ASCII-hex символ
 forward stock num2asciiHexHalfByte(num);
 
-//! @brief Преобразовывает каждый элемент подмассива в его ASCII-hex 2-символьное представление
+//! @brief Преобразовать каждый элемент подмассива в его ASCII-hex 2-символьное представление
 //! @param[inout] ar преобразуемый массив
 //! @param[in] arLength длина массива
 //! @param[in] subLength длина подмассива
 //! @param[in] start стартовый индекс подмассива
 //! @return true - успешно, false - ошибка (недостаточная длина массива)
-forward stock toAsciiHex(ar{}, arLength, subLength, start = 0);
+forward bool:stock toAsciiHex(ar{}, arLength, subLength, start = 0);
 //! @}
-
 
 //! @addtogroup base64
 //! @{
@@ -248,7 +258,7 @@ forward stock toAsciiHex(ar{}, arLength, subLength, start = 0);
 forward stock base64Encode(const in{}, inSize, inPos, out{}, outSize, outPos = 0);
 
 //! @brief Проверка символа на принадлежность алфавиту base64
-forward stock isBase64(ch);
+forward bool:stock isBase64(byte);
 
 //! @brief Декодировать из Base64
 //! @details RFC 4648

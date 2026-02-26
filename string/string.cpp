@@ -84,28 +84,29 @@ stock unread2space(str{}, strLength, start = 0, bool:ignoreNull = false)
     return count;
 }
 
-stock decfractoa(num, exp, str{}, pos, length, separator)
+stock decfractoa(num, exp, str{}, pos, strLength, separator)
 {
     if (pos < 0)
         pos = 0;
     
     if (exp <= 0)
-        return itoa(num, str, pos, length);
+        return itoa(num, str, pos, strLength);
 
-    if ((exp > 9) || ((pos + 3) > length))
+    if ((exp > 9) || ((pos + 3) > strLength))
         return 0;
 
-    new divider = pow(10, exp);
-    new isNegative = num < 0;
+    new const divider = pow(10, exp);
+    assert divider != 0;
+    new const bool:isNegative = num < 0;
     if (isNegative)
-        str{pos++} = '-';
+        str{pos++} = SYMBOL_MINUS;
 
-    new len = itoa((num == cellmin ? -(num + 1) : (isNegative ? -num : num)) / divider, str, pos, length);
+    new const len = itoa((num == cellmin ? -(num + 1) : (isNegative ? -num : num)) / divider, str, pos, strLength);
     if (len == 0)
         return 0;
 
     pos += len;
-    if (exp + pos + 1 > length)
+    if ((exp + pos) >= strLength)
         return 0;
 
     str{pos++} = separator;
@@ -113,83 +114,51 @@ stock decfractoa(num, exp, str{}, pos, length, separator)
     if (isNegative)
         num = divider - num;
 
-    new zeros = exp - digits(num);
-    for (new i = 0; (i < zeros) && (pos < length); i++)
-        str{pos++} = '0';
+    new const zeros = exp - digits(num);
+    for (new i = 0; (pos < strLength) && (i < zeros); i++, pos++)
+        str{pos} = SYMBOL_0;
 
-    return (isNegative ? 1 : 0) + len + 1 + zeros + itoa(num, str, pos, length);
+    return (isNegative ? 1 : 0) + len + 1 + zeros + itoa(num, str, pos, strLength);
 }
 
-stock itoa(num, str{}, pos, length)
+stock itoa(num, str{}, pos, strLength)
 {
-    new countDigits = digits(num);
-    new isNegative = num < 0;
-    if (pos < 0)
-        pos = 0;
-    
-    if ((pos + countDigits + (isNegative ? 1 : 0)) > length)
-        return 0;
-
-    if (num == 0)
-    {
-        str{pos} = '0';
-        return 1;
-    }
-    if (num == cellmin)
-        return insertArrayStr(str, pos, length, NUM_VALUE_MIN_STR, NUM_VALUE_MIN_STR_LENGTH);
-    
-    if (isNegative) 
-    {
-        num *= -1;
-        str{pos++} = '-';
-    }
-    new divider = 1;
-    for (new i = 0; i < (countDigits - 1); i++)
-        divider *= 10;
-
-    for (new i = 0; i < countDigits; i++)
-    {
-        new c = num / divider;
-        str{pos++} = c + 0x30;
-        num -= c * divider;
-        divider /= 10;
-    }
-    return countDigits + (isNegative ? 1 : 0);
+    return itoaw(num, str, pos, strLength, 0);
 }
 
-stock itoaw(num, str{}, pos, length, width)
+stock itoaw(num, str{}, pos, strLength, width = 0)
 {
-    new isNegative = num < 0;
-    new numDigits = digits(num);
-    new numSymbols = numDigits + (isNegative ? 1 : 0);
+    new const bool:isNegative = num < 0;
+    new const numDigits = digits(num);
+    new const numSymbols = numDigits + (isNegative ? 1 : 0);
     if (width < 0)
         width = 0;
 
-    new totalSymbols = numSymbols >= width ? numSymbols : width;
+    new const totalSymbols = numSymbols > width ? numSymbols : width;
     if (pos < 0)
         pos = 0;
     
-    if ((pos + totalSymbols) > length)
+    if ((pos + totalSymbols) > strLength)
         return 0;
 
     if (isNegative)
-        str{pos++} = '-';
+        str{pos++} = SYMBOL_MINUS;
 
     for (new i = 0; i < (totalSymbols - numSymbols); i++)
-        str{pos++} = '0';
+        str{pos++} = SYMBOL_0;
 
     if (isNegative)
     {
         if (num == cellmin)
         {    
-            insertArrayStr(str, pos, length, "2147483648", NUM_VALUE_MAX_STR_LENGTH);
+            insertArrayStr(str, pos, strLength, "2147483648", NUM_VALUE_MAX_STR_LENGTH);
             return totalSymbols;
         }
         num = -num;
     }
     if (num == 0)
     {
-        str{pos} = '0';
+        str{pos} = SYMBOL_0;
     }
     else
     {
@@ -199,9 +168,9 @@ stock itoaw(num, str{}, pos, length, width)
 
         for (new i = 0; i < numDigits; i++)
         {
-            new c = num / divider;
-            str{pos++} = c + 0x30;
-            num -= c * divider;
+            new const digit = num / divider;
+            str{pos++} = digit + SYMBOL_0;
+            num -= digit * divider;
             divider /= 10;
         }
     }
@@ -211,15 +180,15 @@ stock itoaw(num, str{}, pos, length, width)
 stock num2asciiHexHalfByte(num)
 {
     num &= 0x0F;
-    return num + (num < 10 ? 0x30 : 0x37);
+    return num + (num < 10 ? SYMBOL_0 : SYMBOL_7);
 }
 
-stock toAsciiHex(ar{}, arLength, subLength, start = 0)
+stock bool:toAsciiHex(ar{}, arLength, subLength, start = 0)
 {
     if (start < 0)
         start = 0;
 
-    if ((start + 2 * subLength) > arLength)
+    if ((start + (2 * subLength)) > arLength)
         return false;
 
     for (new i = subLength - 1; i >= 0; i--)
@@ -230,30 +199,27 @@ stock toAsciiHex(ar{}, arLength, subLength, start = 0)
     return true;
 }
 
-stock atoi(const str{}, pos, length, &value)
+stock atoi(const str{}, pos, strLength, &value)
 {
     if (pos < 0)
         pos = 0;
 
-    new startPos = pos;
-    pos += skipSpaces(str, length, pos);
-    new isNegative = str{pos} == '-';
-    if (isNegative || (str{pos} == '+'))
+    new const startPos = pos;
+    pos += skipSpaces(str, strLength, pos);
+    new const bool:isNegative = str{pos} == SYMBOL_MINUS;
+    if (isNegative || (str{pos} == SYMBOL_PLUS))
         pos++;
 
     value = 0;
-    new digitFound = false;
-    for (; pos < length; pos++)
+    new bool:digitFound = false;
+    for (; (pos < strLength) && isDigit(str{pos}); pos++)
     {
-        if (!isDigit(str{pos}))
-            break;
-
         if (!digitFound)
             digitFound = true;
 
-        new newVal;
-        newVal = (value * 10) + (str{pos} - '0');
-        if ((((value * 10) / 10) != value) || ((newVal < 0) && ((newVal != cellmin) || !isNegative))) // переполнение
+        new const newVal = (value * 10) + (str{pos} - SYMBOL_0);
+        new const bool:isOverflow = (((value * 10) / 10) != value) || ((newVal < 0) && ((newVal != cellmin) || !isNegative));
+        if (isOverflow)
             return 0;
 
         value = newVal;
@@ -283,15 +249,15 @@ stock bool:isDigit(byte)
     return ((byte >= SYMBOL_0) && (byte <= SYMBOL_9));
 }
 
-stock atofi(const str{}, pos, length, separator, precision, &value)
+stock atofi(const str{}, pos, strLength, separator, precision, &value)
 {
     if (pos < 0)
         pos = 0;
 
     new startPos = pos;
-    pos += skipSpaces(str, length, pos);
-    new isNegative = str{pos} == SYMBOL_MINUS;
-    new added = atoi(str, pos, length, value);
+    pos += skipSpaces(str, strLength, pos);
+    new const bool:isNegative = str{pos} == SYMBOL_MINUS;
+    new const added = atoi(str, pos, strLength, value);
     if (added == 0)
         return 0;
 
@@ -303,14 +269,11 @@ stock atofi(const str{}, pos, length, separator, precision, &value)
     if (str{pos} == separator)
     {
         pos++;
-        for (; (i < precision) && (pos < length); i++, pos++)
+        for (; (i < precision) && (pos < strLength) && isDigit(str{pos}); i++, pos++)
         {
-            if (!isDigit(str{pos}))
-                break;
-
-            new newVal;
-            newVal = (value * 10) + (str{pos} - '0');
-            if ((((value * 10) / 10) != value) || ((newVal < 0) && ((newVal != cellmin) || !isNegative))) // переполнение
+            new const newVal = (value * 10) + (str{pos} - SYMBOL_0);
+            new const bool:isOverflow = (((value * 10) / 10) != value) || ((newVal < 0) && ((newVal != cellmin) || !isNegative));
+            if (isOverflow)
                 return 0;
 
             value = newVal;
@@ -318,16 +281,14 @@ stock atofi(const str{}, pos, length, separator, precision, &value)
     }
     for (; i < precision; i++) // оставшуюся точность дополняем нулями
     {    
-        if (((value * 10) / 10) != value) // переполнение
+        new const bool:isOverflow = ((value * 10) / 10) != value;
+        if (isOverflow)
             return 0;
 
         value *= 10;
     }
-    for (; pos < length; pos++) // оставшиеся цифры пропускаем
-    {
-        if (!isDigit(str{pos}))
-            break;
-    }
+    for (; (pos < strLength) && isDigit(str{pos}); pos++) // оставшиеся цифры пропускаем
+    {}
     if (isNegative)
         value = -value;
 
@@ -343,10 +304,10 @@ stock getHexString(const ar{}, arStart, arSize, str{}, strSize, strPos = 0)
         strPos = 0;
     
     new i;
-    for (i = 0; (i < (arSize - arStart)) && ((arStart + i) < arSize) && ((strPos + 2 * i + 1) < strSize); i++)
+    for (i = 0; (i < (arSize - arStart)) && ((arStart + i) < arSize) && ((strPos + (2 * i) + 1) < strSize); i++)
     {
-        str{strPos + 2 * i} = num2asciiHexHalfByte(ar{arStart + i} >> 4);
-        str{strPos + 2 * i + 1} = num2asciiHexHalfByte(ar{arStart + i});
+        str{strPos + (2 * i)} = num2asciiHexHalfByte(ar{arStart + i} >> 4);
+        str{strPos + (2 * i) + 1} = num2asciiHexHalfByte(ar{arStart + i});
     }
     return i * 2;
 }
@@ -364,8 +325,8 @@ stock base64Encode(const in{}, inSize, inPos, out{}, outSize, outPos = 0)
     if (outPos < 0)
         outPos = 0;
     
-    new size = inSize - inPos;
-    new outStrLength = base64StrLength(size);
+    new const size = inSize - inPos;
+    new const outStrLength = base64StrLength(size);
     if ((inSize <= inPos) || (outSize <= outPos) || ((outSize - outPos) < outStrLength))
         return 0;
 
@@ -399,9 +360,9 @@ stock base64Encode(const in{}, inSize, inPos, out{}, outSize, outPos = 0)
     return outStrLength;
 }
 
-stock isBase64(ch)
+stock bool:isBase64(byte)
 {
-    return searchLinearStr(BASE64_ALPHABET, BASE64_ALPHABET_SIZE, ch) >= 0;
+    return searchLinearStr(BASE64_ALPHABET, BASE64_ALPHABET_SIZE, byte) >= 0;
 }
 
 stock base64Decode(const in{}, inSize, inPos, out{}, outSize, outPos = 0)
@@ -412,12 +373,12 @@ stock base64Decode(const in{}, inSize, inPos, out{}, outSize, outPos = 0)
     if (outPos < 0)
         outPos = 0;
     
-    new size = inSize - inPos;
+    new const size = inSize - inPos;
     if ((inSize <= inPos) || (outSize <= outPos) || ((outSize - outPos) < fromBase64StrMinSize(size))
         || ((size % BASE64_BLOCK_SIZE) != 0))
         return 0;
 
-    new outPosStart = outPos;
+    new const outPosStart = outPos;
     for (new i = 0; (i + BASE64_BLOCK_SIZE) <= size; i += BASE64_BLOCK_SIZE)
     {
         new idx[1];
@@ -485,31 +446,27 @@ stock strSplitNums(const str{}, strSize, pos, separator, values[], valuesMaxSize
     if (pos < 0)
         pos = 0;
 
-    new startPos = pos;
+    new const startPos = pos;
     valuesActualSize = 0;
-    if (pos < strSize)
-    {
-        if (str{pos} == separator)
-            pos++;
-    }
     while ((pos < strSize) && (valuesActualSize < valuesMaxSize))
     {
+        new const nextPos = pos + 1;
+        if (str{pos} == separator)
+        {    
+            if ((nextPos < strSize) && (str{nextPos} == separator))
+                break;
+        }
+        else if (pos != startPos)
+        {
+            break;
+        }
         new val;
-        new count = atoi(str, pos, strSize, val);
+        new const count = atoi(str, nextPos, strSize, val);
         if (count <= 0)
             break;
 
-        if (valuesActualSize < valuesMaxSize)
-            values[valuesActualSize++] = val;
-
-        pos += count;
-        if ((pos < strSize) && (valuesActualSize < valuesMaxSize))
-        {
-            if (str{pos} == separator)
-                pos++;
-            else
-                break;
-        }
+        values[valuesActualSize++] = val;
+        pos = nextPos + count;
     }
     return pos - startPos;
 }
@@ -546,12 +503,16 @@ stock asciiHex2num(byte)
     if (isDigit(byte))
         return getDigit(byte);
 
-    return byte - (((byte >= 'A') && (byte <= 'F')) ? 'A' : 'a') + 10;
+    return byte - (((byte >= SYMBOL_LATIN_CAPITAL_LETTER_A) && (byte <= SYMBOL_LATIN_CAPITAL_LETTER_F))
+                    ? SYMBOL_LATIN_CAPITAL_LETTER_A
+                    : SYMBOL_LATIN_SMALL_LETTER_A) + 10;
 }
 
 stock isAsciiHex(byte)
 {
-    return ((byte >= '0') && (byte <= '9')) || ((byte >= 'A') && (byte <= 'F')) || ((byte >= 'a') && (byte <= 'f'));
+    return ((byte >= SYMBOL_0) && (byte <= SYMBOL_9))
+            || ((byte >= SYMBOL_LATIN_CAPITAL_LETTER_A) && (byte <= SYMBOL_LATIN_CAPITAL_LETTER_F))
+            || ((byte >= SYMBOL_LATIN_SMALL_LETTER_A) && (byte <= SYMBOL_LATIN_SMALL_LETTER_F));
 }
 
 stock getStrFromGlobalVars(const dataInVarAddresses[], dataInVarAddressesSize, str{}, strMaxSize, pos = 0)
