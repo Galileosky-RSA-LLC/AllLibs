@@ -48,12 +48,12 @@ stock getSoftVersion(&softMaj, &softMin)
         return false;
 
     pos += 5;
-    new len = atoi(buf, pos, bufLength, softMaj);
+    new len = atoi(buf, softMaj, bufLength, pos);
     if (!len)
         return false;
 
     pos += 1 + len;
-    return atoi(buf, pos, bufLength, softMin);
+    return atoi(buf, softMin, bufLength, pos);
 }
 
 stock getDebugLevel()

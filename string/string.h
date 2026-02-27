@@ -37,9 +37,9 @@ stock const BASE64_ALPHABET{} ="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuv
 #define SYMBOL_PLUS '+'
 #define SYMBOL_MINUS '-'
 
-#define SYMBOL_0 '0'
-#define SYMBOL_7 '7'
-#define SYMBOL_9 '9'
+#define SYMBOL_DIGIT_0 '0'
+#define SYMBOL_DIGIT_7 '7'
+#define SYMBOL_DIGIT_9 '9'
 
 #define SYMBOL_LATIN_CAPITAL_LETTER_A 0x41
 #define SYMBOL_LATIN_CAPITAL_LETTER_F 0x46
@@ -66,26 +66,30 @@ stock const BASE64_ALPHABET{} ="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuv
 //! @{
 
 //! @brief Вернуть цифру из ее кода символа ASCII
+//! @details Например, 0x31 -> 1
+//! @param[in] byte анализируемый байт
 forward stock getDigit(byte);
 
 //! @brief Проверить, является ли символ цифрой в кодировке ASCII
+//! @details Например, 0x30 -> true, 0x20 -> false
 //! @param[in] byte анализируемый байт
 forward bool:stock isDigit(byte);
 
-//! @brief Посчитать длину символов числа
-//! @details Например "-1" -> 2
+//! @brief Вычислить длину строкового представления числа
+//! @details Например, "-1" -> 2
 //! @param[in] num исходное число
-//! @return кол-во символов в строковом представлении числа
 forward stock numLength(num);
 
 //! @brief Пропустить последовательные пустоты в строке (пробел, табуляция)
+//! @details Например, "   -123", .pos=0 -> 3
 //! @param[in] str массив со строкой
-//! @param[in] strLength длина массива со строкой
+//! @param[in] strLength длина массива со строкой; если <=0, то длина строки будет вычислена
 //! @param[in] pos позиция начала
 //! @return кол-во пропущенных символов
-forward stock skipSpaces(const str{}, strLength, pos = 0);
+forward stock skipSpaces(const str{}, strLength = 0, pos = 0);
 
 //! @brief Вычислить длину подстроки символов
+//! @details Например, "abcd" -> 4
 //! @details до \0 или до конца массива
 //! @param[in] str массив со строкой
 //! @param[in] strLength длина массива; если <=0, то игнорируется
@@ -93,6 +97,7 @@ forward stock skipSpaces(const str{}, strLength, pos = 0);
 forward stock strLen(const str{}, strLength = 0, start = 0);
 
 //! @brief Копировать одну подстроку в другую строку с ее завершением (если позволяет длина)
+//! @details Например, .dest="abcdef",.destPos=2,.destLength=6,.source="gh" -> .dest=="abgh"
 //! @param[out] dest массив строки-приемника
 //! @param[in] destPos позиция начала вставки в строку-приемник
 //! @param[in] destLength длина массива строки-приемника
@@ -104,69 +109,69 @@ forward stock strLen(const str{}, strLength = 0, start = 0);
 forward stock strncpy(dest{}, destPos, destLength, const source{}, sourcePos = 0, sourceLength = 0, bool:fromBack = false);
 //! @}
 
-
 //! @defgroup sym2anotherSym Преобразование символ <-> другой символ
 //! @{
 
 //! @brief Перевести подстроку к нижнему регистру символов
-//! @details в т.ч. кириллические
+//! @details в т.ч. кириллические. Например, "АвтоVaz" -> "автоvaz"
 //! @param[inout] str массив со строкой
-//! @param[in] strLength длина массива
+//! @param[in] strLength длина массива со строкой; если <=0, то длина строки будет вычислена
 //! @param[in] start индекс начала подстроки
-//! @param[in] ignoreNull признак необходимости игнорирования \0: false - преобразование заканчивается на \0, true - продолжается до конца массива
-forward stock toLowerCase(str{}, strLength, start = 0, bool:ignoreNull = false);
+forward stock toLowerCase(str{}, strLength = 0, start = 0);
 
 //! @brief Перевести подстроку к верхнему регистру символов
-//! @details в т.ч. кириллические
+//! @details в т.ч. кириллические. Например, "АвтоVaz" -> "АВТОVAZ"
 //! @param[inout] str массив со строкой
-//! @param[in] strLength длина массива
+//! @param[in] strLength длина массива; если <=0, то длина строки будет вычислена
 //! @param[in] start индекс начала подстроки
-//! @param[in] ignoreNull признак необходимости игнорирования \0: false - преобразование заканчивается на \0, true - продолжается до конца массива
-forward stock toUpperCase(str{}, strLength, start = 0, bool:ignoreNull = false);
+forward stock toUpperCase(str{}, strLength = 0, start = 0);
 
 //! @brief Преобразовать нечитаемые символы в пробелы
+//! @details Например, {0x30, 0x05, 0x1F, 0x20, 0x7F, 0x31} -> {0x30, 0x20, 0x20, 0x20, 0x20, 0x31}
 //! @param[inout] str массив со строкой для преобразования
-//! @param[in] strLength длина массива со строкой
+//! @param[in] strLength длина массива со строкой; если <=0, то длина строки будет вычислена
 //! @param[in] start стартовый индекс начала преобразования
-//! @param[in] ignoreNull признак необходимости игнорирования \0: false - преобразование заканчивается на \0, true - продолжается до конца массива
+//! @param[in] ignoreNull признак необходимости игнорирования промежуточных \0: false - преобразование заканчивается на \0, true - продолжается до конца массива
 //! @return кол-во преобразований
-forward stock unread2space(str{}, strLength, start = 0, bool:ignoreNull = false);
+forward stock unread2space(str{}, strLength = 0, start = 0, bool:ignoreNull = false);
 //! @}
-
 
 //! @addtogroup strnum
 //! @{
 
 //! @brief Преобразовать подстроку ASCII дробного числа в целое число
-//! @details Пробелы и табуляции в начале строки пропускаются
+//! @details Пробелы и табуляции в начале строки пропускаются. 
+//! @details Например: .str="- 54,321", .separator=',', .precision=2 -> -5432
 //! @param[in] str массив со строкой
-//! @param[in] pos позиция начала числа
-//! @param[in] strLength длина массива со строкой
 //! @param[in] separator символ-разделитель целой и дробной частей числа
 //! @param[in] precision требуемая точность - кол-во цифр после разделителя целой и дробной частей
 //! @param[out] value преобразованное число
-//! @return кол-во преобразованных символов подстроки, т.е. если 0 - ошибка
-forward stock atofi(const str{}, pos, strLength, separator, precision, &value);
-
-//! @brief Преобразовать подстроку в целое число
-//! @details Если встречается нечисловой символ (после начальных "-" или "+", если они есть), преобразование прекращается
-//! @param[in] str массив со строкой
+//! @param[in] strLength длина массива со строкой; если <=0, то длина строки будет вычислена
 //! @param[in] pos позиция начала числа
-//! @param[in] strLength длина массива со строкой
+//! @return кол-во преобразованных символов подстроки, т.е. если 0 - ошибка
+forward stock atofi(const str{}, separator, precision, &value, strLength = 0, pos = 0);
+
+//! @brief Преобразовать подстроку ASCII в целое число
+//! @details Пробелы и табуляции в начале строки пропускаются. 
+//! @details Если встречается нечисловой символ (после начальных "-" или "+", если они есть), преобразование прекращается. 
+//! @details Например: "-123" -> 123; "  +4" -> 4
+//! @param[in] str массив со строкой
 //! @param[out] value преобразованное число
+//! @param[in] strLength длина массива со строкой; если <=0, то длина строки будет вычислена
+//! @param[in] pos позиция начала числа
 //! @return кол-во преобразованных символов подстроки, т.е. если 0 - ошибка (неверные входные данные, нет числа или неверный формат)
-forward stock atoi(const str{}, pos, strLength, &value);
+forward stock atoi(const str{}, &value, strLength = 0, pos = 0);
 
 //! @brief Преобразовать десятичную дробь в строку
-//! @details Незначащие нули справа также вставляются
+//! @details Незначащие нули справа также вставляются, по возможности строка оконцовывается \0
 //! @param[in] num исходное целое число
 //! @param[in] exp степень числа 10, на которое нужно разделить исходное число (= кол-во знаков, на которое нужно переместить дес. точку влево), 0..9
 //! @param[out] str массив со строкой
-//! @param[in] pos позиция в строке для вставки
-//! @param[in] strLength длина массива со строкой
+//! @param[in] strMaxSize максимальная длина массива со строкой
 //! @param[in] separator символ-разделитель целой и дробной частей
-//! @return кол-во вставленных в строку символов (0 - ошибка: недостаточная длина строки, недопустимая позиция вставки или большая степень)
-forward stock decfractoa(num, exp, str{}, pos, strLength, separator);
+//! @param[in] pos позиция в строке для вставки
+//! @return размер вставленной строки (0 - ошибка: недостаточная длина строки, недопустимая позиция вставки или большая степень)
+forward stock decfractoa(num, exp, str{}, strMaxSize, separator, pos = 0);
 
 //! @brief Преобразовать число в строку
 //! @details завершающий \0 не добавляется
@@ -199,7 +204,6 @@ forward stock itoaw(num, str{}, pos, strLength, width = 0);
 //! @return кол-во обработанных символов в строке
 forward stock strSplitNums(const str{}, strSize, pos, separator, values[], valuesMaxSize, &valuesActualSize);
 //! @}
-
 
 //! @defgroup asciihex Преобразования ASCII-hex 
 //! @{

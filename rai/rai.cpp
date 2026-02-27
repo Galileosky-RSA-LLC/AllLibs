@@ -83,6 +83,7 @@ stock raiIsAtStation(const route[RAI_ROUTE_DATA], currentStation{}, currentStati
     while (filePos < fileSize)
     {
         new str{RAI_STRING_LENGTH_MAX};
+        str{0} = SYMBOL_NUL;
         new readSize = fileReadLine(route.busLineFilePath, str, RAI_STRING_LENGTH_MAX, filePos);
         if (!readSize)
             return false;
@@ -92,7 +93,7 @@ stock raiIsAtStation(const route[RAI_ROUTE_DATA], currentStation{}, currentStati
         // типа:
         // 51.540487;46.004783;111.00;45.00;60.00;20.00;Universitatska_.wav;Остановка ул. Университетская
         new strPos = 0;
-        new strLength = strLen(str);
+        new strLength = strLen(str, min(readSize, RAI_STRING_LENGTH_MAX));
         const zoneParamsQty = 6;
         new const precisions[zoneParamsQty] = [RAI_COORD_PRECISION, RAI_COORD_PRECISION, RAI_ANGLE_PRECISION, RAI_ANGLE_PRECISION, RAI_RADIUS_PRECISION,
                                                 RAI_RADIUS_PRECISION];
@@ -100,7 +101,7 @@ stock raiIsAtStation(const route[RAI_ROUTE_DATA], currentStation{}, currentStati
         new len;
         for (new i = 0; i < zoneParamsQty; i++)
         {
-            len = atofi(str, strPos, strLength, RAI_FRAC_SEPARATOR_SYMBOL, precisions[i], zoneParams[i]);
+            len = atofi(str, RAI_FRAC_SEPARATOR_SYMBOL, precisions[i], zoneParams[i], strLength, strPos);
             if (!len)
                 return false;
 

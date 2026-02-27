@@ -76,7 +76,7 @@ stock settingSingleRestoreParam(obj[SETTING_SINGLE_DATA])
     new buf{NUM_VALUE_MIN_STR_LENGTH};
     new readSize = FileRead(obj.fileName, buf, NUM_VALUE_MIN_STR_LENGTH, 0);
     new value;
-    if ((readSize < 1) || !atoi(buf, 0, readSize, value)) 
+    if ((readSize < 1) || !atoi(buf, value, readSize, 0)) 
     {
         Diagnostics("r.\"%s\"?", obj.fileName);
         return;

@@ -55,7 +55,7 @@ getCanRegime(portIndex, &mode, &baudRate)
     const modeStrSize = 5;
     new const modeStr{} = "mode=";
     new idx = searchSubArBruteForceStr(answer, 0, len, modeStr, modeStrSize);
-    if ((idx < 0) || !atoi(answer, idx + modeStrSize, len, mode))
+    if ((idx < 0) || !atoi(answer, mode, len, idx + modeStrSize))
         return false;
 
     const baudRateStrSize = 9;
@@ -64,7 +64,7 @@ getCanRegime(portIndex, &mode, &baudRate)
     if (idx < 0)
         return false;
     
-    return atoi(answer, idx + baudRateStrSize, len, baudRate);
+    return atoi(answer, baudRate, len, idx + baudRateStrSize);
 }
 
 #endif
