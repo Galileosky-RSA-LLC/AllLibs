@@ -41,13 +41,13 @@ generatePhotoPath(portNum, path{}, pathMaxSize)
     new mins;
     new secs;
     unixTime2dateTime(GetVar(UNIX_TIME), years, months, days, hours, mins, secs);
-    pos += itoaw(years % 100, path, pos, pathMaxSize, PHOTO_PATH_TIME_COMP_SIZE);
-    pos += itoaw(months, path, pos, pathMaxSize, PHOTO_PATH_TIME_COMP_SIZE);
-    pos += itoaw(days, path, pos, pathMaxSize, PHOTO_PATH_TIME_COMP_SIZE);
+    pos += itoaw(years % 100, path, pathMaxSize, PHOTO_PATH_TIME_COMP_SIZE, pos);
+    pos += itoaw(months, path, pathMaxSize, PHOTO_PATH_TIME_COMP_SIZE, pos);
+    pos += itoaw(days, path, pathMaxSize, PHOTO_PATH_TIME_COMP_SIZE, pos);
     path{pos++} = PHOTO_PATH_DIR_DELIMETER;
-    pos += itoaw(hours, path, pos, pathMaxSize, PHOTO_PATH_TIME_COMP_SIZE);
-    pos += itoaw(mins, path, pos, pathMaxSize, PHOTO_PATH_TIME_COMP_SIZE);
-    pos += itoaw(secs, path, pos, pathMaxSize, PHOTO_PATH_TIME_COMP_SIZE);
+    pos += itoaw(hours, path, pathMaxSize, PHOTO_PATH_TIME_COMP_SIZE, pos);
+    pos += itoaw(mins, path, pathMaxSize, PHOTO_PATH_TIME_COMP_SIZE, pos);
+    pos += itoaw(secs, path, pathMaxSize, PHOTO_PATH_TIME_COMP_SIZE, pos);
     insertArrayStr(path, pos, pathMaxSize, PHOTO_PATH_END, PHOTO_PATH_END_SIZE);
     return true;
 }
@@ -155,12 +155,12 @@ photoSaveMetaChunk_insertTime(photoMeta{PHOTO_METACHUNK_META_SIZE}, unixTime)
     new mins;
     new secs;
     unixTime2dateTime(unixTime, years, months, days, hours, mins, secs);
-    itoaw(years, photoMeta, PHOTO_METACHUNK_EXIF_YEAR_POS, PHOTO_METACHUNK_META_SIZE, PHOTO_METACHUNK_EXIF_YEAR_SIZE);
-    itoaw(months, photoMeta, PHOTO_METACHUNK_EXIF_MONTH_POS, PHOTO_METACHUNK_META_SIZE, PHOTO_METACHUNK_EXIF_MONTH_SIZE);
-    itoaw(days, photoMeta, PHOTO_METACHUNK_EXIF_DAY_POS, PHOTO_METACHUNK_META_SIZE, PHOTO_METACHUNK_EXIF_DAY_SIZE);
-    itoaw(hours, photoMeta, PHOTO_METACHUNK_EXIF_HOUR_POS, PHOTO_METACHUNK_META_SIZE, PHOTO_METACHUNK_EXIF_HOUR_SIZE);
-    itoaw(mins, photoMeta, PHOTO_METACHUNK_EXIF_MINUTE_POS, PHOTO_METACHUNK_META_SIZE, PHOTO_METACHUNK_EXIF_MINUTE_SIZE);
-    itoaw(secs, photoMeta, PHOTO_METACHUNK_EXIF_SEC_POS, PHOTO_METACHUNK_META_SIZE, PHOTO_METACHUNK_EXIF_SEC_SIZE);
+    itoaw(years, photoMeta, PHOTO_METACHUNK_META_SIZE, PHOTO_METACHUNK_EXIF_YEAR_SIZE, PHOTO_METACHUNK_EXIF_YEAR_POS);
+    itoaw(months, photoMeta, PHOTO_METACHUNK_META_SIZE, PHOTO_METACHUNK_EXIF_MONTH_SIZE, PHOTO_METACHUNK_EXIF_MONTH_POS);
+    itoaw(days, photoMeta, PHOTO_METACHUNK_META_SIZE, PHOTO_METACHUNK_EXIF_DAY_SIZE, PHOTO_METACHUNK_EXIF_DAY_POS);
+    itoaw(hours, photoMeta, PHOTO_METACHUNK_META_SIZE, PHOTO_METACHUNK_EXIF_HOUR_SIZE, PHOTO_METACHUNK_EXIF_HOUR_POS);
+    itoaw(mins, photoMeta, PHOTO_METACHUNK_META_SIZE, PHOTO_METACHUNK_EXIF_MINUTE_SIZE, PHOTO_METACHUNK_EXIF_MINUTE_POS);
+    itoaw(secs, photoMeta, PHOTO_METACHUNK_META_SIZE, PHOTO_METACHUNK_EXIF_SEC_SIZE, PHOTO_METACHUNK_EXIF_SEC_POS);
 }
 
 photoSaveMetaChunk_insertCoords(photoMeta{PHOTO_METACHUNK_META_SIZE})

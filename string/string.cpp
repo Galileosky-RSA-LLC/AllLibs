@@ -87,59 +87,63 @@ stock unread2space(str{}, strLength = 0, start = 0, bool:ignoreNull = false)
     return count;
 }
 
-!!! проверить
 stock decfractoa(num, exp, str{}, strMaxSize, separator, pos = 0)
 {
     if (pos < 0)
         pos = 0;
     
     if (exp <= 0)
-        return itoa(num, str, pos, strMaxSize);
+        return itoa(num, str, strMaxSize, pos);
 
-    if ((exp > 9) || ((pos + 3) > strMaxSize))
+    const fractionalNumberWidthMin = 3;
+    if ((exp > 9) || ((pos + fractionalNumberWidthMin) > strMaxSize))
         return 0;
 
+    new const startPos = pos;
     new const divider = pow(10, exp);
     assert divider != 0;
     new const bool:isNegative = num < 0;
     if (isNegative)
         str{pos++} = SYMBOL_MINUS;
 
-    new const len = itoa((num == cellmin ? -(num + 1) : (isNegative ? -num : num)) / divider, str, pos, strMaxSize);
-    if (len == 0)
+    new const numeratorLengh = itoa((num == cellmin ? -(num + 1) : (isNegative ? -num : num)) / divider, str, strMaxSize, pos);
+    if (numeratorLengh <= 0)
         return 0;
 
-    pos += len;
-    if ((exp + pos) >= strMaxSize)
+    pos += numeratorLengh;
+    if ((exp + pos) > strMaxSize)
         return 0;
 
     str{pos++} = separator;
     num %= divider;
-    if (isNegative)
+    if (isNegative && (num != 0))
         num = divider - num;
 
     new const zeros = exp - digits(num);
     for (new i = 0; (pos < strMaxSize) && (i < zeros); i++, pos++)
         str{pos} = SYMBOL_DIGIT_0;
 
-    new const rest = itoa(num, str, pos, strMaxSize);
-    new nulPos = pos + rest;
+    new const restLength = itoa(num, str, strMaxSize, pos);
+    if (restLength <= 0)
+        return 0;
+
+    new nulPos = pos + restLength;
     if (nulPos < strMaxSize)
         str{nulPos} = SYMBOL_NUL;
 
-    return (isNegative ? 1 : 0) + len + 1 + zeros + rest;
+    return nulPos - startPos;
 }
 
-stock itoa(num, str{}, pos, strLength)
+stock itoa(num, str{}, strMaxSize, pos = 0)
 {
-    return itoaw(num, str, pos, strLength, 0);
+    return itoaw(num, str, strMaxSize, 0, pos);
 }
 
-stock itoaw(num, str{}, pos, strLength, width = 0)
+stock itoaw(num, str{}, strMaxSize, width = 0, pos = 0)
 {
     new const bool:isNegative = num < 0;
-    new const numDigits = digits(num);
-    new const numSymbols = numDigits + (isNegative ? 1 : 0);
+    new const digitsQty = digits(num);
+    new const numSymbols = digitsQty + (isNegative ? 1 : 0);
     if (width < 0)
         width = 0;
 
@@ -147,7 +151,7 @@ stock itoaw(num, str{}, pos, strLength, width = 0)
     if (pos < 0)
         pos = 0;
     
-    if ((pos + totalSymbols) > strLength)
+    if ((pos + totalSymbols) > strMaxSize)
         return 0;
 
     if (isNegative)
@@ -160,22 +164,22 @@ stock itoaw(num, str{}, pos, strLength, width = 0)
     {
         if (num == cellmin)
         {    
-            insertArrayStr(str, pos, strLength, "2147483648", NUM_VALUE_MAX_STR_LENGTH);
+            insertArrayStr(str, pos, strMaxSize, "2147483648", NUM_VALUE_MAX_STR_LENGTH);
             return totalSymbols;
         }
         num = -num;
     }
     if (num == 0)
     {
-        str{pos} = SYMBOL_DIGIT_0;
+        str{pos++} = SYMBOL_DIGIT_0;
     }
     else
     {
         new divider = 1;
-        for (new i = 0; i < (numDigits - 1); i++)
+        for (new i = 0; i < (digitsQty - 1); i++)
             divider *= 10;
 
-        for (new i = 0; i < numDigits; i++)
+        for (new i = 0; i < digitsQty; i++)
         {
             new const digit = num / divider;
             str{pos++} = digit + SYMBOL_DIGIT_0;
@@ -183,6 +187,9 @@ stock itoaw(num, str{}, pos, strLength, width = 0)
             divider /= 10;
         }
     }
+    if (pos < strMaxSize)
+        str{pos} = 0;
+
     return totalSymbols;
 }
 
@@ -462,19 +469,22 @@ stock fromBase64StrMinSize(base64Size)
     return fromBase64StrMaxSize(base64Size) - 2;
 }
 
-stock strSplitNums(const str{}, strSize, pos, separator, values[], valuesMaxSize, &valuesActualSize)
+stock strSplitNums(const str{}, separator, values[], valuesMaxSize, &valuesActualSize, strLength = 0, pos = 0)
 {
     if (pos < 0)
         pos = 0;
 
     new const startPos = pos;
     valuesActualSize = 0;
-    while ((pos < strSize) && (valuesActualSize < valuesMaxSize))
+    if (strLength <= 0)
+        strLength = pos + strLen(str, strLength, pos);
+
+    while ((pos < strLength) && (valuesActualSize < valuesMaxSize))
     {
         new const nextPos = pos + 1;
         if (str{pos} == separator)
         {    
-            if ((nextPos < strSize) && (str{nextPos} == separator))
+            if ((nextPos < strLength) && (str{nextPos} == separator))
                 break;
         }
         else if (pos != startPos)
@@ -482,7 +492,7 @@ stock strSplitNums(const str{}, strSize, pos, separator, values[], valuesMaxSize
             break;
         }
         new val;
-        new const count = atoi(str, val, strSize, nextPos);
+        new const count = atoi(str, val, strLength, nextPos);
         if (count <= 0)
             break;
 
@@ -492,13 +502,16 @@ stock strSplitNums(const str{}, strSize, pos, separator, values[], valuesMaxSize
     return pos - startPos;
 }
 
-stock asciiHexStr2array(const asciiStr{}, asciiStrSize, asciiStrPos, hex{}, hexMaxSize)
+stock asciiHexStr2array(const asciiStr{}, hex{}, hexMaxSize, asciiStrLength = 0, asciiStrPos = 0)
 {
     if (asciiStrPos < 0)
         asciiStrPos = 0;
 
+    if (asciiStrLength <= 0)
+        asciiStrLength = asciiStrPos + strLen(asciiStr, asciiStrLength, asciiStrPos);
+        
     new len;
-    for (; ((len / 2) < hexMaxSize) && ((asciiStrPos + len) < asciiStrSize) && isAsciiHex(asciiStr{asciiStrPos + len}); len++)
+    for (; ((len / 2) < hexMaxSize) && ((asciiStrPos + len) < asciiStrLength) && isAsciiHex(asciiStr{asciiStrPos + len}); len++)
     {}
     if (!len)
         return 0;

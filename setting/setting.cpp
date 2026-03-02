@@ -95,7 +95,7 @@ stock settingSingleStoreParamByChange(obj[SETTING_SINGLE_DATA])
         return;
 
     new buf{NUM_VALUE_MIN_STR_LENGTH};
-    new size = itoa(actualValue, buf, 0, NUM_VALUE_MIN_STR_LENGTH);
+    new size = itoa(actualValue, buf, NUM_VALUE_MIN_STR_LENGTH, 0);
     if (FileDelete(obj.fileName) || (FileWrite(obj.fileName, buf, size, 0) < size))
     {    
         Diagnostics("w.\"%s\"?v=%d", obj.fileName, actualValue);

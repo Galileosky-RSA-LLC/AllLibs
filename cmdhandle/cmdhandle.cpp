@@ -19,7 +19,7 @@ stock cmdHandlerAddTextToAnswer(obj[CMDHANDLE_DATA], const text{}, textSize = 0)
 
 stock cmdHandlerAddNumToAnswer(obj[CMDHANDLE_DATA], num)
 {
-    obj.answerSize += itoa(num, obj.answer, obj.answerSize, CMDHANDLE_ANSWER_SIZE_MAX);
+    obj.answerSize += itoa(num, obj.answer, CMDHANDLE_ANSWER_SIZE_MAX, obj.answerSize);
 }
 
 stock cmdHandlerAddParValueToAnswer(obj[CMDHANDLE_DATA], const parName{}, parValue, parNameSize = 0)

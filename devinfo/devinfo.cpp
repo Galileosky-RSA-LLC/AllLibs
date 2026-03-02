@@ -107,7 +107,7 @@ stock getFreeRam(&firmware, &zip = 0, &easyLogic = 0)
     const valuesMaxSize = 3;
     new values[valuesMaxSize];
     new valuesActualSize;
-    strSplitNums(buf, GetBinaryDataFromCommand(buf, bufMaxSize), 8, ',', values, valuesMaxSize, valuesActualSize);
+    strSplitNums(buf, ',', values, valuesMaxSize, valuesActualSize, GetBinaryDataFromCommand(buf, bufMaxSize), 8);
     if (valuesActualSize > 0)
         firmware = values[0];
 
