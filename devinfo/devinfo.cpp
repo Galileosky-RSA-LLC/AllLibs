@@ -22,16 +22,16 @@ stock getModel()
     ExecCommand(buf);
     GetBinaryDataFromCommand(buf, bufLength);
     toLowerCase(buf, bufLength);
-    if ((searchSubArBruteForceStr(buf, 0, bufLength, "galileosky 10", 13) >= 0) || (searchSubArBruteForceStr(buf, 0, bufLength, "galileosky v10", 14) >= 0))
+    if ((searchStr(buf, "galileosky 10") >= 0) || (searchStr(buf, "galileosky v10") >= 0))
         return DEVINFO_MODEL_10;
 
-    if (searchSubArBruteForceStr(buf, 0, bufLength, "galileosky v7x", 14) >= 0)
+    if (searchStr(buf, "galileosky v7x") >= 0)
         return DEVINFO_MODEL_7X;
     
-    if (searchSubArBruteForceStr(buf, 0, bufLength, "galileosky v7.0", 15) >= 0)
+    if (searchStr(buf, "galileosky v7.0") >= 0)
         return DEVINFO_MODEL_70;
     
-    return (searchSubArBruteForceStr(buf, 0, bufLength, "galileosky baseblock", 20) >= 0) ? DEVINFO_MODEL_BB : DEVINFO_MODEL_UNKNOWN;
+    return (searchStr(buf, "galileosky baseblock") >= 0) ? DEVINFO_MODEL_BB : DEVINFO_MODEL_UNKNOWN;
 }
 
 stock getSoftVersion(&softMaj, &softMin)
@@ -43,7 +43,7 @@ stock getSoftVersion(&softMaj, &softMin)
     ExecCommand(buf);
     GetBinaryDataFromCommand(buf, bufLength);
     toLowerCase(buf, bufLength);
-    new pos = searchSubArBruteForceStr(buf, 0, bufLength, "soft=", 5);
+    new pos = searchStr(buf, "soft=");
     if (pos < 0)
         return false;
 

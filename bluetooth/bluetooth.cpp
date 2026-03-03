@@ -80,6 +80,6 @@ stock bluetooth_getLocalName(const msg[BTMSG], isComplName, nameMaxSize, name{})
     if (!bluetoothGetAdStructType(msg, isComplName ? BLUETOOTH_ADTYPE_COMPL_LOCAL_NAME : BLUETOOTH_ADTYPE_SHORT_LOCAL_NAME, adStruct))
         return false;
 
-    strncpy(name, 0, nameMaxSize, adStruct.data);
+    strncpy(name, nameMaxSize, adStruct.data);
     return strLen(adStruct.data, adStruct.dataSize) == strLen(name, nameMaxSize);
 }

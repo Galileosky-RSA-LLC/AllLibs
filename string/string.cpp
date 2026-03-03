@@ -55,13 +55,13 @@ stock strLen(const str{}, strLength = 0, start = 0)
     return i - start;
 }
 
-stock strncpy(dest{}, destPos, destLength, const source{}, sourcePos = 0, sourceLength = 0, bool:fromBack = false)
+stock strncpy(dest{}, destMaxSize, const source{}, destPos = 0, sourcePos = 0, sourceLength = 0, bool:fromBack = false)
 {
     if (destPos < 0)
         destPos = 0;
 
-    new endPos = destPos + insertArrayStr(dest, destPos, destLength, source, sourcePos + strLen(source, sourceLength, sourcePos), sourcePos, fromBack);
-    if ((endPos >= 0) && (endPos < destLength))
+    new endPos = destPos + insertArrayStr(dest, destPos, destMaxSize, source, sourcePos + strLen(source, sourceLength, sourcePos), sourcePos, fromBack);
+    if ((endPos >= 0) && (endPos < destMaxSize))
         dest{endPos} = SYMBOL_NUL;
 
     return endPos - destPos;
@@ -199,19 +199,27 @@ stock num2asciiHexHalfByte(num)
     return num + (num < 10 ? SYMBOL_DIGIT_0 : SYMBOL_DIGIT_7);
 }
 
-stock bool:toAsciiHex(ar{}, arLength, subLength, start = 0)
+stock bool:toAsciiHex(ar{}, arSize, subSize, start = 0)
 {
     if (start < 0)
         start = 0;
 
-    if ((start + (2 * subLength)) > arLength)
+    if (subSize < 0)
+        subSize = 0;
+
+    new const totalLength = start + (2 * subSize);
+    if (totalLength > arSize)
         return false;
 
-    for (new i = subLength - 1; i >= 0; i--)
+    for (new i = subSize - 1; i >= 0; i--)
     {
-        ar{start + 2 * i + 1} = num2asciiHexHalfByte(ar{start + i});
-        ar{start + 2 * i} = num2asciiHexHalfByte(ar{start + i} >> 4);
+        new const byte = ar{start + i};
+        ar{start + (2 * i) + 1} = num2asciiHexHalfByte(byte);
+        ar{start + (2 * i)} = num2asciiHexHalfByte(byte >> 4);
     }
+    if (totalLength < arSize)
+        ar{totalLength} = 0;
+
     return true;
 }
 
@@ -323,7 +331,7 @@ stock atofi(const str{}, separator, precision, &value, strLength = 0, pos = 0)
     return pos - startPos;
 }
 
-stock getHexString(const ar{}, arStart, arSize, str{}, strSize, strPos = 0)
+stock getHexString(const ar{}, arSize, str{}, strMaxSize, strPos = 0, arStart = 0)
 {
     if (arStart < 0)
         arStart = 0;
@@ -332,12 +340,17 @@ stock getHexString(const ar{}, arStart, arSize, str{}, strSize, strPos = 0)
         strPos = 0;
     
     new i;
-    for (i = 0; (i < (arSize - arStart)) && ((arStart + i) < arSize) && ((strPos + (2 * i) + 1) < strSize); i++)
+    for (i = 0; (i < (arSize - arStart)) && ((arStart + i) < arSize) && ((strPos + (2 * i) + 1) < strMaxSize); i++)
     {
         str{strPos + (2 * i)} = num2asciiHexHalfByte(ar{arStart + i} >> 4);
         str{strPos + (2 * i) + 1} = num2asciiHexHalfByte(ar{arStart + i});
     }
-    return i * 2;
+    new insertedLength = i * 2;
+    new strEndPos = strPos + insertedLength;
+    if (strEndPos < strMaxSize)
+        str{strEndPos} = 0;
+
+    return insertedLength;
 }
 
 stock numLength(num)
@@ -345,7 +358,7 @@ stock numLength(num)
     return digits(num) + (num < 0 ? 1 : 0);
 }
 
-stock base64Encode(const in{}, inSize, inPos, out{}, outSize, outPos = 0)
+stock base64encode(const in{}, inSize, out{}, outMaxSize, outPos = 0, inPos = 0)
 {
     if (inPos < 0)
         inPos = 0;
@@ -354,8 +367,8 @@ stock base64Encode(const in{}, inSize, inPos, out{}, outSize, outPos = 0)
         outPos = 0;
     
     new const size = inSize - inPos;
-    new const outStrLength = base64StrLength(size);
-    if ((inSize <= inPos) || (outSize <= outPos) || ((outSize - outPos) < outStrLength))
+    new const outSubStrLength = base64strLength(size);
+    if ((inSize <= inPos) || (outMaxSize <= outPos) || ((outMaxSize - outPos) < outSubStrLength))
         return 0;
 
     for (new i = 0; i < size; i += 3, outPos += BASE64_BLOCK_SIZE)
@@ -383,9 +396,12 @@ stock base64Encode(const in{}, inSize, inPos, out{}, outSize, outPos = 0)
         for (; bufPos < BASE64_BLOCK_SIZE; bufPos++)
             buf{bufPos} = BASE64_PADDING;
 
-        insertArrayStr(out, outPos, outSize, buf, BASE64_BLOCK_SIZE);
+        insertArrayStr(out, outPos, outMaxSize, buf, BASE64_BLOCK_SIZE);
     }
-    return outStrLength;
+    if (outPos < outMaxSize)
+        out{outPos} = 0;
+
+    return outSubStrLength;
 }
 
 stock bool:isBase64(byte)
@@ -393,7 +409,7 @@ stock bool:isBase64(byte)
     return searchLinearStr(BASE64_ALPHABET, BASE64_ALPHABET_SIZE, byte) >= 0;
 }
 
-stock base64Decode(const in{}, inSize, inPos, out{}, outSize, outPos = 0)
+stock base64decode(const in{}, out{}, outMaxSize, outPos = 0, inSize = 0, inPos = 0)
 {
     if (inPos < 0)
         inPos = 0;
@@ -401,8 +417,11 @@ stock base64Decode(const in{}, inSize, inPos, out{}, outSize, outPos = 0)
     if (outPos < 0)
         outPos = 0;
     
+    if (inSize <= 0)
+        inSize = inPos + strLen(in, inSize, inPos);
+
     new const size = inSize - inPos;
-    if ((inSize <= inPos) || (outSize <= outPos) || ((outSize - outPos) < fromBase64StrMinSize(size))
+    if ((inSize <= inPos) || (outMaxSize <= outPos) || ((outMaxSize - outPos) < fromBase64minSize(size))
         || ((size % BASE64_BLOCK_SIZE) != 0))
         return 0;
 
@@ -430,7 +449,7 @@ stock base64Decode(const in{}, inSize, inPos, out{}, outSize, outPos = 0)
             if (idx{2} >= BASE64_ALPHABET_SIZE)
                 return 0;
 
-            if (outPos >= outSize)
+            if (outPos >= outMaxSize)
                 return 0;
 
             out{outPos++} = ((idx{1} << 4) & 0xF0) | (idx{2} >> 2);
@@ -444,7 +463,7 @@ stock base64Decode(const in{}, inSize, inPos, out{}, outSize, outPos = 0)
                 if (idx{3} >= BASE64_ALPHABET_SIZE)
                     return 0;
 
-                if (outPos >= outSize)
+                if (outPos >= outMaxSize)
                     return 0;
                 
                 out{outPos++} = ((idx{2} << 6) & 0xC0) | idx{3};
@@ -454,19 +473,19 @@ stock base64Decode(const in{}, inSize, inPos, out{}, outSize, outPos = 0)
     return outPos - outPosStart;
 }
 
-stock base64StrLength(inSize)
+stock base64strLength(inSize)
 {
     return ((inSize + 2) / 3) * 4;
 }
 
-stock fromBase64StrMaxSize(base64Size)
+stock fromBase64maxSize(base64length)
 {
-    return (base64Size / 4) * 3;
+    return (base64length / 4) * 3;
 }
 
-stock fromBase64StrMinSize(base64Size)
+stock fromBase64minSize(base64length)
 {
-    return fromBase64StrMaxSize(base64Size) - 2;
+    return fromBase64maxSize(base64length) - 2;
 }
 
 stock strSplitNums(const str{}, separator, values[], valuesMaxSize, &valuesActualSize, strLength = 0, pos = 0)
@@ -509,7 +528,7 @@ stock asciiHexStr2array(const asciiStr{}, hex{}, hexMaxSize, asciiStrLength = 0,
 
     if (asciiStrLength <= 0)
         asciiStrLength = asciiStrPos + strLen(asciiStr, asciiStrLength, asciiStrPos);
-        
+
     new len;
     for (; ((len / 2) < hexMaxSize) && ((asciiStrPos + len) < asciiStrLength) && isAsciiHex(asciiStr{asciiStrPos + len}); len++)
     {}
@@ -542,7 +561,7 @@ stock asciiHex2num(byte)
                     : SYMBOL_LATIN_SMALL_LETTER_A) + 10;
 }
 
-stock isAsciiHex(byte)
+stock bool:isAsciiHex(byte)
 {
     return ((byte >= SYMBOL_DIGIT_0) && (byte <= SYMBOL_DIGIT_9))
             || ((byte >= SYMBOL_LATIN_CAPITAL_LETTER_A) && (byte <= SYMBOL_LATIN_CAPITAL_LETTER_F))
@@ -555,8 +574,14 @@ stock getStrFromGlobalVars(const dataInVarAddresses[], dataInVarAddressesSize, s
                                     .dataOutPos = pos);
 }
 
-stock setStrToGlobalVars(const dataOutVarAddresses[], dataOutVarAddressesSize, const str{}, strMaxSize = 0, pos = 0)
+stock setStrToGlobalVars(const dataOutVarAddresses[], dataOutVarAddressesSize, const str{}, strLength = 0, pos = 0)
 {
-    return setArrayToGlobalVars(dataOutVarAddresses, dataOutVarAddressesSize, str, (pos > 0 ? pos : 0) + strLen(str, strMaxSize, pos), .useDataOutSize = false,
+    return setArrayToGlobalVars(dataOutVarAddresses, dataOutVarAddressesSize, str, (pos > 0 ? pos : 0) + strLen(str, strLength, pos), .useDataOutSize = false,
                                 .dataOutActualSizeVarAddr = 0, .dataInPos = pos);
+}
+
+stock searchStr(const str{}, const sub{}, strLength = 0, strStart = 0, subLength = 0, subStart = 0)
+{
+    return searchSubArBruteForceStr(str, strStart, (strStart > 0 ? strStart : 0) + strLen(str, strLength, strStart), sub,
+                                    (subStart > 0 ? subStart : 0) + strLen(sub, subLength, subStart), subStart);
 }

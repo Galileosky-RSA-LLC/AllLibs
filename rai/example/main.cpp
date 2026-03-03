@@ -211,12 +211,12 @@ getCurrentSalonInfo(const route[RAI_ROUTE_DATA], routeCurData[ROUTE_CURRENT_DATA
 
     if (routeCurData.show == SHOW_CURRENT_STATION)
     {
-        strncpy(text, currentStationPrefixLength, textMaxSize, text, .fromBack = true);
+        strncpy(text, textMaxSize, text, currentStationPrefixLength, .fromBack = true);
         insertArrayStr(text, 0, textMaxSize, CURRENT_STATION_PREFIX, currentStationPrefixLength);
     }
     else if (routeCurData.show == SHOW_NEXT_STATION)
     {
-        strncpy(text, nextStationPrefixLength, textMaxSize, routeCurData.isAtStation ? nextStation : text, .fromBack = true);
+        strncpy(text, textMaxSize, routeCurData.isAtStation ? nextStation : text, nextStationPrefixLength, .fromBack = true);
         insertArrayStr(text, 0, textMaxSize, NEXT_STATION_PREFIX, nextStationPrefixLength);
     }
     Diagnostics("show text=\"%s\"", text);

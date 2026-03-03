@@ -66,19 +66,19 @@ stock const BASE64_ALPHABET{} ="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuv
 //! @{
 
 //! @brief Вернуть цифру из ее кода символа ASCII
-//! @details Например, 0x31 -> 1
+//! @details Например: 0x31 -> 1
 forward stock getDigit(byte);
 
 //! @brief Проверить, является ли символ цифрой в кодировке ASCII
-//! @details Например, 0x30 -> true, 0x20 -> false
+//! @details Например: 0x30 -> true, 0x20 -> false
 forward bool:stock isDigit(byte);
 
 //! @brief Вычислить длину строкового представления числа
-//! @details Например, "-1" -> 2
+//! @details Например: "-1" -> 2
 forward stock numLength(num);
 
 //! @brief Пропустить последовательные пустоты в строке (пробел, табуляция)
-//! @details Например, "   -123", .pos=0 -> 3
+//! @details Например: "   -123", .pos=0 -> 3
 //! @param[in] str массив со строкой
 //! @param[in] strLength длина массива со строкой; если <=0, то длина строки будет вычислена
 //! @param[in] pos позиция начала
@@ -86,7 +86,7 @@ forward stock numLength(num);
 forward stock skipSpaces(const str{}, strLength = 0, pos = 0);
 
 //! @brief Вычислить длину подстроки символов
-//! @details Например, "abcd" -> 4
+//! @details Например: "abcd" -> 4
 //! @details до \0 или до конца массива
 //! @param[in] str массив со строкой
 //! @param[in] strLength длина массива; если <=0, то игнорируется
@@ -94,37 +94,50 @@ forward stock skipSpaces(const str{}, strLength = 0, pos = 0);
 forward stock strLen(const str{}, strLength = 0, start = 0);
 
 //! @brief Копировать одну подстроку в другую строку с ее завершением (если позволяет длина)
-//! @details Например, .dest="abcdef",.destPos=2,.destLength=6,.source="gh" -> .dest=="abgh"
+//! @details Например: .dest="abcdef",.destPos=2,.destMaxSize=6,.source="gh" -> .dest=="abgh"
 //! @param[out] dest массив строки-приемника
-//! @param[in] destPos позиция начала вставки в строку-приемник
-//! @param[in] destLength длина массива строки-приемника
+//! @param[in] destMaxSize максимальная длина массива строки-приемника
 //! @param[in] source массив строки-источника
+//! @param[in] destPos позиция начала вставки в строку-приемник
 //! @param[in] sourcePos начальная позиция в строке-источнике
-//! @param[in] sourceLength длина массива строки-источника (если <=0, то будет вычислена)
+//! @param[in] sourceLength длина массива строки-источника; если <=0, то будет вычислена
 //! @param[in] fromBack признак необходимости вставки с конца источника (например, при совпадении источника с приемником)
 //! @return длина вставленной строки
-forward stock strncpy(dest{}, destPos, destLength, const source{}, sourcePos = 0, sourceLength = 0, bool:fromBack = false);
+forward stock strncpy(dest{}, destMaxSize, const source{}, destPos = 0, sourcePos = 0, sourceLength = 0, bool:fromBack = false);
+
+//! @brief Поиск подстроки
+//! @details Например: .str="0123abcd",.sub="23" -> 2; .str="0123abcd",.sub="ef" -> -1
+//! @param[in] str строка, в которой производится поиск
+//! @param[in] sub искомая строка
+//! @param[in] strLength длина строки, в которой производится поиск; если <=0, то будет вычислена
+//! @param[in] strStart стартовая позиция начала поиска
+//! @param[in] subLength длина искомой строки; если <=0, то будет вычислена
+//! @param[in] subStart позиция начала искомой подстроки
+//! @return >=0: позиция найденной искомой подстроки в строке поиска, ближняя к началу (т.е. первое вхождение), <0 - не найдена
+forward stock searchStr(const str{}, const sub{}, strLength = 0, strStart = 0, subLength = 0, subStart = 0);
 //! @}
 
 //! @defgroup sym2anotherSym Преобразование символ <-> другой символ
 //! @{
 
 //! @brief Перевести подстроку к нижнему регистру символов
-//! @details в т.ч. кириллические. Например, "АвтоVaz" -> "автоvaz"
+//! @details в т.ч. кириллические. 
+//! @details Например: "АвтоVaz" -> "автоvaz"
 //! @param[inout] str массив со строкой
 //! @param[in] strLength длина массива со строкой; если <=0, то длина строки будет вычислена
 //! @param[in] start индекс начала подстроки
 forward stock toLowerCase(str{}, strLength = 0, start = 0);
 
 //! @brief Перевести подстроку к верхнему регистру символов
-//! @details в т.ч. кириллические. Например, "АвтоVaz" -> "АВТОVAZ"
+//! @details в т.ч. кириллические. 
+//! @details Например: "АвтоVaz" -> "АВТОVAZ"
 //! @param[inout] str массив со строкой
 //! @param[in] strLength длина массива со строкой; если <=0, то длина строки будет вычислена
 //! @param[in] start индекс начала подстроки
 forward stock toUpperCase(str{}, strLength = 0, start = 0);
 
 //! @brief Преобразовать нечитаемые символы в пробелы
-//! @details Например, {0x30, 0x05, 0x1F, 0x20, 0x7F, 0x31} -> {0x30, 0x20, 0x20, 0x20, 0x20, 0x31}
+//! @details Например: {0x30, 0x05, 0x1F, 0x20, 0x7F, 0x31} -> {0x30, 0x20, 0x20, 0x20, 0x20, 0x31}
 //! @param[inout] str массив со строкой для преобразования
 //! @param[in] strLength длина массива со строкой; если <=0, то длина строки будет вычислена
 //! @param[in] start стартовый индекс начала преобразования
@@ -226,67 +239,77 @@ forward stock asciiHex2num(byte);
 forward stock asciiHexStr2array(const asciiStr{}, hex{}, hexMaxSize, asciiStrLength = 0, asciiStrPos = 0);
 
 //! @brief Получить hex строковое представление подмассива 
-//! @details (например, {0, 1, 171, 255} -> "0001ABFF")
+//! @details По возможности строка оконцовывается \0. 
+//! @details Например: {0, 1, 171, 255} -> "0001ABFF"
 //! @param[in] ar исходный массив
-//! @param[in] arStart индекс начала конвертируемой части в исходном массиве
 //! @param[in] arSize длина исходного массива
 //! @param[out] str строка для вставки конвертации
-//! @param[in] strSize длина конвертированной строки, должно соблюдаться (strSize - strPos) >= 2 * (arSize - arStart)
+//! @param[in] strMaxSize длина конвертированной строки, должно соблюдаться (strMaxSize - strPos) >= 2 * (arSize - arStart)
 //! @param[in] strPos позиция начала вставки
-//! @return кол-во вставленных байт
-forward stock getHexString(const ar{}, arStart, arSize, str{}, strSize, strPos = 0);
+//! @param[in] arStart индекс начала конвертируемой части в исходном массиве
+//! @return длина вставленной строки
+forward stock getHexString(const ar{}, arSize, str{}, strMaxSize, strPos = 0, arStart = 0);
 
 //! @brief Проверить символ на принадлежность к ASCII-hex (0..9,A..F,a..f)
-forward stock isAsciiHex(byte);
+//! @details Например: 0x30 -> true; 0x41 -> true; 0x61 -> true; 0x00 -> false
+forward bool:stock isAsciiHex(byte);
 
 //! @brief Преобразовать последний полубайт числа в его ASCII-hex символ
+//! @details Например: 0x30 -> '0'; 0x4F -> 'F'
 forward stock num2asciiHexHalfByte(num);
 
 //! @brief Преобразовать каждый элемент подмассива в его ASCII-hex 2-символьное представление
+//! @details По возможности строка оконцовывается \0. 
+//! @details Например: .ar={0x00, 0x01, 0xAA, 0xBB, 0xCC, 0xDD},.arSize=6,.subSize=2 -> {0x30, 0x30, 0x30, 0x31, 0x00, 0xDD} == "0001"
 //! @param[inout] ar преобразуемый массив
-//! @param[in] arLength длина массива
-//! @param[in] subLength длина подмассива
+//! @param[in] arSize длина массива
+//! @param[in] subSize длина преобразуемого подмассива
 //! @param[in] start стартовый индекс подмассива
 //! @return true - успешно, false - ошибка (недостаточная длина массива)
-forward bool:stock toAsciiHex(ar{}, arLength, subLength, start = 0);
+forward bool:stock toAsciiHex(ar{}, arSize, subSize, start = 0);
 //! @}
 
 //! @addtogroup base64
 //! @{
 
-//! @brief Закодировать в Base64
-//! @details RFC 4648
+//! @brief Закодировать в Base64 по RFC 4648
+//! @details По возможности строка оконцовывается \0. 
+//! @details Например: {0x00, 0x01, 0x02, 0x03} -> "AAECAw=="
 //! @param[in] in массив для кодирования
 //! @param[in] inSize длина массива для кодирования
-//! @param[in] inPos позиция начала в массиве для кодирования
 //! @param[out] out выходной массив для закодированных данных
-//! @param[in] outSize длина массива для закодированных данных
+//! @param[in] outMaxSize максимальная длина массива для закодированных данных
 //! @param[in] outPos позиция в массиве для закодированных данных
-//! @return кол-во вставленных символов в выходной массив
-forward stock base64Encode(const in{}, inSize, inPos, out{}, outSize, outPos = 0);
+//! @param[in] inPos позиция начала в массиве для кодирования
+//! @return длина вставленной строки в выходной массив
+forward stock base64encode(const in{}, inSize, out{}, outMaxSize, outPos = 0, inPos = 0);
 
 //! @brief Проверка символа на принадлежность алфавиту base64
+//! @details Например: 0x30 -> true; 0x00 -> false
 forward bool:stock isBase64(byte);
 
-//! @brief Декодировать из Base64
-//! @details RFC 4648
+//! @brief Декодировать из Base64 по RFC 4648
+//! @details Например: "AAECAw==" -> {0x00, 0x01, 0x02, 0x03}
 //! @param[in] in массив закодированных данных
-//! @param[in] inSize длина массива закодированных данных
-//! @param[in] inPos позиция начала в массиве закодированных данных
 //! @param[out] out выходной массив для декодированных данных
-//! @param[in] outSize длина массива декодированных данных
+//! @param[in] outMaxSize максимальная длина массива декодированных данных
 //! @param[in] outPos позиция в массиве декодированных данных
-//! @return кол-во вставленных символов в выходной массив
-forward stock base64Decode(const in{}, inSize, inPos, out{}, outSize, outPos = 0);
+//! @param[in] inSize длина массива закодированных данных; если <=0, то будет вычислена
+//! @param[in] inPos позиция начала в массиве закодированных данных
+//! @return кол-во вставленных байт в выходной массив
+forward stock base64decode(const in{}, out{}, outMaxSize, outPos = 0, inSize = 0, inPos = 0);
 
-//! @brief Вычислить длину закодированного массива в base64 по длине исходного
-forward stock base64StrLength(inSize);
+//! @brief Вычислить длину кодированной в base64 строки по длине исходных данных
+//! @details Например: 3 -> 4; 5 -> 8
+forward stock base64strLength(inSize);
 
-//! @brief Вычислить максимальную длину для декодированной строки из base64 по длине кодированной
-forward stock fromBase64StrMaxSize(base64Size);
+//! @brief Вычислить максимальный размер декодируемых данных из base64 по длине кодированных
+//! @details Например: 4 -> 3
+forward stock fromBase64maxSize(base64length);
 
-//! @brief Вычислить минимальную длину для декодированной строки из base64 по длине кодированной
-forward stock fromBase64StrMinSize(base64Size);
+//! @brief Вычислить минимальный размер декодируемых данных из base64 по длине кодированных
+//! @details Например: 4 -> 1
+forward stock fromBase64minSize(base64length);
 //! @}
 
 //! @defgroup globVarsStore Хранение строки в глобальных переменных
@@ -305,8 +328,8 @@ forward stock getStrFromGlobalVars(const dataInVarAddresses[], dataInVarAddresse
 //! \param[in] dataOutVarAddresses адреса глобальных переменных для хранения строки
 //! \param[in] dataOutVarAddressesSize количество адресов глобальных переменных для хранения строки
 //! \param[in] str записываемая строка
-//! \param[in] strMaxSize предельный размер массива для строки (если не указан или <=0, то будет вычислена длина)
+//! \param[in] strLength длина строки; если <=0, то будет вычислена длина
 //! \param[in] pos позиция начала в записываемой строке
 //! \return длина записанной подстроки
-forward stock setStrToGlobalVars(const dataOutVarAddresses[], dataOutVarAddressesSize, const str{}, strMaxSize = 0, pos = 0);
+forward stock setStrToGlobalVars(const dataOutVarAddresses[], dataOutVarAddressesSize, const str{}, strLength = 0, pos = 0);
 //! @}

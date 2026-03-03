@@ -40,7 +40,7 @@ stock raiSetCurrentRoute(const route[RAI_ROUTE_DATA])
 
 stock raiGetNewRoute(const currentRoute[RAI_ROUTE_DATA], nextRoute[RAI_ROUTE_DATA])
 {
-    strncpy(nextRoute.name, 0, RAI_FILE_PATH_LENGTH_MAX, currentRoute.name);
+    strncpy(nextRoute.name, RAI_FILE_PATH_LENGTH_MAX, currentRoute.name);
     new isReScan = !currentRoute.name{0};
     while (true)
     {
@@ -115,7 +115,7 @@ stock raiIsAtStation(const route[RAI_ROUTE_DATA], currentStation{}, currentStati
         }
         strPos = searchLinearStr(str, strLength, RAI_PARAMS_SEPARATOR_SYMBOL, strPos);
         if (strPos >= 0)
-            strncpy(currentStation, 0, currentStationMaxSize, str, strPos + RAI_PARAMS_SEPARATOR_SIZE);
+            strncpy(currentStation, currentStationMaxSize, str, .sourcePos = strPos + RAI_PARAMS_SEPARATOR_SIZE);
 
         nextStation{0} = 0;
         nextStationFilePos = -1;
@@ -137,7 +137,7 @@ stock raiIsAtStation(const route[RAI_ROUTE_DATA], currentStation{}, currentStati
                 return true;
         }
         nextStationFilePos = filePos + strPos;
-        strncpy(nextStation, 0, nextStationMaxSize, str, strPos);
+        strncpy(nextStation, nextStationMaxSize, str, .sourcePos = strPos);
         return true;
     }
     return false;
@@ -176,7 +176,7 @@ stock rai_generateFilePath(const route[RAI_ROUTE_DATA], const fileName{}, filePa
 
     pos += insertArrayStr(filePath, pos, RAI_FILE_PATH_LENGTH_MAX, route.name, routeNameLength);
     pos += insertArrayStr(filePath, pos, RAI_FILE_PATH_LENGTH_MAX, PATH_SEPARATOR_PRIME, strLen(PATH_SEPARATOR_PRIME));
-    strncpy(filePath, pos, RAI_FILE_PATH_LENGTH_MAX, fileName);
+    strncpy(filePath, RAI_FILE_PATH_LENGTH_MAX, fileName, pos);
     return true;
 }
 

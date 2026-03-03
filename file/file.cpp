@@ -34,7 +34,7 @@ stock fileRename(const src{}, const dest{})
     bufSize = GetBinaryDataFromCommand(buf, CMD_LENGTH_MAX);
     toLowerCase(buf, bufSize);
     new const successResult{} = "success";
-    return searchSubArBruteForceStr(buf, 0, bufSize, successResult, strLen(successResult)) >= 0;
+    return searchStr(buf, successResult) >= 0;
 }
 
 stock fileWriteWrap(const fileName{}, const buf{}, bufSize, fileOffset, bufPos = 0)

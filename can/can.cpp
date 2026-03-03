@@ -54,13 +54,13 @@ getCanRegime(portIndex, &mode, &baudRate)
     toLowerCase(answer, len);
     const modeStrSize = 5;
     new const modeStr{} = "mode=";
-    new idx = searchSubArBruteForceStr(answer, 0, len, modeStr, modeStrSize);
+    new idx = searchStr(answer, modeStr);
     if ((idx < 0) || !atoi(answer, mode, len, idx + modeStrSize))
         return false;
 
     const baudRateStrSize = 9;
     new const baudRateStr{} = "baudrate=";
-    idx = searchSubArBruteForceStr(answer, 0, len, baudRateStr, baudRateStrSize);
+    idx = searchStr(answer, baudRateStr);
     if (idx < 0)
         return false;
     
