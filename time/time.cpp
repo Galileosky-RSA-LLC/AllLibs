@@ -1,4 +1,4 @@
-#ifdef TIME_LIB
+#if defined TIME_LIB
 #endinput
 #endif
 #define TIME_LIB

@@ -1,4 +1,4 @@
-#ifndef MODBUSSERIAL_LIB
+#if !defined MODBUSSERIAL_LIB
 #define MODBUSSERIAL_LIB
 //{ ============================================================================
 //{ Библиотека работы с ModBus по последовательной линии =======================
@@ -345,7 +345,7 @@ modbusSerial_isRtuFrameValid(const obj[MODBUSSERIAL_TRANSCEIVER_DATA])
 //! \return MODBUSSERIAL_OK - успешно (получено > 0 байт данных), MODBUSSERIAL_ERROR_TIMEOUT при отсутствии данных
 modbusSerial_getData(obj[MODBUSSERIAL_TRANSCEIVER_DATA], const setsrv[MODBUSSERIAL_SERVER_DATA], diag)
 {
-    #ifdef MODBUSSERIAL_DEBUG
+    #if defined MODBUSSERIAL_DEBUG
     if (diag)
         Diagnostics("mbs_gD");
     #endif
@@ -409,7 +409,7 @@ modbusSerial_setFrameDelays(obj[MODBUSSERIAL_TRANSCEIVER_DATA])
 modbusSerial_cltReadRegs(obj[MODBUSSERIAL_TRANSCEIVER_DATA], const client[MODBUSSERIAL_CLIENT_DATA], const setsrv[MODBUSSERIAL_SERVER_DATA], holding,
                          regStartAddr, quantityRegs, &excode, diag)
 {
-    #ifdef MODBUSSERIAL_DEBUG
+    #if defined MODBUSSERIAL_DEBUG
     if (diag)
         Diagnostics("mbs_CrR");
     #endif
@@ -440,14 +440,14 @@ modbusSerial_cltReadRegs(obj[MODBUSSERIAL_TRANSCEIVER_DATA], const client[MODBUS
 //! \return MODBUSSERIAL_OK - успешно, MODBUSSERIAL_ERROR_ при ошибке
 modbusSerial_getResponse(obj[MODBUSSERIAL_TRANSCEIVER_DATA], const setsrv[MODBUSSERIAL_SERVER_DATA], &excode, diag)
 {
-    #ifdef MODBUSSERIAL_DEBUG
+    #if defined MODBUSSERIAL_DEBUG
     if (diag)
         Diagnostics("mbs_gR");
     #endif
     new sentFunc;
     if (!modbusGetFunction(obj.buf, MODBUSSERIAL_UF_PDU_OFFSET, min(obj.bufSize, MODBUSSERIAL_BUF_SIZE_MAX), sentFunc))
     {
-        #ifdef MODBUSSERIAL_DEBUG
+        #if defined MODBUSSERIAL_DEBUG
         if (diag)
             Diagnostics("rqS=%d", obj.bufSize);
         #endif
@@ -479,7 +479,7 @@ modbusSerial_getResponse(obj[MODBUSSERIAL_TRANSCEIVER_DATA], const setsrv[MODBUS
         else if (exceptReceived)
             res = MODBUSSERIAL_ERROR_EXCODE;    
     }
-    #ifdef MODBUSSERIAL_DEBUG
+    #if defined MODBUSSERIAL_DEBUG
     if ((res != MODBUSSERIAL_OK) && (obj.bufSize > 0) && diag)
         modbusSerial_diagRcvBuf(obj);
     #endif
@@ -523,7 +523,7 @@ modbusSerial_getResponseAndWait(obj[MODBUSSERIAL_TRANSCEIVER_DATA], const client
 //! \return MODBUSSERIAL_OK - успешно, MODBUSSERIAL_ERROR_ при ошибке, MODBUSSERIAL_ANOTHER_DEV_DATA - получены данные другого адресата
 modbusSerial_srvGetReq(obj[MODBUSSERIAL_TRANSCEIVER_DATA], const setsrv[MODBUSSERIAL_SERVER_DATA], const server[MODBUS_SERVER_DATA], &excode, diag)
 {
-    #ifdef MODBUSSERIAL_DEBUG
+    #if defined MODBUSSERIAL_DEBUG
     if (diag)
         Diagnostics("mbs_sGr");
     #endif
@@ -557,7 +557,7 @@ modbusSerial_srvGetReq(obj[MODBUSSERIAL_TRANSCEIVER_DATA], const setsrv[MODBUSSE
     {
         res = MODBUSSERIAL_ERROR_RECEIVE;
     }
-    #ifdef MODBUSSERIAL_DEBUG
+    #if defined MODBUSSERIAL_DEBUG
     if ((obj.bufSize > 0) && diag)
         modbusSerial_diagRcvBuf(obj);
     #endif
@@ -576,7 +576,7 @@ modbusSerial_sendData(obj[MODBUSSERIAL_TRANSCEIVER_DATA], diag)
     if (res != MODBUSSERIAL_OK)
         return res;
 
-    #ifdef MODBUSSERIAL_DEBUG
+    #if defined MODBUSSERIAL_DEBUG
     if (diag)
         modbusSerial_diagSndBuf(obj);
     #endif

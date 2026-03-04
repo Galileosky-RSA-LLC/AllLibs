@@ -1,4 +1,4 @@
-#ifdef CRYPT_H
+#if defined CRYPT_H
 #endinput
 #endif
 #define CRYPT_H

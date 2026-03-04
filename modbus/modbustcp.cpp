@@ -1,4 +1,4 @@
-#ifndef MODBUSTCP_LIB
+#if !defined MODBUSTCP_LIB
 #define MODBUSTCP_LIB
 //{ ============================================================================
 //{ Библиотека работы с ModBus по TCP/IP =======================================
@@ -238,7 +238,7 @@ modbusTcp_srvGetData(trans[MODBUSTCP_TRANSCEIVER_DATA], handle, diag)
     if (diag)
     {
         Diagnostics("rcv %d bts", trans.bufSize);
-        #ifdef DEBUG
+        #if defined DEBUG
         DiagnosticsHex(trans.buf, trans.bufSize);
         #endif
     }
@@ -293,7 +293,7 @@ modbusTcp_isUnitIdOwn(const trans[MODBUSTCP_TRANSCEIVER_DATA])
 //! \return MODBUSSERIAL_OK - успешно, MODBUSTCP_ERROR_TRANSFER - ошибка
 modbusTcp_srvSendData(const trans[MODBUSTCP_TRANSCEIVER_DATA], const tcpSrv[MODBUSTCP_SERVER_DATA], diag)
 {
-    #ifdef DEBUG
+    #if defined DEBUG
     if (diag)
         Diagnostics("mbt_sSd");
     #endif
@@ -302,7 +302,7 @@ modbusTcp_srvSendData(const trans[MODBUSTCP_TRANSCEIVER_DATA], const tcpSrv[MODB
     if (diag)
     {
         Diagnostics("sent %d bts", sent);
-        #ifdef DEBUG
+        #if defined DEBUG
         DiagnosticsHex(trans.buf, sent);
         #endif
     }

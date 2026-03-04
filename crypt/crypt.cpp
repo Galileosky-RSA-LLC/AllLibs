@@ -1,4 +1,4 @@
-#ifdef CRYPT_LIB
+#if defined CRYPT_LIB
 #endinput
 #endif
 #define CRYPT_LIB

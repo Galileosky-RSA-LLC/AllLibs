@@ -1,4 +1,4 @@
-#ifdef GDEFINES_H
+#if defined GDEFINES_H
 #endinput
 #endif
 #define GDEFINES_H

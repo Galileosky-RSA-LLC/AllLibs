@@ -5,7 +5,7 @@
 
 #define INIT_STORAGE_WAIT_MS 10000
 
-#ifdef DEBUG
+#if defined DEBUG
 #define EEPROM_DEBUG
 #define INIT_DIAG_AFTER_RESET_WAIT_MS 10000
 #define INIT_WAIT_MS (INIT_STORAGE_WAIT_MS + INIT_DIAG_AFTER_RESET_WAIT_MS)
@@ -50,7 +50,7 @@ main()
     }
     else
     {
-        #ifdef DEBUG
+        #if defined DEBUG
         Diagnostics("ROM-");
         #endif
         // тут можно инициализировать настройки из файлов

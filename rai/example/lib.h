@@ -1,7 +1,7 @@
 //! @file
 //! @brief Заголовок библиотеки общих функций алгоритма
 
-#ifdef ALG_H
+#if defined ALG_H
 #endinput
 #endif
 #define ALG_H

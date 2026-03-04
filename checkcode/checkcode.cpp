@@ -1,7 +1,7 @@
 //! @file
 //! @brief Функции библиотеки проверочных кодов (CRC, CS, etc.)
 
-#ifdef CHECKCODE_LIB
+#if defined CHECKCODE_LIB
 #endinput
 #endif
 #define CHECKCODE_LIB

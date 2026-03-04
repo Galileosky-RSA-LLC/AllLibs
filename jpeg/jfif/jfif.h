@@ -1,4 +1,4 @@
-#ifndef JFIF_H
+#if !defined JFIF_H
 #define JFIF_H
 // заголовок библиотеки работы с JFIF изображениями
 

@@ -1,4 +1,4 @@
-#ifndef TPMS_H
+#if !defined TPMS_H
 #define TPMS_H
 // заголовок библиотеки систем контроля давления в шинах
 

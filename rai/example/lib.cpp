@@ -1,7 +1,7 @@
 //! @file
 //! @brief Функции библиотеки общих функций алгоритма
 
-#ifdef ALG_LIB
+#if defined ALG_LIB
 #endinput
 #endif
 #define ALG_LIB

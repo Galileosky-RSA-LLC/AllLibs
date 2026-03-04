@@ -1,7 +1,7 @@
 //! @file
 //! @brief Заголовок библиотеки проверочных кодов (CRC, CS, etc.)
 
-#ifdef CHECKCODE_H
+#if defined CHECKCODE_H
 #endinput
 #endif
 #define CHECKCODE_H

@@ -1,4 +1,4 @@
-#ifdef DEVINFO_LIB
+#if defined DEVINFO_LIB
 #endinput
 #endif
 #define DEVINFO_LIB

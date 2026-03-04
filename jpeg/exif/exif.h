@@ -1,4 +1,4 @@
-#ifndef EXIF_H
+#if !defined EXIF_H
 #define EXIF_H
 // заголовок библиотеки работы с EXIF изображениями
 

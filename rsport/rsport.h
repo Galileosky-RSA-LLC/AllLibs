@@ -1,4 +1,4 @@
-#ifdef RSPORT_H
+#if defined RSPORT_H
 #endinput
 #endif
 #define RSPORT_H

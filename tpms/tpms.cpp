@@ -1,4 +1,4 @@
-#ifndef TPMS_LIB
+#if !defined TPMS_LIB
 #define TPMS_LIB
 // библиотека систем контроля давления в шинах
 

@@ -1,7 +1,7 @@
 //! @file
 //! @brief Функции библиотеки массива пользователя
 
-#ifdef USERARRAY_LIB
+#if defined USERARRAY_LIB
 #endinput
 #endif
 #define USERARRAY_LIB

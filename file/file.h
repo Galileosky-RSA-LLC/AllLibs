@@ -1,7 +1,7 @@
 //! @file
 //! @brief Заголовок библиотеки для работы с файлами
 
-#ifdef FILE_H
+#if defined FILE_H
 #endinput
 #endif
 #define FILE_H

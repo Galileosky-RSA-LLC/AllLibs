@@ -1,7 +1,7 @@
 //! @file
 //! @brief Заголовок библиотеки массива пользователя
 
-#ifdef USERARRAY_H
+#if defined USERARRAY_H
 #endinput
 #endif
 #define USERARRAY_H

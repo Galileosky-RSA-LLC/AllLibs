@@ -1,4 +1,4 @@
-#ifndef JPEG_H
+#if !defined JPEG_H
 #define JPEG_H
 // заголовок библиотеки работы со сжатыми изображениями JPEG
 

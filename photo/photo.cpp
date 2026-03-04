@@ -1,4 +1,4 @@
-#ifndef PHOTO_LIB
+#if !defined PHOTO_LIB
 #define PHOTO_LIB
 
 #include "photo.h"

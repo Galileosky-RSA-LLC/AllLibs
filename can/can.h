@@ -1,4 +1,4 @@
-#ifndef CAN_H
+#if !defined CAN_H
 #define CAN_H
 // Заголовок библиотеки работы с CAN
 

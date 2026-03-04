@@ -1,7 +1,7 @@
 //! @file
 //! @brief Заголовок библиотеки асинхронных функций
 
-#ifdef ASYNC_H
+#if defined ASYNC_H
 #endinput
 #endif
 #define ASYNC_H

@@ -1,4 +1,4 @@
-#ifdef TIME_H
+#if defined TIME_H
 #endinput
 #endif
 #define TIME_H

@@ -1,4 +1,4 @@
-#ifndef JPEG_LIB
+#if !defined JPEG_LIB
 #define JPEG_LIB
 // Библиотека работы со сжатыми изображениями JPEG
 

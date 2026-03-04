@@ -1,4 +1,4 @@
-#ifndef DIAG_LIB
+#if !defined DIAG_LIB
 #define DIAG_LIB
 // Библиотека расширенного вывода в диагностику
 

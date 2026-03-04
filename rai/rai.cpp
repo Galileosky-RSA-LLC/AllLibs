@@ -1,7 +1,7 @@
 //! @file
 //! @brief Функции библиотеки маршрутного автоинформатора
 
-#ifdef RAI_LIB
+#if defined RAI_LIB
 #endinput
 #endif
 #define RAI_LIB

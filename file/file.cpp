@@ -1,7 +1,7 @@
 //! @file
 //! @brief Функции для работы с файлами
 
-#ifdef FILE_LIB
+#if defined FILE_LIB
 #endinput
 #endif
 #define FILE_LIB

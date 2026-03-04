@@ -1,4 +1,4 @@
-#ifdef BLUETOOTH_LIB
+#if defined BLUETOOTH_LIB
 #endinput
 #endif
 #define BLUETOOTH_LIB

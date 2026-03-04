@@ -1,4 +1,4 @@
-#ifdef SETTING_LIB
+#if defined SETTING_LIB
 #endinput
 #endif
 #define SETTING_LIB
@@ -21,7 +21,7 @@ stock settingInit(obj[SETTING_DATA], const fileName{}, const varAddresses[], var
     {    
         obj.varAddr[i] = varAddresses[i];
         obj.oldValue[i] = GetVar(obj.varAddr[i]);
-        #ifdef SETTING_DEBUG
+        #if defined SETTING_DEBUG
         Diagnostics("\"%s\" def[%d]=%d", obj.fileName, i, obj.oldValue[i]);
         #endif
     }
@@ -53,7 +53,7 @@ stock settingRestoreParams(obj[SETTING_DATA])
     for (i = 0; i < size / 4; i++)
     {    
         SetVar(obj.varAddr[i], obj.oldValue[i]);
-        #ifdef SETTING_DEBUG
+        #if defined SETTING_DEBUG
         Diagnostics("r.\"%s\"[%d]=%d", obj.fileName, i, obj.oldValue[i]);
         #endif
     }
@@ -66,7 +66,7 @@ stock settingSingleInit(obj[SETTING_SINGLE_DATA], const fileName{}, varAddress)
 	insertArrayStr(obj.fileName, 0, SETTING_FILENAME_SIZE_MAX, fileName, strLen(fileName, SETTING_FILENAME_SIZE_MAX));
     obj.varAddr = varAddress;
     obj.oldValue = GetVar(obj.varAddr);
-    #ifdef SETTING_DEBUG
+    #if defined SETTING_DEBUG
     Diagnostics("\"%s\" def=%d", obj.fileName, obj.oldValue);
     #endif
 }
@@ -83,7 +83,7 @@ stock settingSingleRestoreParam(obj[SETTING_SINGLE_DATA])
     }
     obj.oldValue = value;
     SetVar(obj.varAddr, obj.oldValue);
-    #ifdef SETTING_DEBUG
+    #if defined SETTING_DEBUG
     Diagnostics("r.\"%s\"!v=%d", obj.fileName, obj.oldValue);
     #endif
 }

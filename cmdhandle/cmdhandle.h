@@ -1,7 +1,7 @@
 //! @file
 //! @brief Заголовок библиотеки обработчика команд
 
-#ifdef CMDHANDLE_H
+#if defined CMDHANDLE_H
 #endinput
 #endif
 #define CMDHANDLE_H

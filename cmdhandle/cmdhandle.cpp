@@ -1,7 +1,7 @@
 //! @file
 //! @brief Функции библиотеки обработчика команд
 
-#ifdef CMDHANDLE_LIB
+#if defined CMDHANDLE_LIB
 #endinput
 #endif
 #define CMDHANDLE_LIB

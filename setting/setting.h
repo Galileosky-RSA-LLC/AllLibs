@@ -1,4 +1,4 @@
-#ifdef SETTING_H
+#if defined SETTING_H
 #endinput
 #endif
 #define SETTING_H
@@ -14,7 +14,7 @@
 #define SETTING_CONF_CMD_WAIT_MS 5000 //!< время ожидания конфигурационных команд при отсутствии доступа к файловой системе
 
 #define SETTING_PARAM_SIZE CELL_BYTES
-#ifndef SETTING_PARAMS_AMOUNT
+#if !defined SETTING_PARAMS_AMOUNT
 #define SETTING_PARAMS_AMOUNT 0 //!< общее количество сохраняемых параметров, определить на верхнем уровне
 #endif
 #if (SETTING_PARAMS_AMOUNT < 1)

@@ -1,4 +1,4 @@
-#ifdef BLUETOOTH_H
+#if defined BLUETOOTH_H
 #endinput
 #endif
 #define BLUETOOTH_H

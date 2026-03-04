@@ -1,4 +1,4 @@
-#ifdef EEPROM_H
+#if defined EEPROM_H
 #endinput
 #endif
 #define EEPROM_H
@@ -12,7 +12,7 @@
 
 #define EEPROM_CONF_CMD_WAIT_MS 5000 //!< время ожидания конфигурационных команд при отсутствии доступа к ROM
 
-#ifndef EEPROM_PARAMS_COUNT
+#if !defined EEPROM_PARAMS_COUNT
 #define EEPROM_PARAMS_COUNT 0 //!< общее количество сохраняемых параметров, определить на верхнем уровне
 #endif
 

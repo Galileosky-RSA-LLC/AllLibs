@@ -1,4 +1,4 @@
-#ifndef PHOTO_H
+#if !defined PHOTO_H
 #define PHOTO_H
 
 #include "..\jpeg\jpeg.h"

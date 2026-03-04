@@ -1,4 +1,4 @@
-#ifdef DEVINFO_H
+#if defined DEVINFO_H
 #endinput
 #endif
 #define DEVINFO_H

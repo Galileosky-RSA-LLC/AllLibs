@@ -1,7 +1,7 @@
 //! @file
 //! @brief Заголовок библиотеки маршрутного автоинформатора
 
-#ifdef RAI_H
+#if defined RAI_H
 #endinput
 #endif
 #define RAI_H

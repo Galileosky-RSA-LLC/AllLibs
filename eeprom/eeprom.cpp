@@ -1,4 +1,4 @@
-#ifdef EEPROM_LIB
+#if defined EEPROM_LIB
 #endinput
 #endif
 #define EEPROM_LIB
@@ -38,7 +38,7 @@ stock eepromStoreParamsByChange(obj[EEPROM_DATA])
         {    
             if (!eeprom_storeParams(obj, i))
             {    
-                #ifdef EEPROM_DEBUG
+                #if defined EEPROM_DEBUG
                 Diagnostics("w.p?k=%d", i);
                 #endif
             }
@@ -59,7 +59,7 @@ stock eepromRestoreParams(obj[EEPROM_DATA])
                 SetVar(obj.keysVarAddr[id], obj.keyBuf[j]);
 
             obj.keysOldValue[id] = (res != 0) ? obj.keyBuf[j] : GetVar(obj.keysVarAddr[id]);
-            #ifdef EEPROM_DEBUG
+            #if defined EEPROM_DEBUG
             Diagnostics((res != 0) ? "r.p[%d]=%d" : "r.p[%d]?def=%d", id, (res != 0) ? obj.keyBuf[j] : obj.keysOldValue[id]);
             #endif
         }

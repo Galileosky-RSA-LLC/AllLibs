@@ -1,4 +1,4 @@
-#ifndef CAN_LIB
+#if !defined CAN_LIB
 #define CAN_LIB
 // Библиотека работы с CAN
 
