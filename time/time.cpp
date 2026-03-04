@@ -1,45 +1,48 @@
+//! @file
+//! @brief Реализация библиотеки времени
+
 #if defined TIME_LIB
 #endinput
 #endif
 #define TIME_LIB
 
-//! @file
-//! @brief Реализация библиотеки времени
-
 #include "time.h"
-#include "..\numeric\numeric.h"
 
-stock isTimerExpired(fixedUptime, timer)
+stock bool:isTimerExpired(fixedUptime, timerMs)
 {
-    new gUpt = GetVar(UPTIME);
-    if (timer < 0)
-        timer = 0;
+    new const gUpt = GetVar(UPTIME);
+    if (timerMs < 0)
+        timerMs = 0;
 
-	if (gUpt == fixedUptime)
-		return timer == 0;
+	new const elapsed = gUpt - fixedUptime;
+    if (elapsed == 0)
+		return timerMs == 0;
     
-    return (gUpt - fixedUptime) >= 0 ? (gUpt - fixedUptime) >= timer : true;
+    return (elapsed < 0) || (elapsed >= timerMs);
 }
 
-stock wait(timer)
+stock wait(timerMs)
 {
-    waitFrom(GetVar(UPTIME), timer);
+    waitFrom(GetVar(UPTIME), timerMs);
 }
 
-stock waitFrom(fixedUptime, timer)
+stock waitFrom(fixedUptime, timerMs)
 {
-    while (!isTimerExpired(fixedUptime, timer))
+    while (!isTimerExpired(fixedUptime, timerMs))
         Delay(10);
 }
 
-stock unixTime2dateTime(time, &year, &month, &day, &hour, &minute, &second)
+stock unixTime2dateTime(unixtime, &year, &month, &day, &hour, &minute, &second)
 {
+    if (unixtime < 0)
+        return false;
+
     new yearsFromStart = 0;
     new thisYearSeconds = NONLEAP_YEAR_SECONDS;
-    while (time >= thisYearSeconds)
+    while (unixtime >= thisYearSeconds)
     {
         yearsFromStart++;
-        time -= thisYearSeconds;
+        unixtime -= thisYearSeconds;
         thisYearSeconds = NONLEAP_YEAR_SECONDS + (((yearsFromStart % 4) == 2) ? SECONDS_PER_DAY : 0);
     }
     year = UNIX_EPOCH_YEAR_START + yearsFromStart;
@@ -48,26 +51,27 @@ stock unixTime2dateTime(time, &year, &month, &day, &hour, &minute, &second)
     if (isLeapYear(year))
         monthDays[1] = FEBRUARY_LEAP_DAYS;
 
-    new daysElapsed = time / SECONDS_PER_DAY;
-    new day1 = daysElapsed;
+    new const daysElapsed = unixtime / SECONDS_PER_DAY;
+    new totalDays = daysElapsed;
     for (new i = 0; i < sizeof(monthDays); i++)
     {
-        if (day1 < monthDays[i])
+        if (totalDays < monthDays[i])
         {
             month = i + 1;
-            day = day1 + 1;
+            day = totalDays + 1;
             break;
         }
-        day1 -= monthDays[i];
+        totalDays -= monthDays[i];
     }
-    new secondsFromMidnight = time - (daysElapsed * SECONDS_PER_DAY);
+    new const secondsFromMidnight = unixtime - (daysElapsed * SECONDS_PER_DAY);
     hour = secondsFromMidnight / SECONDS_PER_HOUR;
-    new secondsFromHour = secondsFromMidnight - (hour * SECONDS_PER_HOUR);
+    new const secondsFromHour = secondsFromMidnight - (hour * SECONDS_PER_HOUR);
     minute = secondsFromHour / SECONDS_PER_MINUTE;
     second = secondsFromHour - (minute * SECONDS_PER_MINUTE);
+    return true;
 }
 
-stock uptimeLess(uptime1, uptime2)
+stock bool:uptimeLess(uptime1, uptime2)
 {
     if (uptime1 == uptime2)
         return false;
@@ -78,12 +82,11 @@ stock uptimeLess(uptime1, uptime2)
     return (uptime1 >= 0) && (uptime2 < 0);
 }
 
-stock dateTime2unixTime(year, month, day, hour, minute, second, &unixtime)
+stock bool:dateTime2unixTime(year, month, day, hour, minute, second, &unixtime)
 {
     new monthDays[] = [JANUARY_DAYS, FEBRUARY_NONLEAP_DAYS, MARCH_DAYS, APRIL_DAYS, MAY_DAYS, JUNE_DAYS, JULY_DAYS, AUGUST_DAYS, SEPTEMBER_DAYS, OCTOBER_DAYS,
                         NOVEMBER_DAYS, DECEMBER_DAYS];
-    new leapYear = isLeapYear(year);
-    if (leapYear)
+    if (isLeapYear(year))
         monthDays[1] = FEBRUARY_LEAP_DAYS;
 
     if ((hour < HOUR_MIN) || (hour > HOUR_MAX)
@@ -91,15 +94,35 @@ stock dateTime2unixTime(year, month, day, hour, minute, second, &unixtime)
         || (second < SECOND_MIN) || (second > SECOND_MAX)
         || (month < MONTH_MIN) || (month > MONTH_MAX)
         || (day < DAY_MIN) || (day > monthDays[month - 1])
-        || (year < UNIX_EPOCH_YEAR_START) || (year > UNIX_EPOCH_YEAR_END_32)
-        || ((year == UNIX_EPOCH_YEAR_END_32) && ((month > UNIX_EPOCH_MONTH_END_32)
-                                    || ((month == UNIX_EPOCH_MONTH_END_32) && ((day > UNIX_EPOCH_DAY_END_32)
-                                                                    || ((day == UNIX_EPOCH_DAY_END_32) && ((hour > UNIX_EPOCH_HOUR_END_32)
-                                                                                    || ((hour == UNIX_EPOCH_HOUR_END_32) && ((minute > UNIX_EPOCH_MINUTE_END_32)
-                                                                                                            || ((minute == UNIX_EPOCH_MINUTE_END_32)
-                                                                                                                && (second > UNIX_EPOCH_SECOND_END_32)))))))))))
+        || (year < UNIX_EPOCH_YEAR_START) || (year > UNIX_EPOCH_YEAR_END_32BIT))
         return false;
 
+    if (year == UNIX_EPOCH_YEAR_END_32BIT)
+    {
+        if (month > UNIX_EPOCH_MONTH_END_32BIT)
+            return false;
+
+        if (month == UNIX_EPOCH_MONTH_END_32BIT)
+        {
+            if (day > UNIX_EPOCH_DAY_END_32BIT)
+                return false;
+            
+            if (day == UNIX_EPOCH_DAY_END_32BIT)
+            {
+                if (hour > UNIX_EPOCH_HOUR_END_32BIT)
+                    return false;
+                
+                if (hour == UNIX_EPOCH_HOUR_END_32BIT)
+                {
+                    if (minute > UNIX_EPOCH_MINUTE_END_32BIT)
+                        return false;
+
+                    if ((minute == UNIX_EPOCH_MINUTE_END_32BIT) && (second > UNIX_EPOCH_SECOND_END_32BIT))
+                        return false;
+                }
+            }
+        }
+    }
     new i;
     for (i = UNIX_EPOCH_YEAR_START; i < year; i++)
         unixtime += isLeapYear(i) ? LEAP_YEAR_DAYS : NONLEAP_YEAR_DAYS;
@@ -117,9 +140,9 @@ stock dateTime2unixTime(year, month, day, hour, minute, second, &unixtime)
     return true;
 }
 
-stock isLeapYear(year)
+stock bool:isLeapYear(year)
 {
-    return (((year % 4 == 0) && (year % 100 != 0)) || (year % 400 == 0));
+    return (((year % 4) == 0) && ((year % 100) != 0)) || ((year % 400) == 0);
 }
 
 stock duration(uptimeStart, uptimeEnd)
