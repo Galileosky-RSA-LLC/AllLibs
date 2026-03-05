@@ -32,14 +32,22 @@ tcpSrvCmIsHandleChanged(const connection[TCPSRVCM_CONNECTION_DATA], handle)
 //! Найти самое старое соединение
 tcpSrvCmGetOldestConnection(const connections[][TCPSRVCM_CONNECTION_DATA], maxConnections)
 {
-    new connId = 0;
-    new activeUptime = -1;
+    new now = GetVar(UPTIME);
+    new connId = -1;
+    new maxDuration;
+    new maxOverflows;
     for (new i = 0; i < maxConnections; i++)
     {
-        if ((connections[i].handle >= 0) && uptimeLess(connections[i].activityUptime, activeUptime))
+        if (connections[i].handle < 0)
+            continue;
+
+        new overflows;
+        new duration = durationMs(connections[i].activityUptime, now, overflows);
+        if ((connId < 0) || (overflows > maxOverflows) || ((overflows == maxOverflows) && (duration > maxDuration)))
         {
             connId = i;
-            activeUptime = connections[i].activityUptime;
+            maxDuration = duration;
+            maxOverflows = overflows;
         }
     }
     return connId;

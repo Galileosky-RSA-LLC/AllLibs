@@ -78,13 +78,10 @@
     .second,\
 ]
 
-//! @brief Проверить, истек ли таймер с зафиксированного времени UPTIME
+//! @brief Проверить, истек ли таймер с зафиксированного времени
 //! @param[in] fixedUptime зафиксированное время от старта терминала в мс
 //! @param[in] timerMs таймер в мс
 forward bool:stock isTimerExpired(fixedUptime, timerMs);
-
-//! @brief Проверить, что uptime1 < uptime2
-forward bool:stock uptimeLess(uptime1, uptime2);
 
 //! @brief Задержать выполнение
 //! @details Более точно, чем Delay() - шаг 10 мс
@@ -111,5 +108,6 @@ forward bool:stock isLeapYear(year);
 //! @brief Определить длительность в мс
 //! @param[in] uptimeStart время старта
 //! @param[in] uptimeEnd время окончания
-//! @return длительность в мс
-forward stock duration(uptimeStart, uptimeEnd);
+//! @param[out] overflows количество переполнений значения cellmax
+//! @return остаточная длительность после последнего переполнения, т.е. итоговая длительность: overflows * cellmax + return
+forward stock durationMs(uptimeStart, uptimeEnd, &overflows = 0);

@@ -32,7 +32,7 @@ stock waitFrom(fixedUptime, timerMs)
         Delay(10);
 }
 
-stock unixTime2dateTime(unixtime, datetime[DATETIME])
+stock bool:unixTime2dateTime(unixtime, datetime[DATETIME])
 {
     if (unixtime < 0)
         return false;
@@ -69,17 +69,6 @@ stock unixTime2dateTime(unixtime, datetime[DATETIME])
     datetime.minute = secondsFromHour / SECONDS_PER_MINUTE;
     datetime.second = secondsFromHour - (datetime.minute * SECONDS_PER_MINUTE);
     return true;
-}
-
-stock bool:uptimeLess(uptime1, uptime2)
-{
-    if (uptime1 == uptime2)
-        return false;
-
-    if (((uptime1 >= 0) && (uptime2 >= 0)) || ((uptime1 < 0) && (uptime2 < 0)))
-        return uptime1 < uptime2;
-
-    return (uptime1 >= 0) && (uptime2 < 0);
 }
 
 stock bool:dateTime2unixTime(const datetime[DATETIME], &unixtime)
@@ -145,7 +134,19 @@ stock bool:isLeapYear(year)
     return (((year % 4) == 0) && ((year % 100) != 0)) || ((year % 400) == 0);
 }
 
-stock duration(uptimeStart, uptimeEnd)
+stock durationMs(uptimeStart, uptimeEnd, &overflows = 0)
 {
-    return uptimeStart <= uptimeEnd ? uptimeEnd - uptimeStart : cellmax - uptimeStart + uptimeEnd;
+    new dur = uptimeEnd - uptimeStart;
+    if (dur >= 0)
+    {    
+        overflows = 0;
+        return dur;
+    }
+    if (dur == -1)
+    {
+        overflows = 2;
+        return 1;
+    }
+    overflows = 1;
+    return dur - cellmax;
 }

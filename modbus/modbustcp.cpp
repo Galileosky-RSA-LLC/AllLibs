@@ -191,17 +191,18 @@ modbusTcp_srvConMngGetRequest(trans[MODBUSTCP_TRANSCEIVER_DATA], tcpSrv[MODBUSTC
             if (isHandleChanged)
             {    
                 tcpSrvCmInitConnection(connections[tcpSrv.lastCon], handle);
-                if (tcpSrvCmGetUsedConnections(connections, tcpSrv.maxCons) >= tcpSrv.maxCons)
+                if ((tcpSrv.maxCons > 1) && (tcpSrvCmGetUsedConnections(connections, tcpSrv.maxCons) >= tcpSrv.maxCons))
                 {    
-                    new oldestCon = tcpSrvCmGetOldestConnection(connections, tcpSrv.maxCons);
-                    if ((oldestCon == tcpSrv.gatewayCon) && tcpSrv.conUsedByGateway)
-                    {
-                        new activityTime = connections[oldestCon].activityUptime;
-                        connections[oldestCon].activityUptime = -1;
-                        oldestCon = tcpSrvCmGetOldestConnection(connections, tcpSrv.maxCons);
-                        connections[oldestCon].activityUptime = activityTime;
+                    new bool:isUsedByGateway = tcpSrv.conUsedByGateway;
+                    if (isUsedByGateway)
+                    {    
+                        assert (tcpSrv.gatewayCon >= 0) && (tcpSrv.gatewayCon < TCPSRVCMD_CONNECTIONS_MAX);
+                        connections[conId].activityUptime = GetVar(UPTIME);
                     }
-                    ServerSocketClose(connections[oldestCon].handle);
+                    new oldestCon = tcpSrvCmGetOldestConnection(connections, tcpSrv.maxCons);
+                    assert (oldestCon >= 0) && (oldestCon < TCPSRVCMD_CONNECTIONS_MAX);
+                    if (!isUsedByGateway || (isUsedByGateway && (oldestCon != tcpSrv.gatewayCon)))
+                        ServerSocketClose(connections[oldestCon].handle);
                 }
             }
             res = modbusTcp_srvGetData(trans, handle, diag);
