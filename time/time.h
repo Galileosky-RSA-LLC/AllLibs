@@ -69,6 +69,15 @@
 #define UNIX_EPOCH_SECOND_END_32BIT 7
 //! @}
 
+#define DATETIME[\
+    .year,\
+    .month,\
+    .day,\
+    .hour,\
+    .minute,\
+    .second,\
+]
+
 //! @brief Проверить, истек ли таймер с зафиксированного времени UPTIME
 //! @param[in] fixedUptime зафиксированное время от старта терминала в мс
 //! @param[in] timerMs таймер в мс
@@ -86,25 +95,15 @@ forward stock waitFrom(fixedUptime, timerMs);
 
 //! @brief Разделить метку времени Unixtime на компоненты даты и времени суток
 //! @param[in] unixtime метка времени Unixtime
-//! @param[out] day день
-//! @param[out] month месяц
-//! @param[out] year год
-//! @param[out] hour час
-//! @param[out] minute минута
-//! @param[out] second секунда
+//! @param[out] datetime структура даты и времени
 //! @return true - успешно, false - ошибка входных данных
-forward bool:stock unixTime2dateTime(unixtime, &year, &month, &day, &hour, &minute, &second);
+forward bool:stock unixTime2dateTime(unixtime, datetime[DATETIME]);
 
 //! @brief Преобразовать компоненты даты и времени суток (UTC без смещения) в метку времени Unixtime
-//! @param[in] day день
-//! @param[in] month месяц
-//! @param[in] year год
-//! @param[in] hour час
-//! @param[in] minute минута
-//! @param[in] second секунда
+//! @param[in] datetime структура даты и времени
 //! @param[out] unixtime метка времени Unixtime
 //! @return true - успешно, false - ошибка входных данных
-forward bool:stock dateTime2unixTime(year, month, day, hour, minute, second, &unixtime);
+forward bool:stock dateTime2unixTime(const datetime[DATETIME], &unixtime);
 
 //! @brief Проверить год на високосность
 forward bool:stock isLeapYear(year);

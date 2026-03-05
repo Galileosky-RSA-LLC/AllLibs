@@ -32,7 +32,7 @@ stock waitFrom(fixedUptime, timerMs)
         Delay(10);
 }
 
-stock unixTime2dateTime(unixtime, &year, &month, &day, &hour, &minute, &second)
+stock unixTime2dateTime(unixtime, datetime[DATETIME])
 {
     if (unixtime < 0)
         return false;
@@ -45,10 +45,10 @@ stock unixTime2dateTime(unixtime, &year, &month, &day, &hour, &minute, &second)
         unixtime -= thisYearSeconds;
         thisYearSeconds = NONLEAP_YEAR_SECONDS + (((yearsFromStart % 4) == 2) ? SECONDS_PER_DAY : 0);
     }
-    year = UNIX_EPOCH_YEAR_START + yearsFromStart;
+    datetime.year = UNIX_EPOCH_YEAR_START + yearsFromStart;
     new monthDays[] = [JANUARY_DAYS, FEBRUARY_NONLEAP_DAYS, MARCH_DAYS, APRIL_DAYS, MAY_DAYS, JUNE_DAYS, JULY_DAYS, AUGUST_DAYS, SEPTEMBER_DAYS, OCTOBER_DAYS,
                         NOVEMBER_DAYS, DECEMBER_DAYS];
-    if (isLeapYear(year))
+    if (isLeapYear(datetime.year))
         monthDays[1] = FEBRUARY_LEAP_DAYS;
 
     new const daysElapsed = unixtime / SECONDS_PER_DAY;
@@ -57,17 +57,17 @@ stock unixTime2dateTime(unixtime, &year, &month, &day, &hour, &minute, &second)
     {
         if (totalDays < monthDays[i])
         {
-            month = i + 1;
-            day = totalDays + 1;
+            datetime.month = i + 1;
+            datetime.day = totalDays + 1;
             break;
         }
         totalDays -= monthDays[i];
     }
     new const secondsFromMidnight = unixtime - (daysElapsed * SECONDS_PER_DAY);
-    hour = secondsFromMidnight / SECONDS_PER_HOUR;
-    new const secondsFromHour = secondsFromMidnight - (hour * SECONDS_PER_HOUR);
-    minute = secondsFromHour / SECONDS_PER_MINUTE;
-    second = secondsFromHour - (minute * SECONDS_PER_MINUTE);
+    datetime.hour = secondsFromMidnight / SECONDS_PER_HOUR;
+    new const secondsFromHour = secondsFromMidnight - (datetime.hour * SECONDS_PER_HOUR);
+    datetime.minute = secondsFromHour / SECONDS_PER_MINUTE;
+    datetime.second = secondsFromHour - (datetime.minute * SECONDS_PER_MINUTE);
     return true;
 }
 
@@ -82,61 +82,61 @@ stock bool:uptimeLess(uptime1, uptime2)
     return (uptime1 >= 0) && (uptime2 < 0);
 }
 
-stock bool:dateTime2unixTime(year, month, day, hour, minute, second, &unixtime)
+stock bool:dateTime2unixTime(const datetime[DATETIME], &unixtime)
 {
     new monthDays[] = [JANUARY_DAYS, FEBRUARY_NONLEAP_DAYS, MARCH_DAYS, APRIL_DAYS, MAY_DAYS, JUNE_DAYS, JULY_DAYS, AUGUST_DAYS, SEPTEMBER_DAYS, OCTOBER_DAYS,
                         NOVEMBER_DAYS, DECEMBER_DAYS];
-    if (isLeapYear(year))
+    if (isLeapYear(datetime.year))
         monthDays[1] = FEBRUARY_LEAP_DAYS;
 
-    if ((hour < HOUR_MIN) || (hour > HOUR_MAX)
-        || (minute < MINUTE_MIN) || (minute > MINUTE_MAX)
-        || (second < SECOND_MIN) || (second > SECOND_MAX)
-        || (month < MONTH_MIN) || (month > MONTH_MAX)
-        || (day < DAY_MIN) || (day > monthDays[month - 1])
-        || (year < UNIX_EPOCH_YEAR_START) || (year > UNIX_EPOCH_YEAR_END_32BIT))
+    if ((datetime.hour < HOUR_MIN) || (datetime.hour > HOUR_MAX)
+        || (datetime.minute < MINUTE_MIN) || (datetime.minute > MINUTE_MAX)
+        || (datetime.second < SECOND_MIN) || (datetime.second > SECOND_MAX)
+        || (datetime.month < MONTH_MIN) || (datetime.month > MONTH_MAX)
+        || (datetime.day < DAY_MIN) || (datetime.day > monthDays[datetime.month - 1])
+        || (datetime.year < UNIX_EPOCH_YEAR_START) || (datetime.year > UNIX_EPOCH_YEAR_END_32BIT))
         return false;
 
-    if (year == UNIX_EPOCH_YEAR_END_32BIT)
+    if (datetime.year == UNIX_EPOCH_YEAR_END_32BIT)
     {
-        if (month > UNIX_EPOCH_MONTH_END_32BIT)
+        if (datetime.month > UNIX_EPOCH_MONTH_END_32BIT)
             return false;
 
-        if (month == UNIX_EPOCH_MONTH_END_32BIT)
+        if (datetime.month == UNIX_EPOCH_MONTH_END_32BIT)
         {
-            if (day > UNIX_EPOCH_DAY_END_32BIT)
+            if (datetime.day > UNIX_EPOCH_DAY_END_32BIT)
                 return false;
             
-            if (day == UNIX_EPOCH_DAY_END_32BIT)
+            if (datetime.day == UNIX_EPOCH_DAY_END_32BIT)
             {
-                if (hour > UNIX_EPOCH_HOUR_END_32BIT)
+                if (datetime.hour > UNIX_EPOCH_HOUR_END_32BIT)
                     return false;
                 
-                if (hour == UNIX_EPOCH_HOUR_END_32BIT)
+                if (datetime.hour == UNIX_EPOCH_HOUR_END_32BIT)
                 {
-                    if (minute > UNIX_EPOCH_MINUTE_END_32BIT)
+                    if (datetime.minute > UNIX_EPOCH_MINUTE_END_32BIT)
                         return false;
 
-                    if ((minute == UNIX_EPOCH_MINUTE_END_32BIT) && (second > UNIX_EPOCH_SECOND_END_32BIT))
+                    if ((datetime.minute == UNIX_EPOCH_MINUTE_END_32BIT) && (datetime.second > UNIX_EPOCH_SECOND_END_32BIT))
                         return false;
                 }
             }
         }
     }
     new i;
-    for (i = UNIX_EPOCH_YEAR_START; i < year; i++)
+    for (i = UNIX_EPOCH_YEAR_START; i < datetime.year; i++)
         unixtime += isLeapYear(i) ? LEAP_YEAR_DAYS : NONLEAP_YEAR_DAYS;
 
-    for (i = 0; i < (month - 1); i++)
+    for (i = 0; i < (datetime.month - 1); i++)
         unixtime += monthDays[i];
     
-    unixtime += day - 1;
+    unixtime += datetime.day - 1;
     unixtime *= HOURS_PER_DAY;
-    unixtime += hour;
+    unixtime += datetime.hour;
     unixtime *= MINUTES_PER_HOUR;
-    unixtime += minute;
+    unixtime += datetime.minute;
     unixtime *= SECONDS_PER_MINUTE;
-    unixtime += second;
+    unixtime += datetime.second;
     return true;
 }
 

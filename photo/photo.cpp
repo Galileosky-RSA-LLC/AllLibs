@@ -34,20 +34,15 @@ generatePhotoPath(portNum, path{}, pathMaxSize)
         path{pos++} = '0' + portNum;
 
     path{pos++} = PHOTO_PATH_DIR_DELIMETER;
-    new years;
-    new months;
-    new days;
-    new hours;
-    new mins;
-    new secs;
-    unixTime2dateTime(GetVar(UNIX_TIME), years, months, days, hours, mins, secs);
-    pos += itoaw(years % 100, path, pathMaxSize, PHOTO_PATH_TIME_COMP_SIZE, pos);
-    pos += itoaw(months, path, pathMaxSize, PHOTO_PATH_TIME_COMP_SIZE, pos);
-    pos += itoaw(days, path, pathMaxSize, PHOTO_PATH_TIME_COMP_SIZE, pos);
+    new datetime[DATETIME];
+    unixTime2dateTime(GetVar(UNIX_TIME), datetime);
+    pos += itoaw(datetime.year % 100, path, pathMaxSize, PHOTO_PATH_TIME_COMP_SIZE, pos);
+    pos += itoaw(datetime.month, path, pathMaxSize, PHOTO_PATH_TIME_COMP_SIZE, pos);
+    pos += itoaw(datetime.day, path, pathMaxSize, PHOTO_PATH_TIME_COMP_SIZE, pos);
     path{pos++} = PHOTO_PATH_DIR_DELIMETER;
-    pos += itoaw(hours, path, pathMaxSize, PHOTO_PATH_TIME_COMP_SIZE, pos);
-    pos += itoaw(mins, path, pathMaxSize, PHOTO_PATH_TIME_COMP_SIZE, pos);
-    pos += itoaw(secs, path, pathMaxSize, PHOTO_PATH_TIME_COMP_SIZE, pos);
+    pos += itoaw(datetime.hour, path, pathMaxSize, PHOTO_PATH_TIME_COMP_SIZE, pos);
+    pos += itoaw(datetime.minute, path, pathMaxSize, PHOTO_PATH_TIME_COMP_SIZE, pos);
+    pos += itoaw(datetime.second, path, pathMaxSize, PHOTO_PATH_TIME_COMP_SIZE, pos);
     insertArrayStr(path, pos, pathMaxSize, PHOTO_PATH_END, PHOTO_PATH_END_SIZE);
     return true;
 }
@@ -148,19 +143,14 @@ photoSaveMetaChunk_insertImei(photoMeta{PHOTO_METACHUNK_META_SIZE})
 
 photoSaveMetaChunk_insertTime(photoMeta{PHOTO_METACHUNK_META_SIZE}, unixTime)
 {
-    new years;
-    new months;
-    new days;
-    new hours;
-    new mins;
-    new secs;
-    unixTime2dateTime(unixTime, years, months, days, hours, mins, secs);
-    itoaw(years, photoMeta, PHOTO_METACHUNK_META_SIZE, PHOTO_METACHUNK_EXIF_YEAR_SIZE, PHOTO_METACHUNK_EXIF_YEAR_POS);
-    itoaw(months, photoMeta, PHOTO_METACHUNK_META_SIZE, PHOTO_METACHUNK_EXIF_MONTH_SIZE, PHOTO_METACHUNK_EXIF_MONTH_POS);
-    itoaw(days, photoMeta, PHOTO_METACHUNK_META_SIZE, PHOTO_METACHUNK_EXIF_DAY_SIZE, PHOTO_METACHUNK_EXIF_DAY_POS);
-    itoaw(hours, photoMeta, PHOTO_METACHUNK_META_SIZE, PHOTO_METACHUNK_EXIF_HOUR_SIZE, PHOTO_METACHUNK_EXIF_HOUR_POS);
-    itoaw(mins, photoMeta, PHOTO_METACHUNK_META_SIZE, PHOTO_METACHUNK_EXIF_MINUTE_SIZE, PHOTO_METACHUNK_EXIF_MINUTE_POS);
-    itoaw(secs, photoMeta, PHOTO_METACHUNK_META_SIZE, PHOTO_METACHUNK_EXIF_SEC_SIZE, PHOTO_METACHUNK_EXIF_SEC_POS);
+    new datetime[DATETIME];
+    unixTime2dateTime(unixTime, datetime);
+    itoaw(datetime.year, photoMeta, PHOTO_METACHUNK_META_SIZE, PHOTO_METACHUNK_EXIF_YEAR_SIZE, PHOTO_METACHUNK_EXIF_YEAR_POS);
+    itoaw(datetime.month, photoMeta, PHOTO_METACHUNK_META_SIZE, PHOTO_METACHUNK_EXIF_MONTH_SIZE, PHOTO_METACHUNK_EXIF_MONTH_POS);
+    itoaw(datetime.day, photoMeta, PHOTO_METACHUNK_META_SIZE, PHOTO_METACHUNK_EXIF_DAY_SIZE, PHOTO_METACHUNK_EXIF_DAY_POS);
+    itoaw(datetime.hour, photoMeta, PHOTO_METACHUNK_META_SIZE, PHOTO_METACHUNK_EXIF_HOUR_SIZE, PHOTO_METACHUNK_EXIF_HOUR_POS);
+    itoaw(datetime.minute, photoMeta, PHOTO_METACHUNK_META_SIZE, PHOTO_METACHUNK_EXIF_MINUTE_SIZE, PHOTO_METACHUNK_EXIF_MINUTE_POS);
+    itoaw(datetime.second, photoMeta, PHOTO_METACHUNK_META_SIZE, PHOTO_METACHUNK_EXIF_SEC_SIZE, PHOTO_METACHUNK_EXIF_SEC_POS);
 }
 
 photoSaveMetaChunk_insertCoords(photoMeta{PHOTO_METACHUNK_META_SIZE})
