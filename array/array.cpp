@@ -507,7 +507,10 @@ stock searchMin(const ar[], arSize, start = 0)
     if (start < 0)
         start = 0;
 
-    new idx = -1;
+    if (start >= arSize)
+        return -1;
+
+    new idx = 0;
     for (new i = start; i < arSize; i++)
     {
         if (ar[i] < ar[idx])
@@ -521,7 +524,10 @@ stock searchMinStr(const ar{}, arSize, start = 0)
     if (start < 0)
         start = 0;
 
-    new idx = -1;
+    if (start >= arSize)
+        return -1;
+
+    new idx = 0;
     for (new i = start; i < arSize; i++)
     {
         if (ar{i} < ar{idx})
@@ -535,7 +541,10 @@ stock searchMax(const ar[], arSize, start = 0)
     if (start < 0)
         start = 0;
 
-    new idx = -1;
+    if (start >= arSize)
+        return -1;
+
+    new idx = 0;
     for (new i = start; i < arSize; i++)
     {
         if (ar[i] > ar[idx])
@@ -549,7 +558,10 @@ stock searchMaxStr(const ar{}, arSize, start = 0)
     if (start < 0)
         start = 0;
 
-    new idx = -1;
+    if (start >= arSize)
+        return -1;
+
+    new idx = 0;
     for (new i = start; i < arSize; i++)
     {
         if (ar{i} > ar{idx})
