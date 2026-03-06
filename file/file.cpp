@@ -1,5 +1,5 @@
 //! @file
-//! @brief Функции для работы с файлами
+//! @brief Реализация библиотеки для работы с файлами
 
 #if defined FILE_LIB
 #endinput
@@ -14,7 +14,7 @@
 #include "..\numeric\numeric.h"
 #include "..\cmdhandle\cmdhandle.h"
 
-stock fileRename(const src{}, const dest{})
+stock bool:fileRename(const src{}, const dest{})
 {
     new const srcLength = strLen(src);
     new const destLength = strLen(dest);

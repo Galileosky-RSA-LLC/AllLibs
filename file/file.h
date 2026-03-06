@@ -31,7 +31,7 @@ stock const TIME_ZONE_FILE_PATH{} = "time_zone"; //!< файл с текущим
 //! @param[in] src исходное имя файла, должно оканчиваться \0
 //! @param[in] dest требуемое имя файла, должно оканчиваться \0
 //! @return false - ошибка, true - успешно
-forward stock fileRename(const src{}, const dest{});
+forward bool:stock fileRename(const src{}, const dest{});
 
 //! @brief Записать в файл буфер с произвольной позиции
 //! @param[in] fileName имя файла, должно оканчиваться \0
