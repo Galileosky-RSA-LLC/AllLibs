@@ -1,17 +1,17 @@
+//! @file
+//! @brief Заголовок библиотеки определения информации о приборе
+
 #if defined DEVINFO_H
 #endinput
 #endif
 #define DEVINFO_H
 
-//! @file
-//! @brief Заголовок библиотеки определения информации о приборе
-
 //! @defgroup models Модели приборов
 //! @{
 #define DEVINFO_MODEL_UNKNOWN 0
-#define DEVINFO_MODEL_7X 1
+#define DEVINFO_MODEL_BB 1
 #define DEVINFO_MODEL_70 2
-#define DEVINFO_MODEL_BB 3
+#define DEVINFO_MODEL_7X 3
 #define DEVINFO_MODEL_10 4
 //! @}
 
@@ -76,77 +76,79 @@ forward stock getModel();
 //! @param[out] softMaj мажорная версия
 //! @param[out] softMin минорная версия
 //! @return true - успешно, false - ошибка
-forward stock getSoftVersion(&softMaj, &softMin);
+forward bool:stock getSoftVersion(&softMaj, &softMin);
 
 //! @brief Получить уровень диагностики
 //! @return @ref debugLevels
 forward stock getDebugLevel();
 
 //! @brief Проверить наличие возврата для функции PortInit()
-//! @param[in] devModel модель прибора DEVINFO_MODEL_
+//! @param[in] devModel модель прибора @ref models
 //! @param[in] softMaj мажорная версия прошивки
 //! @param[in] softMin минорная версия прошивки
-forward stock isPortInitHasResult(devModel, softMaj, softMin);
+forward bool:stock isPortInitHasResult(devModel, softMaj, softMin);
 
 //! @brief Проверить доступность функций ROM (сохранение параметров в ПЗУ)
-//! @param[in] devModel модель прибора DEVINFO_MODEL_
+//! @param[in] devModel модель прибора @ref models
 //! @param[in] softMaj мажорная версия прошивки
 //! @param[in] softMin минорная версия прошивки
-forward stock isRomAvailable(devModel, softMaj, softMin);
+forward bool:stock isRomAvailable(devModel, softMaj, softMin);
 
 //! @brief Проверить доступность функций отложенной записи тегов
-//! @param[in] devModel модель прибора DEVINFO_MODEL_
+//! @param[in] devModel модель прибора @ref models
 //! @param[in] softMaj мажорная версия прошивки
 //! @param[in] softMin минорная версия прошивки
-forward stock isTagWriteBeginAvailable(devModel, softMaj, softMin);
+forward bool:stock isTagWriteBeginAvailable(devModel, softMaj, softMin);
 
 //! @brief Проверить доступность тегов колесных датчиков
-//! @param[in] devModel модель прибора DEVINFO_MODEL_
+//! @param[in] devModel модель прибора @ref models
 //! @param[in] softMaj мажорная версия прошивки
 //! @param[in] softMin минорная версия прошивки
-forward stock isWheelTagsAvailable(devModel, softMaj, softMin);
+forward bool:stock isWheelTagsAvailable(devModel, softMaj, softMin);
 
 //! @brief Получить размеры свободной оперативной памяти в байтах
 //! @param[out] firmware для основной прошивки и алгоритмов Easy Logic (в Galileosky 10 Pro - только для прошивки)
 //! @param[out] zip для распаковки файлов и прошивок
 //! @param[out] easyLogic для алгоритмов Easy Logic в Galileosky 10 Pro
-//! @return true - количество полученных значений, false - ошибка (команда не поддерживается, изменился формат и пр.)
+//! @return количество полученных значений (0 - ошибка: команда не поддерживается, изменился формат и пр.)
 forward stock getFreeRam(&firmware, &zip = 0, &easyLogic = 0);
 
 //! @brief Получить максимальный размер данных тега
+//! @param[in] tagId идентификатор тега в контексте скриптов
+//! @return размер (0 - ошибка: неизвестный id тега)
 forward stock getTagMaxSize(tagId);
 
 //! @brief Получить значение числового тега по его идентификатору
-//! @param[in] tagId идентификатор тега
+//! @param[in] tagId идентификатор тега в контексте скриптов
 //! @param[out] value полученное значение при успешном возврате
 //! @return true - успешно, false - ошибка идентификатора тега
-forward stock getTagValue(tagId, &value);
+forward bool:stock getTagValue(tagId, &value);
 
 //! @brief Проверить наличие внешнего питания прибора
 //! @param[in] devStatus значение статуса из глобальной переменной STATUS
-forward stock hasExtPower(devStatus);
+forward bool:stock hasExtPower(devStatus);
 
 //! @brief Проверить, что двигатель заведен (== зажигание включено)
 //! @param[in] devStatus значение статуса из глобальной переменной STATUS
-forward stock isEngineOn(devStatus);
+forward bool:stock isEngineOn(devStatus);
 
 //! @brief Получить дискретный статус дискретно-аналогового входа
 //! @param[in] index индекс входа
-forward stock getInStatus(index);
+forward bool:stock getInStatus(index);
 
 //! @brief Проверить поддержку спецификации пользователя
-//! @param[in] devModel модель прибора DEVINFO_MODEL_
+//! @param[in] devModel модель прибора @ref models
 //! @param[in] softMaj мажорная версия прошивки
 //! @param[in] softMin минорная версия прошивки
-forward stock hasUserSpec(devModel, softMaj, softMin);
+forward bool:stock hasUserSpec(devModel, softMaj, softMin);
 
 //! @brief Получить спецификацию пользователя по ответу на команду
 //! @note Предварительно нужно проверить доступность спецификации пользователя с помощью hasUserSpec()
 //! @param[out] userSpec Полученная спецификация при успешном возврате
 //! @return true - успешно, false - ошибка
-forward stock getUserSpec(&userSpec);
+forward bool:stock getUserSpec(&userSpec);
 
 //! @brief Проверить включение модуля прошивки по спецификации пользователя
 //! @param[in] userSpec спецификация пользователя, можно получить с помощью getUserSpec()
 //! @param[in] userSpecBit бит модуля @ref userspecBits
-forward stock isModuleOn(userSpec, userSpecBit);
+forward bool:stock isModuleOn(userSpec, userSpecBit);

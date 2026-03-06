@@ -1,10 +1,10 @@
+//! @file
+//! @brief Реализация библиотеки определения информации о приборе
+
 #if defined DEVINFO_LIB
 #endinput
 #endif
 #define DEVINFO_LIB
-
-//! @file
-//! @brief Реализация библиотеки определения информации о приборе
 
 #include "..\array\array.h"
 #include "..\array\array.cpp"
@@ -34,7 +34,7 @@ stock getModel()
     return (searchStr(buf, "galileosky baseblock") >= 0) ? DEVINFO_MODEL_BB : DEVINFO_MODEL_UNKNOWN;
 }
 
-stock getSoftVersion(&softMaj, &softMin)
+stock bool:getSoftVersion(&softMaj, &softMin)
 {
     softMaj = 0;
     softMin = 0;
@@ -43,11 +43,13 @@ stock getSoftVersion(&softMaj, &softMin)
     ExecCommand(buf);
     GetBinaryDataFromCommand(buf, bufLength);
     toLowerCase(buf, bufLength);
-    new pos = searchStr(buf, "soft=");
+    new const prefix{} = "soft=";
+    new const prefixLength = strLen(prefix);
+    new pos = searchStr(buf, prefix);
     if (pos < 0)
         return false;
 
-    pos += 5;
+    pos += prefixLength;
     new len = atoi(buf, softMaj, bufLength, pos);
     if (!len)
         return false;
@@ -64,13 +66,16 @@ stock getDebugLevel()
     GetBinaryDataFromCommand(buf, bufLength);
     for (new i = 0; i < bufLength; i++)
     {
-        if ((buf{i} >= 0x30) && (buf{i} <= 0x39))
-            return buf{i} > 0x33 ? 3 : buf{i} - 0x30;
+        if (!isDigit(buf{i}))
+            continue;
+
+        new const res = getDigit(buf{i});
+        return res > DEVINFO_DEBUGLEVEL_MAX ? DEVINFO_DEBUGLEVEL_MAX : res;
     }
     return DEVINFO_DEBUGLEVEL_UNKNOWN;
 }
 
-stock isPortInitHasResult(devModel, softMaj, softMin)
+stock bool:isPortInitHasResult(devModel, softMaj, softMin)
 {
     return ((devModel == DEVINFO_MODEL_7X)
             && (((softMaj == 32) && (softMin >= 9)) || ((softMaj == 37) && (softMin >= 3)) || ((softMaj == 38) && (softMin >= 2)) || (softMaj >= 39)))
@@ -80,20 +85,20 @@ stock isPortInitHasResult(devModel, softMaj, softMin)
             || (devModel >= DEVINFO_MODEL_10);
 }
 
-stock isRomAvailable(devModel, softMaj, softMin)
+stock bool:isRomAvailable(devModel, softMaj, softMin)
 {
     return ((devModel == DEVINFO_MODEL_7X) && (((softMaj == 43) && (softMin >= 3)) || (softMaj > 43)))
             || (devModel >= DEVINFO_MODEL_10);
 }
 
-stock isTagWriteBeginAvailable(devModel, softMaj, softMin)
+stock bool:isTagWriteBeginAvailable(devModel, softMaj, softMin)
 {
     return ((devModel == DEVINFO_MODEL_7X) && (((softMaj == 47) && (softMin >= 13)) || (softMaj > 47)))
             || ((devModel == DEVINFO_MODEL_10) && (((softMaj == 2) && (softMin >= 7)) || (softMaj > 2)))
             || (devModel > DEVINFO_MODEL_10);
 }
 
-stock isWheelTagsAvailable(devModel, softMaj, softMin)
+stock bool:isWheelTagsAvailable(devModel, softMaj, softMin)
 {
     return ((devModel == DEVINFO_MODEL_7X) && (((softMaj == 43) && (softMin >= 3)) || (softMaj > 43)))
             || (devModel >= DEVINFO_MODEL_10);
@@ -160,7 +165,7 @@ stock getTagMaxSize(tagId)
     return 0;
 }
 
-stock getTagValue(tagId, &value)
+stock bool:getTagValue(tagId, &value)
 {
     switch (tagId)
     {
@@ -372,17 +377,17 @@ stock getTagValue(tagId, &value)
     return true;
 }
 
-stock hasExtPower(devStatus)
+stock bool:hasExtPower(devStatus)
 {
     return !((devStatus >>> DEVINFO_STATUS_BIT_EXTPOWERFAIL) & 1);
 }
 
-stock isEngineOn(devStatus)
+stock bool:isEngineOn(devStatus)
 {
     return (devStatus >>> DEVINFO_STATUS_BIT_ENGINEON) & 1;
 }
 
-stock getInStatus(index)
+stock bool:getInStatus(index)
 {
     switch (index)
     {
@@ -401,13 +406,13 @@ stock getInStatus(index)
     return false;
 }
 
-stock hasUserSpec(devModel, softMaj, softMin)
+stock bool:hasUserSpec(devModel, softMaj, softMin)
 {
     return ((devModel == DEVINFO_MODEL_7X) && (((softMaj == 38) && (softMin >= 20)) || ((softMaj == 44) && (softMin >= 2)) || (softMaj > 44)))
             || (devModel >= DEVINFO_MODEL_10);
 }
 
-stock getUserSpec(&userSpec)
+stock bool:getUserSpec(&userSpec)
 {
     new cmdText{} = "USERSPEC";
     ExecCommand(cmdText);
@@ -423,8 +428,8 @@ stock getUserSpec(&userSpec)
     pos--;
     for (new i = 0; pos >= 0; i++, pos--)
     {
-        new const moduleOn = buf{pos} == '1';
-        if (!moduleOn && (buf{pos} != '0'))
+        new const moduleOn = buf{pos} == SYMBOL_DIGIT_1;
+        if (!moduleOn && (buf{pos} != SYMBOL_DIGIT_0))
             break;
 
         userSpec += moduleOn << i;
@@ -432,7 +437,7 @@ stock getUserSpec(&userSpec)
     return true;
 }
 
-stock isModuleOn(userSpec, userSpecBit)
+stock bool:isModuleOn(userSpec, userSpecBit)
 {
     coerce(userSpecBit, 0, CELL_LAST_BIT_INDEX);
     return (userSpec >>> userSpecBit) & 1;

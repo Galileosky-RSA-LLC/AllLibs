@@ -38,6 +38,7 @@ stock const BASE64_ALPHABET{} ="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuv
 #define SYMBOL_MINUS '-'
 
 #define SYMBOL_DIGIT_0 '0'
+#define SYMBOL_DIGIT_1 '1'
 #define SYMBOL_DIGIT_7 '7'
 #define SYMBOL_DIGIT_9 '9'
 
