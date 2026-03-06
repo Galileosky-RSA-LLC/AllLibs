@@ -18,6 +18,7 @@
 #define MINUTES_PER_DAY (HOURS_PER_DAY * MINUTES_PER_HOUR)
 #define SECONDS_PER_DAY (MINUTES_PER_DAY * SECONDS_PER_MINUTE)
 #define MONTHS_PER_YEAR 12
+#define MS_PER_DAY (HOURS_PER_DAY * MS_PER_HOUR)
 //! @}
 
 //! @defgroup timeStampParams Параметры временных меток
@@ -111,3 +112,9 @@ forward bool:stock isLeapYear(year);
 //! @param[out] overflows количество переполнений значения cellmax
 //! @return остаточная длительность после последнего переполнения, т.е. итоговая длительность: overflows * cellmax + return
 forward stock durationMs(uptimeStart, uptimeEnd, &overflows = 0);
+
+//! @brief Вычислить оставшееся время в мс до конца таймера
+//! @param[in] startUptime время старта
+//! @param[in] timerMs таймер в мс
+//! @return оставшаяся длительность
+forward stock remainingUptimeMs(startUptime, timerMs);

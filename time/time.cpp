@@ -150,3 +150,13 @@ stock durationMs(uptimeStart, uptimeEnd, &overflows = 0)
     overflows = 1;
     return dur - cellmax;
 }
+
+stock remainingUptimeMs(startUptime, timerMs)
+{
+    if (timerMs < 0)
+        timerMs = 0;
+
+    new remaining = startUptime + timerMs - GetVar(UPTIME);
+    return remaining > 0 ? remaining : 0;
+}
+
