@@ -104,6 +104,12 @@ forward stock removeConsecutiveDuplicatesStr(ar{}, &arSize, value, start = 0);
 //! @defgroup similarElementsOperations Однотипные операции над элементами
 //! @{
 
+//! @brief Суммирование элементов подмассива
+//! @param[in] ar массив
+//! @param[in] arSize размер массива
+//! @param[in] start стартовый индекс
+forward stock arrayPlus(const ar[], arSize, start = 0);
+
 //! @brief Суммирование элементов подмассива 1-байтных элементов
 //! @param[in] ar массив
 //! @param[in] arSize размер массива
@@ -125,8 +131,15 @@ forward stock arrayInvertBitsStr(ar{}, arSize, start = 0);
 //! @brief Очистить подмассив
 //! @details заменить элементы на \0
 //! @param[in] ar массив
-//! @param[in] start позиция начала подмассива
 //! @param[in] arSize размер массива
+//! @param[in] start позиция начала подмассива
+forward stock clearArray(ar[], arSize, start = 0);
+
+//! @brief Очистить подмассив 1-байтных элементов
+//! @details заменить элементы на \0
+//! @param[in] ar массив
+//! @param[in] arSize размер массива
+//! @param[in] start позиция начала подмассива
 forward stock clearArrayStr(ar{}, arSize, start = 0);
 
 //! @brief Инвертировать подмассив

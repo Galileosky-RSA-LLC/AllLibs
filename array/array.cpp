@@ -776,3 +776,24 @@ stock removeConsecutiveDuplicatesStr(ar{}, &arSize, value, start = 0)
     }
     arSize = newArSize;
 }
+
+stock arrayPlus(const ar[], arSize, start = 0)
+{
+    if (start < 0)
+        start = 0;
+
+    new res;
+    for (new i = start; i < arSize; i++)
+        res += ar[i];
+    
+    return res;
+}
+
+stock clearArray(ar[], arSize, start = 0)
+{
+    if (start < 0)
+        start = 0;
+
+    for (new i = start; i < arSize; i++)
+        ar[i] = 0;
+}
