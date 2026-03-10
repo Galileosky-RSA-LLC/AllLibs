@@ -41,29 +41,37 @@
     .oldValue,\
 ]
 
-//! @brief Инициализировать объект настроек
-//! @param[out] obj инициализируемая структура данных
+//! @brief Инициализировать структуру данных настроек
+//! @param[out] obj инициализируемая структура данных настроек
 //! @param[in] fileName имя файла с настройками, должно оканчиваться \0
-//! @param[in] varAddresses адреса глобальных переменных с настройками
+//! @param[in] varAddresses адреса глобальных переменных с настройками по умолчанию
 //! @param[in] varAddressesSize количество адресов
 forward stock settingInit(obj[SETTING_DATA], const fileName{}, const varAddresses[], varAddressesSize);
 
 //! @brief Загрузить сохраненные параметры из файла в глобальные переменные
+//! @note Предварительно необходимо инициализировать структуру настроек settingInit()
+//! @param[inout] obj структура данных настроек
 forward stock settingRestoreParams(obj[SETTING_DATA]);
 
 //! @brief Сохранить параметры по их изменению
 //! @details Сначала проверяется изменение текущих значений глобальных переменных по отношению к предыдущему вызову
+//! @note Предварительно необходимо инициализировать структуру настроек settingInit()
+//! @param[inout] obj структура данных настроек
 forward stock settingStoreParamsByChange(obj[SETTING_DATA]);
 
 //! @brief Инициализировать изолированный параметр, хранящийся в отдельном файле
-//! @param[out] obj инициализируемая структура данных
+//! @param[out] obj инициализируемая структура данных настроек
 //! @param[in] fileName имя файла с настройкой, должно оканчиваться \0
-//! @param[in] varAddresses адрес глобальной переменной для данной настройки
+//! @param[in] varAddresses адрес глобальной переменной для данной настройки со значением по умолчанию
 forward stock settingSingleInit(obj[SETTING_SINGLE_DATA], const fileName{}, varAddress);
 
 //! @brief Восстановить значение изолированного параметра из файла
+//! @note Предварительно необходимо инициализировать структуру настроек settingSingleInit()
+//! @param[inout] obj структура данных настроек
 forward stock settingSingleRestoreParam(obj[SETTING_SINGLE_DATA]);
 
 //! @brief Сохранить параметр при его изменении
 //! @details Текущее значение сравнивается со значением с предыдущего вызова
+//! @note Предварительно необходимо инициализировать структуру настроек settingSingleInit()
+//! @param[inout] obj структура данных настроек
 forward stock settingSingleStoreParamByChange(obj[SETTING_SINGLE_DATA]);
