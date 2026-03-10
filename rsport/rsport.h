@@ -1,10 +1,10 @@
+//! @file
+//! @brief Заголовок библиотеки последовательных портов
+
 #if defined RSPORT_H
 #endinput
 #endif
 #define RSPORT_H
-
-//! @file
-//! @brief Заголовок библиотеки последовательных портов
 
 //! @defgroup portNums Номера портов
 //! @{
