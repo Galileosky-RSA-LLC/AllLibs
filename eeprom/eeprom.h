@@ -40,13 +40,17 @@
 ]
 
 //! @brief Инициализировать из адресов глобальных переменных значениями по умолчанию
-//! @param[out] obj инициализируемые данные
+//! @param[out] obj инициализируемая структура данных настроек
 //! @param[in] addr адреса глобальных переменных
 //! @param[in] addrSize количество адресов глобальных переменных
 forward stock eepromInitParamValues(obj[EEPROM_DATA], const addr[], addrSize);
 
 //! @brief Восстановить сохраненные параметры
+//! @note Предварительно необходимо инициализировать структуру настроек eepromInitParamValues()
+//! @param[inout] obj структура данных настроек
 forward stock eepromRestoreParams(obj[EEPROM_DATA]);
 
 //! @brief Сохранить параметры по их изменению
+//! @note Предварительно необходимо инициализировать структуру настроек eepromInitParamValues()
+//! @param[inout] obj структура данных настроек
 forward stock eepromStoreParamsByChange(obj[EEPROM_DATA]);

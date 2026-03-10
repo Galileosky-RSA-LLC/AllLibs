@@ -50,9 +50,9 @@ main()
     }
     else
     {
-        #if defined DEBUG
-        Diagnostics("ROM-");
-        #endif
+#if defined DEBUG
+        Diagnostics("ROM unavailable");
+#endif
         // тут можно инициализировать настройки из файлов
     }
     SetVar(gIsSettingsInited, true); //!< сообщаем другим потокам, что настройки инициализированы; а до этого момента они должны ждать
