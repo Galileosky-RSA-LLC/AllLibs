@@ -1,10 +1,10 @@
+//! @file
+//! @brief Реализация библиотеки работы с EEPROM
+
 #if defined EEPROM_LIB
 #endinput
 #endif
 #define EEPROM_LIB
-
-//! @file
-//! @brief Реализация библиотеки работы с EEPROM
 
 #include "eeprom.h"
 
@@ -25,7 +25,7 @@ stock eepromStoreParamsByChange(obj[EEPROM_DATA])
     new needWrite = false;
     for (new i = 0; i < EEPROM_KEYS_COUNT; i++)
 	{
-		for (new j = 0; (j < EEPROM_PARAMS_PER_KEY) && (id < EEPROM_PARAMS_COUNT); j++, id++)
+		for (new j = 0; (j < EEPROM_PARAMS_PER_KEY_MAX) && (id < EEPROM_PARAMS_COUNT); j++, id++)
         {    
             if (GetVar(obj.keysVarAddr[id]) != obj.keysOldValue[id])
             {
@@ -38,9 +38,9 @@ stock eepromStoreParamsByChange(obj[EEPROM_DATA])
         {    
             if (!eeprom_storeParams(obj, i))
             {    
-                #if defined EEPROM_DEBUG
-                Diagnostics("w.p?k=%d", i);
-                #endif
+#if defined EEPROM_DEBUG
+                Diagnostics("rom write param? key=%d", i);
+#endif
             }
             needWrite = false;
         }
@@ -53,15 +53,15 @@ stock eepromRestoreParams(obj[EEPROM_DATA])
     for (new i = 0; i < EEPROM_KEYS_COUNT; i++)
 	{
 		new res = ROMRead(1 + i, obj.keyBuf, EEPROM_KEY_BUFFER_MAX_SIZE);
-        for (new j = 0; (j < EEPROM_PARAMS_PER_KEY) && (id < EEPROM_PARAMS_COUNT); j++, id++)
+        for (new j = 0; (j < EEPROM_PARAMS_PER_KEY_MAX) && (id < EEPROM_PARAMS_COUNT); j++, id++)
         {
             if (res != 0)
                 SetVar(obj.keysVarAddr[id], obj.keyBuf[j]);
 
             obj.keysOldValue[id] = (res != 0) ? obj.keyBuf[j] : GetVar(obj.keysVarAddr[id]);
-            #if defined EEPROM_DEBUG
-            Diagnostics((res != 0) ? "r.p[%d]=%d" : "r.p[%d]?def=%d", id, (res != 0) ? obj.keyBuf[j] : obj.keysOldValue[id]);
-            #endif
+#if defined EEPROM_DEBUG
+            Diagnostics((res != 0) ? "rom param[%d]=%d" : "rom param[%d]? def=%d", id, (res != 0) ? obj.keyBuf[j] : obj.keysOldValue[id]);
+#endif
         }
 	}
 }
@@ -71,17 +71,17 @@ stock eepromRestoreParams(obj[EEPROM_DATA])
 //! @brief Сохранить параметры группы по ключу, в котором они хранятся
 //! @param[in] key идентификатор ключа
 //! @return true - успешно, false - ошибка
-stock eeprom_storeParams(obj[EEPROM_DATA], key)
+stock bool:eeprom_storeParams(obj[EEPROM_DATA], key)
 {
 	if ((key < 0) || (key >= EEPROM_KEYS_COUNT))
 		return false;
 
     new i;
-    new paramCount = min(EEPROM_PARAMS_PER_KEY, (key < EEPROM_KEY_LAST)
-                                                ? EEPROM_PARAMS_PER_KEY
-                                                : (EEPROM_PARAMS_COUNT - EEPROM_KEY_LAST*EEPROM_PARAMS_PER_KEY));
+    new paramCount = min(EEPROM_PARAMS_PER_KEY_MAX, (key < EEPROM_KEY_LAST)
+                                                    ? EEPROM_PARAMS_PER_KEY_MAX
+                                                    : EEPROM_PARAMS_IN_LAST_KEY);
     for (i = 0; i < paramCount; i++)
-		obj.keyBuf[i] = GetVar(obj.keysVarAddr[key*EEPROM_PARAMS_PER_KEY + i]);
+		obj.keyBuf[i] = GetVar(obj.keysVarAddr[(key*EEPROM_PARAMS_PER_KEY_MAX) + i]);
 
-	return ROMWrite(1 + key, obj.keyBuf, i*EEPROM_PARAM_SIZE);
+	return ROMWrite(1 + key, obj.keyBuf, i*EEPROM_PARAM_SIZE) != 0;
 }
