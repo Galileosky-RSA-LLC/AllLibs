@@ -12,6 +12,8 @@
 #include "..\checkcode\checkcode.h"
 #include "..\checkcode\checkcode.cpp"
 #include "..\gdefines.h"
+#include "..\string\string.h"
+#include "..\string\string.cpp"
 
 stock ustructMakeDescriptor(isNumbers, amount, size)
 {
@@ -119,7 +121,7 @@ stock userArrayAddPasCounting(userArray{}, userArrayMaxSize, const sensor[USERAR
 stock setTextInUserArray(const text{})
 {
     new userArray{USERARRAY_MAX_SIZE} = {USERARRAY_TEXT_TYPE};
-    new size = USERARRAY_TEXT_TYPE_LEN + insertArrayStr(userArray, USERARRAY_TEXT_PAYLOAD_POS, USERARRAY_MAX_SIZE, text, strLen(text));
+    new size = USERARRAY_TEXT_TYPE_LEN + strncpy(userArray, USERARRAY_MAX_SIZE, text, USERARRAY_TEXT_PAYLOAD_POS);
     TagWriteArray(TAG_USER_ARRAY, size, userArray);
 }
 

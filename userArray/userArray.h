@@ -203,6 +203,6 @@ forward stock userArrayAddPasCounting(userArray{}, userArrayMaxSize, const senso
 //! @{
 
 //! @brief Записать текст в массив пользователя
-//! @param[in] text записываемый текст
+//! @param[in] text записываемый текст длиной не более USERARRAY_TEXT_PAYLOAD_SIZE_MAX
 forward stock setTextInUserArray(const text{});
 //! @}
