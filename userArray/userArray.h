@@ -8,10 +8,15 @@
 
 #include "..\gdefines.h"
 
+//! @defgroup general Общая структура
+//! @{
 #define USERARRAY_MAX_SIZE TAG_USER_ARRAY_MAX_SIZE
 
 #define USERARRAY_TYPE_POS 0
+//! @}
 
+//! @defgroup passengersCounting Подсчет пассажиров
+//! @{
 #define USERARRAY_PASCOUNT_TYPE 0x0A
 #define USERARRAY_PASCOUNT_TYPE_SIZE 1
 #define USERARRAY_PASCOUNT_SENSOR_ADDR_POS 0
@@ -39,13 +44,19 @@
     .incoming,\
     .outgoing,\
 ]
+//! @}
 
+//! @defgroup ustruct Универсальная структура
+//! @{
 #define USERARRAY_USTRUCT_TYPE 0x7F
 #define USERARRAY_USTRUCT_TYPE_SIZE 1
 #define USERARRAY_USTRUCT_DESCR_SIZE 1
 #define USERARRAY_USTRUCT_DESCR_SYMBOLS_MAX 127
 #define USERARRAY_USTRUCT_DESCR_NUMBERS_MAX 8
+//! @}
 
+//! @defgroup file Передача файла
+//! @{
 #define USERARRAY_FILE_TYPE 0x80
 #define USERARRAY_FILE_TYPE_LEN 1
 #define USERARRAY_FILE_UID_POS (USERARRAY_TYPE_POS + USERARRAY_FILE_TYPE_LEN)
@@ -59,13 +70,17 @@
 #define USERARRAY_FILE_CRC_LEN 1
 #define USERARRAY_FILE_FRAME_LEN_MIN (USERARRAY_FILE_HEADER_LEN + USERARRAY_FILE_CRC_LEN)
 #define USERARRAY_FILE_CHUNK_LEN_MAX (USERARRAY_MAX_SIZE - USERARRAY_FILE_FRAME_LEN_MIN)
+//! @}
 
+//! @defgroup text Текст
+//! @{
 #define USERARRAY_TEXT_TYPE 0xEE
 #define USERARRAY_TEXT_TYPE_LEN 1
 #define USERARRAY_TEXT_PAYLOAD_POS USERARRAY_TEXT_TYPE_LEN
 #define USERARRAY_TEXT_PAYLOAD_SIZE_MAX (USERARRAY_MAX_SIZE - USERARRAY_TEXT_TYPE_LEN)
+//! @}
 
-//! @defgroup ustruct Функции универсальной структуры
+//! @addtogroup ustruct
 //! @{
 
 //! @brief Сформировать описатель для группы параметров массива пользователя универсальной структуры
@@ -100,14 +115,20 @@ forward stock ustructInsertEmpty(userArray{}, userArrayMaxSize, &pos, emptyCount
 //! @param[in] numbersSize количество вставляемых чисел
 //! @return количество вставленных байт (0 - ошибка)
 forward stock ustructInsertNumbers(userArray{}, userArrayMaxSize, &pos, dimension, const numbers[], numbersSize = 1);
-
 //! @}
+
+//! @addtogroup file
+//! @{
 
 //! @brief Отправить файл с помощью массива пользователя
 //! @param[in] fileName имя файла, должно оканчиваться \0
 //! @param[inout] lastFileId идентификатор последнего отправленного файла
 //! @return true - успешно, false - ошибка файловой системы: файл пустой или не прочитался
-forward stock sendFileInUserArray(const fileName{}, &lastFileId);
+forward bool:stock sendFileInUserArray(const fileName{}, &lastFileId);
+//! @}
+
+//! @addtogroup passengersCounting
+//! @{
 
 //! @brief Вставить данные датчика пассажиропотока в массив пользователя
 //! @param[inout] userArray массив пользователя
@@ -116,7 +137,12 @@ forward stock sendFileInUserArray(const fileName{}, &lastFileId);
 //! @param[inout] pos позиция в массиве пользователя
 //! @return количество вставленных байт (0 - ошибка входных данных)
 forward stock userArrayAddPasCounting(userArray{}, userArrayMaxSize, const sensor[USERARRAY_PASCOUNT_SENSOR_DATA], &pos);
+//! @}
+
+//! @addtogroup text
+//! @{
 
 //! @brief Записать текст в массив пользователя
 //! @param[in] text записываемый текст
 forward stock setTextInUserArray(const text{});
+//! @}

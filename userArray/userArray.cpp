@@ -41,7 +41,7 @@ stock ustructMakeDescriptor(isNumbers, amount, size)
     return ((isNumbers == 0) << 7) + (isNumbers ? ((amount - 1) << 4) + size : amount);
 }
 
-stock sendFileInUserArray(const fileName{}, &lastFileId)
+stock bool:sendFileInUserArray(const fileName{}, &lastFileId)
 {
     new const fsize = FileSize(fileName);
     if (fsize < 0)
