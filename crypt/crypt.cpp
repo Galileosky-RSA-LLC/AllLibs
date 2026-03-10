@@ -1,10 +1,10 @@
+//! @file
+//! @brief Реализация библиотеки шифрования
+
 #if defined CRYPT_LIB
 #endinput
 #endif
 #define CRYPT_LIB
-
-//! @file
-//! @brief Реализация библиотеки шифрования
 
 #include "..\numeric\numeric.h"
 #include "..\numeric\numeric.cpp"
