@@ -15,6 +15,48 @@
 #define USERARRAY_TYPE_POS 0
 //! @}
 
+//! @defgroup energyMeterMercury Счетчик электроэнергии "Меркурий"
+//! @{
+#define USERARRAY_EMETER_MERCURY_TYPE 0x02
+#define USERARRAY_EMETER_MERCURY_TYPE_SIZE 1
+//! @}
+
+//! @defgroup tachograph Тахограф
+//! @{
+#define USERARRAY_TACHOGRAPH_TYPE 0x03
+#define USERARRAY_TACHOGRAPH_TYPE_SIZE 1
+//! @}
+
+//! @defgroup sens Устройство "Сенс"
+//! @{
+#define USERARRAY_SENS_TYPE 0x04
+#define USERARRAY_SENS_TYPE_SIZE 1
+//! @}
+
+//! @defgroup skvtm Устройство "СКВТ-М"
+//! @{
+#define USERARRAY_SKVTM_TYPE 0x05
+#define USERARRAY_SKVTM_TYPE_SIZE 1
+//! @}
+
+//! @defgroup tpmsTd5300ax04 Система контроля давления в шинах "TD5300A-X-04"
+//! @{
+#define USERARRAY_TD5300AX04_TYPE 0x06
+#define USERARRAY_TD5300AX04_TYPE_SIZE 1
+//! @}
+
+//! @defgroup flowMeterEurosensDelta Расходомер "Eurosens Delta"
+//! @{
+#define USERARRAY_FMETER_EUROSENS_DELTA_TYPE 0x07
+#define USERARRAY_FMETER_EUROSENS_DELTA_TYPE_SIZE 1
+//! @}
+
+//! @defgroup llsFrequency Частота с ДУТ
+//! @{
+#define USERARRAY_LLSFREQ_TYPE 0x08
+#define USERARRAY_LLSFREQ_TYPE_SIZE 1
+//! @}
+
 //! @defgroup passengersCounting Подсчет пассажиров
 //! @{
 #define USERARRAY_PASCOUNT_TYPE 0x0A
@@ -44,6 +86,24 @@
     .incoming,\
     .outgoing,\
 ]
+//! @}
+
+//! @defgroup ctrlPanelMerkator Пульт "Меркатор"
+//! @{
+#define USERARRAY_CTRLPANEL_MERKATOR_TYPE 0x0B
+#define USERARRAY_CTRLPANEL_MERKATOR_TYPE_SIZE 1
+//! @}
+
+//! @defgroup vims VIMS
+//! @{
+#define USERARRAY_VIMS_TYPE 0x0C
+#define USERARRAY_VIMS_TYPE_SIZE 1
+//! @}
+
+//! @defgroup ela Датчики "ELA"
+//! @{
+#define USERARRAY_ELA_TYPE 0x0E
+#define USERARRAY_ELA_TYPE_SIZE 1
 //! @}
 
 //! @defgroup ustruct Универсальная структура
