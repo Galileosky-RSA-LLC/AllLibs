@@ -1,20 +1,17 @@
-#if !defined DIAG_LIB
+//! @file
+//! @brief Реализация библиотеки расширенного вывода в диагностику
+
+#if defined DIAG_LIB
+#endinput
+#endif
 #define DIAG_LIB
-// Библиотека расширенного вывода в диагностику
 
 #include "..\array\array.h"
 #include "..\array\array.cpp"
 #include "..\string\string.h"
 #include "..\string\string.cpp"
 
-
-//! Вывести в диагностику текстовые представления битов числа, разделенные символом ";". 
-//! Максимальная длина строки диагностики 95 символов
-//! \param[in] number число для представления
-//! \param[in] bytes разрядность числа в байтах, 1..4
-//! \param[in] prefix добавляемый префикс строки диагностики, должен оканчиваться \0
-//! \param[in] texts тексты на каждый бит числа, должны оканчиваться \0. Текст добавляется в диагностику, если соотв. его индексу бит == "ИСТИНА"
-num2bitDiag(number, bytes, const prefix{}, const texts[][])
+stock num2bitDiag(number, bytes, const prefix{}, const texts[][])
 {
     if (bytes < 1)
         bytes = 1;
@@ -45,13 +42,7 @@ num2bitDiag(number, bytes, const prefix{}, const texts[][])
     Diagnostics(str);
 }
 
-//! Вывод в диагностику подмассива в hex и его строковой интерпретации с подписью и разделением на читабельные части
-//! \param[in] ar массив для вывода
-//! \param[in] arLength размер массива
-//! \param[in] arName выводимая подпись, должна оканчиваться \0
-//! \param[in] needStr признак необходимости вывода строкового представления подмассива
-//! \param[in] pos индекс начала вывода
-diagAr(const ar{}, arLength, const arName{}, needStr, pos = 0)
+stock diagAr(const ar{}, arLength, const arName{}, needStr, pos = 0)
 {
 	const diagBlockSize = 48;
     new ddBuf{diagBlockSize + 1};
@@ -76,5 +67,3 @@ diagAr(const ar{}, arLength, const arName{}, needStr, pos = 0)
         }
     }
 }
-
-#endif // DIAG_LIB
