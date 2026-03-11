@@ -30,47 +30,57 @@ stock const RAI_AUDIO_FILE_NAME{} = "route.wav";
 //! @brief Получить имя и пути файлов текущего маршрута
 //! @param[out] route структура маршрута
 //! @return true - успешно, false - ошибка файловой системы
-forward stock raiGetCurrentRoute(route[RAI_ROUTE_DATA]);
+forward bool:stock raiGetCurrentRoute(route[RAI_ROUTE_DATA]);
 
 //! @brief Установить маршрут в автоинформаторе
-//! @details Предварительно необходимо получить имя и пути маршрута
-//! @param[in] route маршрут
-forward stock raiSetCurrentRoute(const route[RAI_ROUTE_DATA]);
+//! @note Предварительно необходимо получить имя и пути маршрута raiGetCurrentRoute()
+//! @param[in] route структура маршрута
+//! @return true - успешно, false - ошибка (не получен маршрут, ошибка файловой системы)
+forward bool:stock raiSetCurrentRoute(const route[RAI_ROUTE_DATA]);
 
 //! @brief Получить имя и пути файлов следующего маршрута
 //! @param[in] currentRoute структура текущего маршрута
 //! @param[out] nextRoute структура следующего маршрута
 //! @return true - успешно, false - нет маршрутов или ошибка файловой системы
-forward stock raiGetNewRoute(const currentRoute[RAI_ROUTE_DATA], nextRoute[RAI_ROUTE_DATA]);
+forward bool:stock raiGetNewRoute(const currentRoute[RAI_ROUTE_DATA], nextRoute[RAI_ROUTE_DATA]);
 
 //! @brief Получить начальную и конечную остановки маршрута из файла
-//! @details Предварительно необходимо получить имя и пути маршрута
-//! @param[inout] route маршрут
-//! @return true - успешно, false - ошибка: нет маршрута или файла с конечными остановками
-forward stock raiGetFinalStations(route[RAI_ROUTE_DATA]);
+//! @note Предварительно необходимо получить имя и пути маршрута raiGetCurrentRoute()
+//! @param[inout] route структура маршрута
+//! @return true - успешно, false - ошибка (нет маршрута или файла с конечными остановками)
+forward bool:stock raiGetFinalStations(route[RAI_ROUTE_DATA]);
 
 //! @brief Проверить на присутствие в геозоне остановки
-//! @details Предварительно необходимо получить имя и пути маршрута
-//! @param[in] route маршрут
+//! @note Предварительно необходимо получить имя и пути маршрута raiGetCurrentRoute()
+//! @param[in] route структура маршрута
 //! @param[out] currentStation название текущей остановки, если в ее геозоне
 //! @param[in] currentStationMaxSize предельная длина для названия текущей остановки
 //! @param[out] nextStation название следующей остановки, если в геозоне текущей остановки
 //! @param[in] nextStationMaxSize предельная длина для названия следующей остановки
 //! @param[out] nextStationFilePos позиция в файле названия следующей остановки (-1 - название не найдено или не в геозоне текущей остановки)
 //! @return true - в геозоне, false - не в геозоне
-forward stock raiIsAtStation(const route[RAI_ROUTE_DATA], currentStation{}, currentStationMaxSize, nextStation{}, nextStationMaxSize, &nextStationFilePos);
+forward bool:stock raiIsAtStation(const route[RAI_ROUTE_DATA], currentStation{}, currentStationMaxSize, nextStation{}, nextStationMaxSize, &nextStationFilePos);
+
+//! @brief Получить название следующей остановки
+//! @note Предварительно необходимо получить имя и пути маршрута raiGetCurrentRoute()
+//! @param[in] route структура маршрута
+//! @param[in] filePos смещение в файле
+//! @param[out] station название остановки при успешном возврате
+//! @param[in] stationMaxSize предельная длина для названия остановки
+//! @return true - успешно, false - ошибка
+forward bool:stock raiGetNextStation(const route[RAI_ROUTE_DATA], filePos, station{}, stationMaxSize);
 
 //! @brief Получить рекламное сообщение
-//! @details Предварительно необходимо получить имя и пути маршрута
-//! @param[in] route маршрут
+//! @note Предварительно необходимо получить имя и пути маршрута raiGetCurrentRoute()
+//! @param[in] route структура маршрута
 //! @param[in] filePos смещение сообщения в файле
 //! @param[out] advertisment сообщение
 //! @param[in] advertismentMaxSize предельная длина сообщения
 //! @param[out] nextPos позиция следующего сообщения, если найдено текущее
 //! @return true - успешно, false - ошибка
-forward stock raiGetAdvertisment(const route[RAI_ROUTE_DATA], filePos, advertisment{}, advertismentMaxSize, &nextPos);
+forward bool:stock raiGetAdvertisment(const route[RAI_ROUTE_DATA], filePos, advertisment{}, advertismentMaxSize, &nextPos);
 
 //! @brief Установить название маршрута в тег массива пользователя
-//! @details Предварительно необходимо получить имя и пути маршрута
-//! @param[in] route маршрут
+//! @note Предварительно необходимо получить имя и пути маршрута raiGetCurrentRoute()
+//! @param[in] route структура маршрута
 forward stock raiSetRouteNameInUserArray(const route[RAI_ROUTE_DATA]);
