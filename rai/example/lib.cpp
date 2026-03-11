@@ -9,9 +9,9 @@
 #include "..\..\numeric\numeric.h"
 #include "..\..\numeric\numeric.cpp"
 
-stock isSettingsInited()
+stock bool:isSettingsInited()
 {
-    return GetVar(gIsSettingsInited);
+    return GetVar(gIsSettingsInited) != 0;
 }
 
 stock setSettingsInited()
@@ -19,12 +19,12 @@ stock setSettingsInited()
     SetVar(gIsSettingsInited, true);
 }
 
-stock isNeedSwithRoute()
+stock bool:isNeedSwithRoute()
 {
-    return GetVar(gIsNeedSwithRoute);
+    return GetVar(gIsNeedSwithRoute) != 0;
 }
 
-stock setNeedSwithRoute(value)
+stock setNeedSwithRoute(bool:value)
 {
     SetVar(gIsNeedSwithRoute, value);
 }
@@ -71,12 +71,12 @@ stock storeRouteCurrentData(const routeCurrentData[ROUTE_CURRENT_DATA])
     SetVar(gShowStartUptime, routeCurrentData.showStartUptime);
 }
 
-stock isDisplayInited(displayIndex)
+stock bool:isDisplayInited(displayIndex)
 {
     return getBit(_getIsDisplaysInited(), displayIndex);
 }
 
-stock setDisplayInit(displayIndex, value)
+stock setDisplayInit(displayIndex, bool:value)
 {
     _setIsDisplaysInited(setBit(_getIsDisplaysInited(), displayIndex, value));
 }
@@ -125,7 +125,7 @@ stock calcRouteCrc(const routeName{})
     return CRC16(routeName, strLen(routeName, RAI_FILE_PATH_LENGTH_MAX));
 }
 
-stock isNeedChangeShow(const routeCurrentData[ROUTE_CURRENT_DATA])
+stock bool:isNeedChangeShow(const routeCurrentData[ROUTE_CURRENT_DATA])
 {
     return (routeCurrentData.show == SHOW_UNKNOWN) || isTimerExpired(routeCurrentData.showStartUptime, getMessageShowTimeS() * MS_PER_SECOND);
 }

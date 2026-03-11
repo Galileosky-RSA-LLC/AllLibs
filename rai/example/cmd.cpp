@@ -9,9 +9,6 @@
 #define CMD_SET_TIME_ZONE 4
 #define CMD_DISPLAY 5
 
-#define CMD_MIN CMD_SWITCH_ROUTE
-#define CMD_MAX CMD_DISPLAY
-
 #define PARAMS_QTY_MAX 1
 
 #define ADV_TIME_S_MIN 20
@@ -34,11 +31,6 @@ new g_cmdParams[PARAMS_QTY_MAX];
 main()
 {
     new cmd = GetVar(gCmd);
-    if ((cmd < CMD_MIN) || (cmd > CMD_MAX))
-    {
-        sendTextAnswer("cmd?");
-        return;
-    }
     if ((cmd > CMD_SWITCH_ROUTE) && !isSettingsInited())
     {
         sendTextAnswer("wait init");
@@ -57,6 +49,7 @@ main()
         case CMD_SET_ADV_TIME: cmdAdvTime();
         case CMD_SET_TIME_ZONE: cmdTimeZone();
         case CMD_DISPLAY: displayCmd();
+        default: cmdHandlerAddTextToAnswer(g_cmdhdl, "cmd?");
     }
     cmdHandlerSendPreparedAnswer(g_cmdhdl);
 }
@@ -80,7 +73,7 @@ cmdSwitchRoute()
 
 cmdRouteInput()
 {
-    new inputIdx = GetVar(gRouteInputIdxNew);
+    new const inputIdx = GetVar(gRouteInputIdxNew);
     if ((inputIdx >= ADC_INPUT_IDX_MIN) && (inputIdx <= ADC_INPUT_IDX_MAX))
         setRouteSwitchInputIdx(inputIdx);
 
@@ -95,7 +88,7 @@ makeRouteInputIdxAnswer()
 
 cmdAdvTime()
 {
-    new advTimeS = GetVar(gAdvTimeSnew);
+    new const advTimeS = GetVar(gAdvTimeSnew);
     if (advTimeS >= ADV_TIME_S_MIN)
         setMessageShowTimeS(advTimeS);
 
@@ -110,7 +103,7 @@ makeAdvTimeAnswer()
 
 cmdTimeZone()
 {
-    new timeZone = GetVar(gTimeZoneNew);
+    new const timeZone = GetVar(gTimeZoneNew);
     if ((timeZone >= TIME_ZONE_MIN) && (timeZone <= TIME_ZONE_MAX))
         setTimeZone(timeZone);
 
