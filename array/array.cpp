@@ -584,12 +584,12 @@ stock countArrayUsedCells(currentArSizeInBytes)
     return countUsedCells(currentArSizeInBytes, CELL_BYTES);
 }
 
-stock num24bit2arrayLe(num, ar{}, start, arSize)
+stock bool:num24bit2arrayLe(num, ar{}, start, arSize)
 {
     return num2array(num, 3, true, ar, start, arSize);
 }
 
-stock num24bit2arrayBe(num, ar{}, start, arSize)
+stock bool:num24bit2arrayBe(num, ar{}, start, arSize)
 {
     return num2array(num, 3, false, ar, start, arSize);
 }

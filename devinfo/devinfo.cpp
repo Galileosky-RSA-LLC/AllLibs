@@ -391,16 +391,16 @@ stock bool:getInStatus(index)
 {
     switch (index)
     {
-        case 0: return GetVar(STATUS_OF_IN0);
-        case 1: return GetVar(STATUS_OF_IN1);
-        case 2: return GetVar(STATUS_OF_IN2);
-        case 3: return GetVar(STATUS_OF_IN3);
-        case 4: return GetVar(STATUS_OF_IN4);
-        case 5: return GetVar(STATUS_OF_IN5);
-        case 6: return GetVar(STATUS_OF_IN6);
-        case 7: return GetVar(STATUS_OF_IN7);
-        case 8: return GetVar(STATUS_OF_IN8);
-        case 9: return GetVar(STATUS_OF_IN9);
+        case 0: return GetVar(STATUS_OF_IN0) != 0;
+        case 1: return GetVar(STATUS_OF_IN1) != 0;
+        case 2: return GetVar(STATUS_OF_IN2) != 0;
+        case 3: return GetVar(STATUS_OF_IN3) != 0;
+        case 4: return GetVar(STATUS_OF_IN4) != 0;
+        case 5: return GetVar(STATUS_OF_IN5) != 0;
+        case 6: return GetVar(STATUS_OF_IN6) != 0;
+        case 7: return GetVar(STATUS_OF_IN7) != 0;
+        case 8: return GetVar(STATUS_OF_IN8) != 0;
+        case 9: return GetVar(STATUS_OF_IN9) != 0;
         default: return false;
     }
     return false;

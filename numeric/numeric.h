@@ -80,9 +80,9 @@ forward stock setByte(number, byteId, newByteValue);
 
 //! @brief Получить значение бита
 //! @param[in] num число
-//! @param[in] bit номер бита, 0..31
-//! @return значение бита false/true
-forward stock getBit(num, bit);
+//! @param[in] bit индекс бита, 0..31
+//! @return значение бита
+forward bool:stock getBit(num, bit);
 
 //! @brief Инвертировать биты в байте
 forward stock invertBitsInByte(byte);
@@ -105,9 +105,9 @@ forward stock reverseBits(value, bits);
 
 //! @brief Установить значение бита
 //! @param[in] num исходное число
-//! @param[in] bit номер изменяемого бита, 0..31
-//! @param[in] bitValue устанавливаемое значение бита false/true
+//! @param[in] bit изменяемый бит, 0..31
+//! @param[in] bitValue устанавливаемое значение бита
 //! @return измененное число
-forward stock setBit(num, bit, bitValue);
+forward stock setBit(num, bit, bool:bitValue);
 
 //! @}

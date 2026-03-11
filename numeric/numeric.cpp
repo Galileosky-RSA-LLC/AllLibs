@@ -22,13 +22,13 @@ stock invertBitsInByte(byte)
     return tmp;
 }
 
-stock getBit(num, bit)
+stock bool:getBit(num, bit)
 {
     coerce(bit, 0, CELL_LAST_BIT_INDEX);
-    return (num >> bit) & 1;
+    return ((num >> bit) & 1) != 0;
 }
 
-stock setBit(num, bit, bitValue)
+stock setBit(num, bit, bool:bitValue)
 {
     coerce(bit, 0, CELL_LAST_BIT_INDEX);
     new tmp = 1 << bit;
