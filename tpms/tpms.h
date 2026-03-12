@@ -36,8 +36,8 @@
 #define TPMS_WHEEL_DATA [ \
     .temperature,\
     .pressurePsi,\
-    .sensorOnline,\
-    .sensorOk,\
+    bool:.sensorOnline,\
+    bool:.sensorOk,\
     .reason,\
 ]
 

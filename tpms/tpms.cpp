@@ -59,7 +59,7 @@ stock tpmsWriteWheelTag(wheelIdx, const wheel[TPMS_WHEEL_DATA])
     new temperature = wheel.temperature;
     coerce(temperature, TPMS_WHEELTAG_TEMP_MIN, TPMS_WHEELTAG_TEMP_MAX);
     new const value = ((reason << TPMS_WHEELTAG_FLAGS_REASON_BIT)
-                        + ((!wheel.sensorOk << TPMS_WHEELTAG_FLAGS_ERROR_BIT) + !wheel.sensorOnline) << TPMS_WHEELTAG_FLAGS_LSHIFT)
+                        + (((!wheel.sensorOk ? 1 : 0) << TPMS_WHEELTAG_FLAGS_ERROR_BIT) + (!wheel.sensorOnline ? 1 : 0)) << TPMS_WHEELTAG_FLAGS_LSHIFT)
                         + ((temperature & TPMS_WHEELTAG_TEMP_MASK) << TPMS_WHEELTAG_TEMP_LSHIFT)
                         + pressure;
     TagWriteValue(TAG_WHEEL_0 + wheelIdx, value);
@@ -80,8 +80,8 @@ stock tpmsWriteCommonTag(const wheels[TPMS_WHEELS_MAX][TPMS_WHEEL_DATA])
         new reason = wheels[i].reason;
         coerce(reason, TPMS_REASON_MIN, TPMS_REASON_MAX);
         buf{wheelOffset + TPMS_COMTAG_WHEEL_TEMPFLAGS_BYTE} = (reason << TPMS_COMTAG_WHEEL_REASON_BIT)
-                                                                + (!wheels[i].sensorOk << TPMS_COMTAG_WHEEL_ERROR_BIT)
-                                                                + (!wheels[i].sensorOnline << TPMS_COMTAG_WHEEL_ONLINE_BIT)
+                                                                + ((!wheels[i].sensorOk ? 1 : 0) << TPMS_COMTAG_WHEEL_ERROR_BIT)
+                                                                + ((!wheels[i].sensorOnline ? 1 : 0) << TPMS_COMTAG_WHEEL_ONLINE_BIT)
                                                                 + temperature;
     }
     swapBuf(buf,TPMS_COMTAG_WHEELS_SIZE);
