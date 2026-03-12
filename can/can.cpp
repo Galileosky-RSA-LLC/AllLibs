@@ -14,7 +14,6 @@
 
 stock canDiagMessage(const mes[CANMSG], portNum, bool:isSend)
 {
-    clearArrayStr(mes.data, CAN_DATASIZE_GENERAL_MAX, mes.dataSize);
     Diagnostics("CAN%d %s.id%d=%Xh,ds=%d:%X %Xh", portNum, isSend ? "s" : "r", mes.idType, mes.id, mes.dataSize, mes.dataSize > 0 ? mes.data[0] : 0,
                 mes.dataSize > 4 ? mes.data[1] : 0);
 }
@@ -53,5 +52,5 @@ stock bool:getCanRegime(portNum, &mode, &baudRate)
     if (idx < 0)
         return false;
     
-    return atoi(answer, baudRate, len, idx + strLen(baudRateStr));
+    return atoi(answer, baudRate, len, idx + strLen(baudRateStr)) > 0;
 }
