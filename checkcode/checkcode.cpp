@@ -45,7 +45,7 @@ stock fletcher16(const data{}, dataSize, pos = 0)
         sum1 = (sum1 + data{pos}) % 255;
         sum2 = (sum2 + sum1) % 255;
     }
-   return (sum2 << 8) | sum1;
+    return (sum2 << 8) | sum1;
 }
 
 stock fletcher16opt(const data{}, dataSize, pos = 0)
