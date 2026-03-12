@@ -464,7 +464,7 @@ forward stock shakerSortStr(ar{}, arSize, start = 0);
 //! @param[in] bit позиция бита относительно начала подмассива
 //! @param[out] value значение бита при успешном возврате
 //! @return false - неуспешно (ошибка входных данных), true - успешно
-forward bool:stock getBitFromArray(const ar{}, start, arSize, bit, &value);
+forward bool:stock getBitFromArray(const ar{}, start, arSize, bit, &bool:value);
 
 //! @brief Установить значение бита в подмассиве
 //! @param[inout] ar массив
@@ -473,7 +473,7 @@ forward bool:stock getBitFromArray(const ar{}, start, arSize, bit, &value);
 //! @param[in] bit позиция бита относительно начала подмассива
 //! @param[in] value устанавливаемое значение бита
 //! @return false - неуспешно (ошибка входных данных), true - успешно
-forward bool:stock setBitInArray(ar{}, start, arSize, bit, value);
+forward bool:stock setBitInArray(ar{}, start, arSize, bit, bool:value);
 //! @}
 
 //! @defgroup globVarsStore Хранение в глобальных переменных

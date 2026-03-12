@@ -478,26 +478,26 @@ stock shakerSortStr(ar{}, arSize, start = 0)
     }
 }
 
-stock bool:getBitFromArray(const ar{}, start, arSize, bit, &value)
+stock bool:getBitFromArray(const ar{}, start, arSize, bit, &bool:value)
 {
-    new offset = start + bit / 8;
+    new offset = start + (bit / BYTE_BITS);
     if ((start < 0) || (bit < 0) || (offset >= arSize))
         return false;
 
-    value = (ar{offset} >> bit % 8) & 1;
+    value = ((ar{offset} >> (bit % BYTE_BITS)) & 1) != 0;
     return true;
 }
 
-stock bool:setBitInArray(ar{}, start, arSize, bit, value)
+stock bool:setBitInArray(ar{}, start, arSize, bit, bool:value)
 {
-    new offset = start + bit / 8;
+    new offset = start + (bit / BYTE_BITS);
     if ((start < 0) || (bit < 0) || (offset >= arSize))
         return false;
 
-    if (value != 0)
-        ar{offset} |= 1 << bit % 8;
+    if (value)
+        ar{offset} |= 1 << (bit % BYTE_BITS);
     else
-        ar{offset} &= ~(1 << bit % 8);
+        ar{offset} &= ~(1 << (bit % BYTE_BITS));
     
     return true;
 }
