@@ -147,7 +147,7 @@
 //! @param[in] isNumbers признак числового типа данных (!=0 - числа, =0 - строка)
 //! @param[in] amount количество элементов: для строки - длина в байтах (от 0 до 127), для чисел - от 1 до 8
 //! @param[in] size размер памяти числа: 0, 1, 2, 4 или 8 (для строкового типа данных не учитывается)
-forward stock ustructMakeDescriptor(isNumbers, amount, size);
+forward stock ustructMakeDescriptor(bool:isNumbers, amount, size);
 
 //! @brief Сформировать описатель группы чисел в массиве пользователя универсальной структуры
 //! @param[in] amount количество чисел, 1..8

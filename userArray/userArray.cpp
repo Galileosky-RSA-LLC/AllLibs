@@ -14,8 +14,10 @@
 #include "..\gdefines.h"
 #include "..\string\string.h"
 #include "..\string\string.cpp"
+#include "..\numeric\numeric.h"
+#include "..\numeric\numeric.cpp"
 
-stock ustructMakeDescriptor(isNumbers, amount, size)
+stock ustructMakeDescriptor(bool:isNumbers, amount, size)
 {
     if (isNumbers)
     {    
@@ -40,7 +42,7 @@ stock ustructMakeDescriptor(isNumbers, amount, size)
         if (amount < 0)
             amount = 0;
     }
-    return ((isNumbers == 0) << 7) + (isNumbers ? ((amount - 1) << 4) + size : amount);
+    return ((isNumbers ? 0 : 1) << 7) + (isNumbers ? ((amount - 1) << 4) + size : amount);
 }
 
 stock bool:sendFileInUserArray(const fileName{}, &lastFileId)
@@ -88,7 +90,7 @@ stock ustructMakeDescriptorStr(strSize)
 
 stock ustructInsertEmpty(userArray{}, userArrayMaxSize, &pos, emptyCount)
 {
-    new groups = (emptyCount / USERARRAY_USTRUCT_DESCR_NUMBERS_MAX) + ((emptyCount % USERARRAY_USTRUCT_DESCR_NUMBERS_MAX) != 0);
+    new const groups = countUsedCells(emptyCount, USERARRAY_USTRUCT_DESCR_NUMBERS_MAX);
     if ((pos < 0) || ((pos + groups) > userArrayMaxSize))
         return 0;
     
