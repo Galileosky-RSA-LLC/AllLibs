@@ -17,8 +17,8 @@ forward stock num2bitDiag(number, const texts[][], textsCount, const prefix{} = 
 
 //! @brief Вывод в диагностику подмассива в hex и его строковой интерпретации с подписью и разделением на читабельные части
 //! @param[in] ar массив для вывода
-//! @param[in] arLength размер массива
+//! @param[in] arSize размер массива
 //! @param[in] arName выводимая подпись, должна оканчиваться \0
 //! @param[in] needStr признак необходимости вывода строкового представления подмассива
 //! @param[in] pos индекс начала вывода
-forward stock diagAr(const ar{}, arLength, const arName{}, bool:needStr = false, pos = 0);
+forward stock diagAr(const ar{}, arSize, const arName{}, bool:needStr = false, pos = 0);

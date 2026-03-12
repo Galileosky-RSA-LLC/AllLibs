@@ -33,17 +33,17 @@ stock num2bitDiag(number, const texts[][], textsCount, const prefix{} = "")
     Diagnostics(str);
 }
 
-stock diagAr(const ar{}, arLength, const arName{}, bool:needStr = false, pos = 0)
+stock diagAr(const ar{}, arSize, const arName{}, bool:needStr = false, pos = 0)
 {
     if (pos < 0)
         pos = 0;
 
-    Diagnostics("%s =%d bytes", arName, arLength - pos);
-    while (pos < arLength)
+    Diagnostics("%s =%d bytes", arName, arSize - pos);
+    while (pos < arSize)
     {
         const diagBlockSize = 48;
         new diagBuf{diagBlockSize + 1};
-        new const count = insertArrayStr(diagBuf, 0, diagBlockSize, ar, arLength, pos);
+        new const count = insertArrayStr(diagBuf, 0, diagBlockSize, ar, arSize, pos);
         Diagnostics("%s bytes %d..%d:", arName, pos, pos + count - 1);
         DiagnosticsHex(diagBuf, count);
         if (needStr)
