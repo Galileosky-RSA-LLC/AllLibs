@@ -37,7 +37,8 @@ forward stock abs(num);
 forward bool:stock coerce(&num, rangeMin, rangeMax);
 
 //! @brief Получить количество занятых ячеек по актуальной длине параметра
-forward stock countUsedCells(size, cellSize);
+//! @details Например: .totalSize=5,.cellSize=2 -> 3
+forward stock countUsedCells(totalSize, cellSize);
 
 //! @brief Конвертировать в BCD
 forward stock dec2bcd(dec);
@@ -57,7 +58,7 @@ forward stock getByte(number, byteId);
 forward stock pow(num, p);
 
 //! @brief Перевернуть байты числа
-//! @details например, 0xAABBCCDD -> 0xDDCCBBAA
+//! @details Например: 0xAABBCCDD -> 0xDDCCBBAA
 forward stock reverse(value);
 
 //! @brief Генерировать псевдослучайное число из заданного диапазона
@@ -71,9 +72,7 @@ forward stock rnd(atLeast, noGreater);
 //! @param[in] newByteValue новое значение байта
 //! @return измененное число
 forward stock setByte(number, byteId, newByteValue);
-
 //! @}
-
 
 //! @defgroup bits Битовые операции
 //! @{
@@ -109,5 +108,4 @@ forward stock reverseBits(value, bits);
 //! @param[in] bitValue устанавливаемое значение бита
 //! @return измененное число
 forward stock setBit(num, bit, bool:bitValue);
-
 //! @}

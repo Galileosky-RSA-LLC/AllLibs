@@ -149,12 +149,12 @@ stock dec2bcd(dec)
     return result;
 }
 
-stock countUsedCells(size, cellSize)
+stock countUsedCells(totalSize, cellSize)
 {
-    if ((size <= 0) || (cellSize <= 0))
+    if ((totalSize <= 0) || (cellSize <= 0))
         return 0;
 
-    return (size / cellSize) + ((size % cellSize) ? 1 : 0);
+    return (totalSize / cellSize) + (((totalSize % cellSize) != 0) ? 1 : 0);
 }
 
 stock rol(value, bits)
