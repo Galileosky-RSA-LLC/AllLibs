@@ -271,7 +271,7 @@ stock photoSaveMetaChunk(chunk{}, chunkSizeIn, const fileName{}, const maker{} =
 
 //! @privatesection
 
-photoSaveMetaChunk_getSegSize(const chunk{}, chunkSize, pos, const segmentMarker{}, &segmentSize)
+stock photoSaveMetaChunk_getSegSize(const chunk{}, chunkSize, pos, const segmentMarker{}, &segmentSize)
 {
     new size;
     if (countIdenticalStr(chunk, pos, chunkSize, segmentMarker, 0, JPEG_SEGMENT_MARKER_SIZE) == JPEG_SEGMENT_MARKER_SIZE)
@@ -291,14 +291,14 @@ photoSaveMetaChunk_getSegSize(const chunk{}, chunkSize, pos, const segmentMarker
     return PHOTO_METACHUNK_OK;
 }
 
-photoSaveMetaChunk_insertImei(photoMeta{PHOTO_METACHUNK_META_SIZE})
+stock photoSaveMetaChunk_insertImei(photoMeta{PHOTO_METACHUNK_META_SIZE})
 {
     new imei{PHOTO_METACHUNK_EXIF_IMEI_VALUE_SIZE};
     GetIMEI(imei, PHOTO_METACHUNK_EXIF_IMEI_VALUE_SIZE);
     insertArrayStr(photoMeta, PHOTO_METACHUNK_EXIF_IMEI_VALUE_POS, PHOTO_METACHUNK_META_SIZE, imei, PHOTO_METACHUNK_EXIF_IMEI_VALUE_SIZE);
 }
 
-photoSaveMetaChunk_insertTime(photoMeta{PHOTO_METACHUNK_META_SIZE}, unixTime)
+stock photoSaveMetaChunk_insertTime(photoMeta{PHOTO_METACHUNK_META_SIZE}, unixTime)
 {
     new datetime[DATETIME];
     unixTime2dateTime(unixTime, datetime);
@@ -310,7 +310,7 @@ photoSaveMetaChunk_insertTime(photoMeta{PHOTO_METACHUNK_META_SIZE}, unixTime)
     itoaw(datetime.second, photoMeta, PHOTO_METACHUNK_META_SIZE, PHOTO_METACHUNK_EXIF_SEC_SIZE, PHOTO_METACHUNK_EXIF_SEC_POS);
 }
 
-photoSaveMetaChunk_insertCoords(photoMeta{PHOTO_METACHUNK_META_SIZE})
+stock photoSaveMetaChunk_insertCoords(photoMeta{PHOTO_METACHUNK_META_SIZE})
 {
     new const latitude = GetVar(LATITUDE);
     new const longitude = GetVar(LONGITUDE);
