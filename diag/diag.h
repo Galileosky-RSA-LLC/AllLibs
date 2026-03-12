@@ -6,13 +6,14 @@
 #endif
 #define DIAG_H
 
-//! @brief Вывести в диагностику текстовые представления битов числа, разделенные символом ";". 
-//! @details Максимальная длина строки диагностики 95 символов
-//! @param[in] number число для представления
-//! @param[in] bytes разрядность числа в байтах, 1..4
-//! @param[in] prefix добавляемый префикс строки диагностики, должен оканчиваться \0
-//! @param[in] texts тексты на каждый бит числа, должны оканчиваться \0. Текст добавляется в диагностику, если соотв. его индексу бит == "ИСТИНА"
-forward stock num2bitDiag(number, bytes, const prefix{}, const texts[][]);
+//! @brief Вывести в диагностику текстовые представления битов числа, разделенные символом ";"
+//! @details Максимальная длина строки диагностики 95 символов. 
+//! @details Например: .number=13,.texts=["A","B","C","D","E"],.textsCount=5,.prefix="Warning:" -> "Warning:A;C;D"
+//! @param[in] number число для битового представления
+//! @param[in] texts тексты на каждый бит числа. Текст добавляется в диагностику, если соотв. его индексу бит == true
+//! @param[in] textsCount количество текстовых строк
+//! @param[in] prefix добавляемый префикс строки диагностики
+forward stock num2bitDiag(number, const texts[][], textsCount, const prefix{} = "");
 
 //! @brief Вывод в диагностику подмассива в hex и его строковой интерпретации с подписью и разделением на читабельные части
 //! @param[in] ar массив для вывода
@@ -20,4 +21,4 @@ forward stock num2bitDiag(number, bytes, const prefix{}, const texts[][]);
 //! @param[in] arName выводимая подпись, должна оканчиваться \0
 //! @param[in] needStr признак необходимости вывода строкового представления подмассива
 //! @param[in] pos индекс начала вывода
-forward stock diagAr(const ar{}, arLength, const arName{}, needStr, pos = 0);
+forward stock diagAr(const ar{}, arLength, const arName{}, bool:needStr = false, pos = 0);
