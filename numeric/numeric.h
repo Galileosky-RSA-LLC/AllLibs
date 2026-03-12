@@ -15,7 +15,7 @@
 #endif
 
 #if !defined COUNT_USED_CELLS
-#define COUNT_USED_CELLS(%1,%2) ((%1) / (%2) + (((%1) % (%2)) != 0))
+#define COUNT_USED_CELLS(%1,%2) (((%1) / (%2)) + ((((%1) % (%2)) != 0) ? 1 : 0))
 #endif
 
 #define BYTE_BITS 8
