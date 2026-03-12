@@ -55,7 +55,7 @@ stock bool:getSoftVersion(&softMaj, &softMin)
         return false;
 
     pos += 1 + len;
-    return atoi(buf, softMin, bufLength, pos);
+    return atoi(buf, softMin, bufLength, pos) > 0;
 }
 
 stock getDebugLevel()
@@ -384,7 +384,7 @@ stock bool:hasExtPower(devStatus)
 
 stock bool:isEngineOn(devStatus)
 {
-    return (devStatus >>> DEVINFO_STATUS_BIT_ENGINEON) & 1;
+    return ((devStatus >>> DEVINFO_STATUS_BIT_ENGINEON) & 1) != 0;
 }
 
 stock bool:getInStatus(index)
@@ -440,5 +440,5 @@ stock bool:getUserSpec(&userSpec)
 stock bool:isModuleOn(userSpec, userSpecBit)
 {
     coerce(userSpecBit, 0, CELL_LAST_BIT_INDEX);
-    return (userSpec >>> userSpecBit) & 1;
+    return ((userSpec >>> userSpecBit) & 1) != 0;
 }
