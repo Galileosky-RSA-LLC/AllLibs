@@ -77,9 +77,7 @@ stock bool:eeprom_storeParams(obj[EEPROM_DATA], key)
 		return false;
 
     new i;
-    new paramCount = min(EEPROM_PARAMS_PER_KEY_MAX, (key < EEPROM_KEY_LAST)
-                                                    ? EEPROM_PARAMS_PER_KEY_MAX
-                                                    : EEPROM_PARAMS_IN_LAST_KEY);
+    new const paramCount = min(EEPROM_PARAMS_PER_KEY_MAX, (key < EEPROM_KEY_LAST) ? EEPROM_PARAMS_PER_KEY_MAX : EEPROM_PARAMS_IN_LAST_KEY);
     for (i = 0; i < paramCount; i++)
 		obj.keyBuf[i] = GetVar(obj.keysVarAddr[(key*EEPROM_PARAMS_PER_KEY_MAX) + i]);
 
