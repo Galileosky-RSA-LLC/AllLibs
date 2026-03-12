@@ -46,7 +46,7 @@ stock fileWriteWrap(const fileName{}, const buf{}, bufSize, fileOffset, bufPos =
         return FileWrite(fileName, buf, bufSize, fileOffset);
 
     new rest = bufPos % CELL_BYTES;
-    new bufCell = (bufPos / CELL_BYTES) + (rest != 0);
+    new bufCell = (bufPos / CELL_BYTES) + ((rest != 0) ? 1 : 0);
     new subSize = rest ? CELL_BYTES - rest : 0;
     if (subSize)
     {

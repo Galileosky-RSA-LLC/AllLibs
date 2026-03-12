@@ -49,4 +49,4 @@ forward stock fileWriteWrap(const fileName{}, const buf{}, bufSize, fileOffset, 
 //! @param[out] buf буфер для прочитанной строки
 //! @param[in] bufMaxSize предельный размер буфера для прочитанной строки, с учетом спец. символов завершения строки
 //! @return прочитанный размер, включая спец. символы завершения и все промежуточные \0
-forward stock fileReadLine(const fileFullPath{}, buf{}, bufMaxSize, fileOffset)
+forward stock fileReadLine(const fileFullPath{}, buf{}, bufMaxSize, fileOffset);
