@@ -1,7 +1,7 @@
 //! @file
-//! @brief Функции для работы с файлами
+//! @brief Реализация библиотеки для работы с файлами
 
-#ifdef FILE_LIB
+#if defined FILE_LIB
 #endinput
 #endif
 #define FILE_LIB
@@ -14,7 +14,7 @@
 #include "..\numeric\numeric.h"
 #include "..\cmdhandle\cmdhandle.h"
 
-stock fileRename(const src{}, const dest{})
+stock bool:fileRename(const src{}, const dest{})
 {
     new const srcLength = strLen(src);
     new const destLength = strLen(dest);
@@ -34,7 +34,7 @@ stock fileRename(const src{}, const dest{})
     bufSize = GetBinaryDataFromCommand(buf, CMD_LENGTH_MAX);
     toLowerCase(buf, bufSize);
     new const successResult{} = "success";
-    return searchSubArBruteForceStr(buf, 0, bufSize, successResult, strLen(successResult)) >= 0;
+    return searchStr(buf, successResult) >= 0;
 }
 
 stock fileWriteWrap(const fileName{}, const buf{}, bufSize, fileOffset, bufPos = 0)
@@ -46,7 +46,7 @@ stock fileWriteWrap(const fileName{}, const buf{}, bufSize, fileOffset, bufPos =
         return FileWrite(fileName, buf, bufSize, fileOffset);
 
     new rest = bufPos % CELL_BYTES;
-    new bufCell = (bufPos / CELL_BYTES) + (rest != 0);
+    new bufCell = (bufPos / CELL_BYTES) + ((rest != 0) ? 1 : 0);
     new subSize = rest ? CELL_BYTES - rest : 0;
     if (subSize)
     {

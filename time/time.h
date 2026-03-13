@@ -1,10 +1,10 @@
-#ifdef TIME_H
+//! @file
+//! @brief Заголовок библиотеки времени
+
+#if defined TIME_H
 #endinput
 #endif
 #define TIME_H
-
-//! @file
-//! @brief Заголовок библиотеки времени
 
 //! @defgroup timeIntervalDurations Длительности временных промежутков
 //! @{
@@ -18,6 +18,7 @@
 #define MINUTES_PER_DAY (HOURS_PER_DAY * MINUTES_PER_HOUR)
 #define SECONDS_PER_DAY (MINUTES_PER_DAY * SECONDS_PER_MINUTE)
 #define MONTHS_PER_YEAR 12
+#define MS_PER_DAY (HOURS_PER_DAY * MS_PER_HOUR)
 //! @}
 
 //! @defgroup timeStampParams Параметры временных меток
@@ -61,55 +62,59 @@
 //! @defgroup unixEpoch Эпоха Unix
 //! @{
 #define UNIX_EPOCH_YEAR_START 1970
-#define UNIX_EPOCH_YEAR_END_32 2038
-#define UNIX_EPOCH_MONTH_END_32 1
-#define UNIX_EPOCH_DAY_END_32 19
-#define UNIX_EPOCH_HOUR_END_32 3
-#define UNIX_EPOCH_MINUTE_END_32 14
-#define UNIX_EPOCH_SECOND_END_32 7
+#define UNIX_EPOCH_YEAR_END_32BIT 2038
+#define UNIX_EPOCH_MONTH_END_32BIT 1
+#define UNIX_EPOCH_DAY_END_32BIT 19
+#define UNIX_EPOCH_HOUR_END_32BIT 3
+#define UNIX_EPOCH_MINUTE_END_32BIT 14
+#define UNIX_EPOCH_SECOND_END_32BIT 7
 //! @}
 
-//! @brief Истек ли таймер с зафиксированного времени UPTIME
-//! @param[in] fixedUptime зафиксированное время от запуска операционной системы в мс
-//! @param[in] timer таймер в мс
-forward stock isTimerExpired(fixedUptime, timer);
+#define DATETIME[\
+    .year,\
+    .month,\
+    .day,\
+    .hour,\
+    .minute,\
+    .second,\
+]
 
-//! @brief Проверить, что uptime1 < uptime2
-forward stock uptimeLess(uptime1, uptime2);
+//! @brief Проверить, истек ли таймер с зафиксированного времени
+//! @param[in] fixedUptime зафиксированное время от старта терминала в мс
+//! @param[in] timerMs таймер в мс
+forward bool:stock isTimerExpired(fixedUptime, timerMs);
 
 //! @brief Задержать выполнение
 //! @details Более точно, чем Delay() - шаг 10 мс
-forward stock wait(timer);
+forward stock wait(timerMs);
 
 //! @brief Задержать выполнение с зафиксированного времени
-forward stock waitFrom(fixedUptime, timer);
+forward stock waitFrom(fixedUptime, timerMs);
 
-//! @brief Разделить метку времени Unixtime на дату и время в отдельные переменные
-//! @param[in] time метка времени Unixtime
-//! @param[out] day день
-//! @param[out] month месяц
-//! @param[out] year год
-//! @param[out] hour час
-//! @param[out] minute минута
-//! @param[out] second секунда
-forward stock unixTime2dateTime(time, &year, &month, &day, &hour, &minute, &second);
+//! @brief Разделить метку времени Unixtime на компоненты даты и времени суток
+//! @param[in] unixtime метка времени Unixtime
+//! @param[out] datetime структура даты и времени
+//! @return true - успешно, false - ошибка входных данных
+forward bool:stock unixTime2dateTime(unixtime, datetime[DATETIME]);
 
-//! @brief Преобразовать компоненты времени (UTC без смещения) в Unixtime
-//! @param[in] day день
-//! @param[in] month месяц
-//! @param[in] year год
-//! @param[in] hour час
-//! @param[in] minute минута
-//! @param[in] second секунда
+//! @brief Преобразовать компоненты даты и времени суток (UTC без смещения) в метку времени Unixtime
+//! @param[in] datetime структура даты и времени
 //! @param[out] unixtime метка времени Unixtime
 //! @return true - успешно, false - ошибка входных данных
-forward stock dateTime2unixTime(year, month, day, hour, minute, second, &unixtime);
+forward bool:stock dateTime2unixTime(const datetime[DATETIME], &unixtime);
 
 //! @brief Проверить год на високосность
-forward stock isLeapYear(year);
+forward bool:stock isLeapYear(year);
 
 //! @brief Определить длительность в мс
 //! @param[in] uptimeStart время старта
 //! @param[in] uptimeEnd время окончания
-//! @return длительность в мс
-forward stock duration(uptimeStart, uptimeEnd);
+//! @param[out] overflows количество переполнений значения cellmax
+//! @return остаточная длительность после последнего переполнения, т.е. итоговая длительность: overflows * cellmax + return
+forward stock durationMs(uptimeStart, uptimeEnd, &overflows = 0);
+
+//! @brief Вычислить оставшееся время в мс до конца таймера
+//! @param[in] startUptime время старта
+//! @param[in] timerMs таймер в мс
+//! @return оставшаяся длительность
+forward stock remainingUptimeMs(startUptime, timerMs);

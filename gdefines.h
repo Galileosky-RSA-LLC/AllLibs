@@ -1,10 +1,10 @@
-#ifdef GDEFINES_H
+//! @file
+//! @brief Общие определения
+
+#if defined GDEFINES_H
 #endinput
 #endif
 #define GDEFINES_H
-
-//! @file
-//! @brief Общие определения
 
 //! @defgroup tagIds Идентификаторы тегов
 

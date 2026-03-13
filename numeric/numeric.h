@@ -1,24 +1,21 @@
 //! @file
 //! @brief Заголовок библиотеки работы с числами
 
-#ifdef NUMERIC_H
+#if defined NUMERIC_H
 #endinput
 #endif
 #define NUMERIC_H
 
-#define NUM_VALUE_MAX cellmax // 2 147 483 647, устаревшее определение, использовать cellmax
-#define NUM_VALUE_MIN cellmin // -2 147 483 648, устаревшее определение, использовать cellmin
-
-#ifndef MIN
+#if !defined MIN
 #define MIN(%1,%2) ((%1) < (%2) ? (%1) : (%2)) // при многих вложенных таких же - ЗАВИСАЕТ КОМПИЛЯЦИЯ
 #endif
 
-#ifndef MAX
+#if !defined MAX
 #define MAX(%1,%2) ((%1) > (%2) ? (%1) : (%2)) // при многих вложенных таких же - ЗАВИСАЕТ КОМПИЛЯЦИЯ
 #endif
 
-#ifndef COUNT_USED_CELLS
-#define COUNT_USED_CELLS(%1,%2) ((%1) / (%2) + (((%1) % (%2)) != 0))
+#if !defined COUNT_USED_CELLS
+#define COUNT_USED_CELLS(%1,%2) (((%1) / (%2)) + ((((%1) % (%2)) != 0) ? 1 : 0))
 #endif
 
 #define BYTE_BITS 8
@@ -37,10 +34,11 @@ forward stock abs(num);
 //! @param[in] rangeMin минимум диапазона
 //! @param[in] rangeMax максимум диапазона
 //! @return false - число не корректировалось, true - число корректировалось
-forward stock coerce(&num, rangeMin, rangeMax);
+forward bool:stock coerce(&num, rangeMin, rangeMax);
 
 //! @brief Получить количество занятых ячеек по актуальной длине параметра
-forward stock countUsedCells(size, cellSize);
+//! @details Например: .totalSize=5,.cellSize=2 -> 3
+forward stock countUsedCells(totalSize, cellSize);
 
 //! @brief Конвертировать в BCD
 forward stock dec2bcd(dec);
@@ -50,7 +48,7 @@ forward stock digits(val);
 
 //! @brief Получить байт из числа
 //! @param[in] number исходное число
-//! @param[in] byteId номер байта в числе, 0..3
+//! @param[in] byteId позиция байта в числе, 0..3
 forward stock getByte(number, byteId);
 
 //! @brief Возвести число в неотрицательную степень
@@ -60,7 +58,7 @@ forward stock getByte(number, byteId);
 forward stock pow(num, p);
 
 //! @brief Перевернуть байты числа
-//! @details например, 0xAABBCCDD -> 0xDDCCBBAA
+//! @details Например: 0xAABBCCDD -> 0xDDCCBBAA
 forward stock reverse(value);
 
 //! @brief Генерировать псевдослучайное число из заданного диапазона
@@ -74,18 +72,16 @@ forward stock rnd(atLeast, noGreater);
 //! @param[in] newByteValue новое значение байта
 //! @return измененное число
 forward stock setByte(number, byteId, newByteValue);
-
 //! @}
-
 
 //! @defgroup bits Битовые операции
 //! @{
 
 //! @brief Получить значение бита
 //! @param[in] num число
-//! @param[in] bit номер бита, 0..31
-//! @return значение бита false/true
-forward stock getBit(num, bit);
+//! @param[in] bit индекс бита, 0..31
+//! @return значение бита
+forward bool:stock getBit(num, bit);
 
 //! @brief Инвертировать биты в байте
 forward stock invertBitsInByte(byte);
@@ -108,9 +104,8 @@ forward stock reverseBits(value, bits);
 
 //! @brief Установить значение бита
 //! @param[in] num исходное число
-//! @param[in] bit номер изменяемого бита, 0..31
-//! @param[in] bitValue устанавливаемое значение бита false/true
+//! @param[in] bit изменяемый бит, 0..31
+//! @param[in] bitValue устанавливаемое значение бита
 //! @return измененное число
-forward stock setBit(num, bit, bitValue);
-
+forward stock setBit(num, bit, bool:bitValue);
 //! @}

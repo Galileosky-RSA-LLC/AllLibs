@@ -1,9 +1,15 @@
-#ifndef JFIF_H
+//! @file
+//! @brief Заголовок библиотеки работы с JFIF изображениями
+
+#if defined JFIF_H
+#endinput
+#endif
 #define JFIF_H
-// заголовок библиотеки работы с JFIF изображениями
 
 #include "..\jpeg.h"
 
+//! @defgroup main Основной сегмент
+//! @{
 #define JFIF_SEGMENT_ID JPEG_SEGMENT_APP0_ID
 stock const JFIF_SEGMENT_MARKER{} = {JPEG_SEGMENT_MARKER_PREFIX, JFIF_SEGMENT_ID};
 #define JFIF_SEGMENT_MARKER_SIZE JPEG_SEGMENT_MARKER_SIZE
@@ -32,8 +38,11 @@ stock const JFIF_SEGMENT_MARKER{} = {JPEG_SEGMENT_MARKER_PREFIX, JFIF_SEGMENT_ID
                         JFIF_DENSITY_X_SIZE + JFIF_DENSITY_Y_SIZE + JFIF_THUMBNAIL_X_SIZE + JFIF_THUMBNAIL_Y_SIZE + JFIF_THUMBNAIL_DATA_SIZE_MIN)
 #define JFIF_LEN_MIN (JFIF_SIZE_MIN - JFIF_SEGMENT_MARKER_SIZE)
 #define JFIF_FILE_POS (JPEG_SEGMENT_SOI_POS + JPEG_SEGMENT_SOI_SIZE)
+//! @}
 
-// расширение (JFXX, если используется, то должен идти сразу за JFIF)
+//! @defgroup jfxx Сегмент-расширение JFXX
+//! @details Если используется, то должен идти сразу за JFIF
+//! @{
 #define JFXX_SEGMENT_ID JPEG_SEGMENT_APP0_ID
 stock const JFXX_SEGMENT_MARKER{} = {JPEG_SEGMENT_MARKER_PREFIX, JFXX_SEGMENT_ID};
 #define JFXX_SEGMENT_MARKER_SIZE JPEG_SEGMENT_MARKER_SIZE
@@ -45,7 +54,6 @@ stock const JFXX_SEGMENT_MARKER{} = {JPEG_SEGMENT_MARKER_PREFIX, JFXX_SEGMENT_ID
 #define JFXX_THUMBNAIL_FORMAT_POS (JFXX_ASCII_POS + JFXX_ASCII_SIZE)
 #define JFXX_THUMBNAIL_FORMAT_SIZE 1
 #define JFXX_THUMBNAIL_DATA_POS (JFXX_THUMBNAIL_FORMAT_POS + JFXX_THUMBNAIL_FORMAT_SIZE)
-#define JFXX_THUMBNAIL_DATA_SIZE_MIN 0 // на самом деле больше, но для проверок пока хватит
+#define JFXX_THUMBNAIL_DATA_SIZE_MIN 0 //!< на самом деле больше, но для проверок пока хватит
 #define JFXX_SIZE_MIN (JFXX_SEGMENT_MARKER_SIZE + JFXX_LEN_SIZE + JFXX_ASCII_SIZE + JFXX_THUMBNAIL_FORMAT_SIZE + JFXX_THUMBNAIL_DATA_SIZE_MIN)
-
-#endif
+//! @}

@@ -1,10 +1,10 @@
-#ifdef EEPROM_H
+//! @file
+//! @brief Заголовок библиотеки работы с EEPROM
+
+#if defined EEPROM_H
 #endinput
 #endif
 #define EEPROM_H
-
-//! @file
-//! @brief Заголовок библиотеки работы с EEPROM
 
 #include "..\numeric\numeric.h"
 
@@ -12,15 +12,15 @@
 
 #define EEPROM_CONF_CMD_WAIT_MS 5000 //!< время ожидания конфигурационных команд при отсутствии доступа к ROM
 
-#ifndef EEPROM_PARAMS_COUNT
+#if !defined EEPROM_PARAMS_COUNT
 #define EEPROM_PARAMS_COUNT 0 //!< общее количество сохраняемых параметров, определить на верхнем уровне
 #endif
 
 #define EEPROM_PARAM_SIZE CELL_BYTES
 #define EEPROM_KEY_BUFFER_MAX_SIZE 16
-#define EEPROM_PARAMS_PER_KEY (EEPROM_KEY_BUFFER_MAX_SIZE / EEPROM_PARAM_SIZE)
+#define EEPROM_PARAMS_PER_KEY_MAX (EEPROM_KEY_BUFFER_MAX_SIZE / EEPROM_PARAM_SIZE)
 #define EEPROM_KEYS_COUNT_MAX 32
-#define EEPROM_PARAMS_COUNT_MAX (EEPROM_KEYS_COUNT_MAX * EEPROM_PARAMS_PER_KEY)
+#define EEPROM_PARAMS_COUNT_MAX (EEPROM_KEYS_COUNT_MAX * EEPROM_PARAMS_PER_KEY_MAX)
 #if ((EEPROM_PARAMS_COUNT < 1) || (EEPROM_PARAMS_COUNT > EEPROM_PARAMS_COUNT_MAX))
 #error "EEPROM_PARAMS_COUNT wrong"
 #endif
@@ -29,23 +29,28 @@
 #else
 #define EEPROM_PARAMS_ADD_COUNT EEPROM_PARAMS_COUNT
 #endif
-#define EEPROM_KEYS_COUNT COUNT_USED_CELLS(EEPROM_PARAMS_COUNT, EEPROM_PARAMS_PER_KEY)
+#define EEPROM_KEYS_COUNT COUNT_USED_CELLS(EEPROM_PARAMS_COUNT, EEPROM_PARAMS_PER_KEY_MAX)
 #define EEPROM_KEY_LAST (EEPROM_KEYS_COUNT - 1)
+#define EEPROM_PARAMS_IN_LAST_KEY (EEPROM_PARAMS_COUNT - EEPROM_KEY_LAST*EEPROM_PARAMS_PER_KEY_MAX)
 
 #define EEPROM_DATA [\
-    .keyBuf[EEPROM_PARAMS_PER_KEY],\
+    .keyBuf[EEPROM_PARAMS_PER_KEY_MAX],\
     .keysVarAddr[EEPROM_PARAMS_ADD_COUNT],\
     .keysOldValue[EEPROM_PARAMS_ADD_COUNT],\
 ]
 
 //! @brief Инициализировать из адресов глобальных переменных значениями по умолчанию
-//! @param[out] obj инициализируемые данные
+//! @param[out] obj инициализируемая структура данных настроек
 //! @param[in] addr адреса глобальных переменных
 //! @param[in] addrSize количество адресов глобальных переменных
 forward stock eepromInitParamValues(obj[EEPROM_DATA], const addr[], addrSize);
 
 //! @brief Восстановить сохраненные параметры
+//! @note Предварительно необходимо инициализировать структуру настроек eepromInitParamValues()
+//! @param[inout] obj структура данных настроек
 forward stock eepromRestoreParams(obj[EEPROM_DATA]);
 
 //! @brief Сохранить параметры по их изменению
+//! @note Предварительно необходимо инициализировать структуру настроек eepromInitParamValues()
+//! @param[inout] obj структура данных настроек
 forward stock eepromStoreParamsByChange(obj[EEPROM_DATA]);

@@ -1,7 +1,7 @@
 //! @file
 //! @brief Функции библиотеки маршрутного автоинформатора
 
-#ifdef RAI_LIB
+#if defined RAI_LIB
 #endinput
 #endif
 #define RAI_LIB
@@ -23,24 +23,24 @@
 
 //! @publicsection
 
-stock raiGetCurrentRoute(route[RAI_ROUTE_DATA])
+stock bool:raiGetCurrentRoute(route[RAI_ROUTE_DATA])
 {
-    new res = rai_restoreRouteName(route) && rai_getFilePaths(route);
+    new const bool:res = rai_restoreRouteName(route) && rai_getFilePaths(route);
     if (!res)
         route.name{0} = 0;
 
     return res;
 }
 
-stock raiSetCurrentRoute(const route[RAI_ROUTE_DATA])
+stock bool:raiSetCurrentRoute(const route[RAI_ROUTE_DATA])
 {
-    new len = strLen(route.name);
+    new const len = strLen(route.name);
     return (len > 0) && !FileDelete(RAI_CURRENT_ROUTE_FILE_PATH) && (FileWrite(RAI_CURRENT_ROUTE_FILE_PATH, route.name, len, 0) == len);
 }
 
-stock raiGetNewRoute(const currentRoute[RAI_ROUTE_DATA], nextRoute[RAI_ROUTE_DATA])
+stock bool:raiGetNewRoute(const currentRoute[RAI_ROUTE_DATA], nextRoute[RAI_ROUTE_DATA])
 {
-    strncpy(nextRoute.name, 0, RAI_FILE_PATH_LENGTH_MAX, currentRoute.name);
+    strncpy(nextRoute.name, RAI_FILE_PATH_LENGTH_MAX, currentRoute.name);
     new isReScan = !currentRoute.name{0};
     while (true)
     {
@@ -62,7 +62,7 @@ stock raiGetNewRoute(const currentRoute[RAI_ROUTE_DATA], nextRoute[RAI_ROUTE_DAT
     return false;
 }
 
-stock raiGetFinalStations(route[RAI_ROUTE_DATA])
+stock bool:raiGetFinalStations(route[RAI_ROUTE_DATA])
 {
     route.startStation{0} = 0;
     route.endStation{0} = 0;
@@ -76,13 +76,14 @@ stock raiGetFinalStations(route[RAI_ROUTE_DATA])
     return true;
 }
 
-stock raiIsAtStation(const route[RAI_ROUTE_DATA], currentStation{}, currentStationMaxSize, nextStation{}, nextStationMaxSize, &nextStationFilePos)
+stock bool:raiIsAtStation(const route[RAI_ROUTE_DATA], currentStation{}, currentStationMaxSize, nextStation{}, nextStationMaxSize, &nextStationFilePos)
 {
     new filePos = 0;
     new const fileSize = FileSize(route.busLineFilePath);
     while (filePos < fileSize)
     {
         new str{RAI_STRING_LENGTH_MAX};
+        str{0} = SYMBOL_NUL;
         new readSize = fileReadLine(route.busLineFilePath, str, RAI_STRING_LENGTH_MAX, filePos);
         if (!readSize)
             return false;
@@ -92,7 +93,7 @@ stock raiIsAtStation(const route[RAI_ROUTE_DATA], currentStation{}, currentStati
         // типа:
         // 51.540487;46.004783;111.00;45.00;60.00;20.00;Universitatska_.wav;Остановка ул. Университетская
         new strPos = 0;
-        new strLength = strLen(str);
+        new strLength = strLen(str, min(readSize, RAI_STRING_LENGTH_MAX));
         const zoneParamsQty = 6;
         new const precisions[zoneParamsQty] = [RAI_COORD_PRECISION, RAI_COORD_PRECISION, RAI_ANGLE_PRECISION, RAI_ANGLE_PRECISION, RAI_RADIUS_PRECISION,
                                                 RAI_RADIUS_PRECISION];
@@ -100,7 +101,7 @@ stock raiIsAtStation(const route[RAI_ROUTE_DATA], currentStation{}, currentStati
         new len;
         for (new i = 0; i < zoneParamsQty; i++)
         {
-            len = atofi(str, strPos, strLength, RAI_FRAC_SEPARATOR_SYMBOL, precisions[i], zoneParams[i]);
+            len = atofi(str, RAI_FRAC_SEPARATOR_SYMBOL, precisions[i], zoneParams[i], strLength, strPos);
             if (!len)
                 return false;
 
@@ -114,7 +115,7 @@ stock raiIsAtStation(const route[RAI_ROUTE_DATA], currentStation{}, currentStati
         }
         strPos = searchLinearStr(str, strLength, RAI_PARAMS_SEPARATOR_SYMBOL, strPos);
         if (strPos >= 0)
-            strncpy(currentStation, 0, currentStationMaxSize, str, strPos + RAI_PARAMS_SEPARATOR_SIZE);
+            strncpy(currentStation, currentStationMaxSize, str, .sourcePos = strPos + RAI_PARAMS_SEPARATOR_SIZE);
 
         nextStation{0} = 0;
         nextStationFilePos = -1;
@@ -136,23 +137,23 @@ stock raiIsAtStation(const route[RAI_ROUTE_DATA], currentStation{}, currentStati
                 return true;
         }
         nextStationFilePos = filePos + strPos;
-        strncpy(nextStation, 0, nextStationMaxSize, str, strPos);
+        strncpy(nextStation, nextStationMaxSize, str, .sourcePos = strPos);
         return true;
     }
     return false;
 }
 
-stock raiGetAdvertisment(const route[RAI_ROUTE_DATA], filePos, advertisment{}, advertismentMaxSize, &nextPos)
+stock bool:raiGetAdvertisement(const route[RAI_ROUTE_DATA], filePos, advertisement{}, advertisementMaxSize, &nextPos)
 {
-    new readSize = fileReadLine(route.advertismentFilePath, advertisment, advertismentMaxSize, filePos);
-    if (!readSize || !advertisment{0})
+    new const readSize = fileReadLine(route.advertisementFilePath, advertisement, advertisementMaxSize, filePos);
+    if (!readSize || !advertisement{0})
         return false;
 
     nextPos = filePos + readSize;
     return true;
 }
 
-stock raiGetNextStation(const route[RAI_ROUTE_DATA], filePos, station{}, stationMaxSize)
+stock bool:raiGetNextStation(const route[RAI_ROUTE_DATA], filePos, station{}, stationMaxSize)
 {
     return (filePos > 0) && (fileReadLine(route.busLineFilePath, station, stationMaxSize, filePos) > 0) && station{0};
 }
@@ -164,42 +165,41 @@ stock raiSetRouteNameInUserArray(const route[RAI_ROUTE_DATA])
 
 //! @privatesection
 
-stock rai_generateFilePath(const route[RAI_ROUTE_DATA], const fileName{}, filePath{})
+stock bool:rai_generateFilePath(const route[RAI_ROUTE_DATA], const fileName{}, filePath{})
 {
-    new pos = 0;
     filePath{0} = 0;
-    new routeNameLength = strLen(route.name);
-    new fileNameLength = strLen(fileName);
+    new const routeNameLength = strLen(route.name);
+    new const fileNameLength = strLen(fileName);
     if ((routeNameLength <= 0) || (fileNameLength <= 0) || ((routeNameLength + fileNameLength + 1) > RAI_FILE_PATH_LENGTH_MAX))
         return false;
 
-    pos += insertArrayStr(filePath, pos, RAI_FILE_PATH_LENGTH_MAX, route.name, routeNameLength);
-    pos += insertArrayStr(filePath, pos, RAI_FILE_PATH_LENGTH_MAX, PATH_SEPARATOR_PRIME, strLen(PATH_SEPARATOR_PRIME));
-    strncpy(filePath, pos, RAI_FILE_PATH_LENGTH_MAX, fileName);
+    new pos = strncpy(filePath, RAI_FILE_PATH_LENGTH_MAX, route.name);
+    pos += strncpy(filePath, RAI_FILE_PATH_LENGTH_MAX, PATH_SEPARATOR_PRIME, pos);
+    strncpy(filePath, RAI_FILE_PATH_LENGTH_MAX, fileName, pos);
     return true;
 }
 
-stock rai_restoreRouteName(route[RAI_ROUTE_DATA])
+stock bool:rai_restoreRouteName(route[RAI_ROUTE_DATA])
 {
-    new len = FileRead(RAI_CURRENT_ROUTE_FILE_PATH, route.name, RAI_FILE_PATH_LENGTH_MAX);
+    new const len = FileRead(RAI_CURRENT_ROUTE_FILE_PATH, route.name, RAI_FILE_PATH_LENGTH_MAX);
     route.name{len <= 0 ? 0 : ((len < RAI_FILE_PATH_LENGTH_MAX) ? len : RAI_FILE_PATH_LENGTH_MAX)} = 0;
     return len > 0;
 }
 
-stock rai_getFinalStationsFilePath(route[RAI_ROUTE_DATA])
+stock bool:rai_getFinalStationsFilePath(route[RAI_ROUTE_DATA])
 {
     return route.name{0}
             && rai_generateFilePath(route, RAI_FINAL_STATIONS_FILE_NAME, route.finalStationsFilePath)
             && (FileSize(route.finalStationsFilePath) >= 0);
 }
 
-stock rai_getFilePaths(route[RAI_ROUTE_DATA])
+stock bool:rai_getFilePaths(route[RAI_ROUTE_DATA])
 {
     if (!rai_getFinalStationsFilePath(route))
         return false;
     
     rai_generateFilePath(route, RAI_AUDIO_FILE_NAME, route.audioFilePath);
     rai_generateFilePath(route, RAI_BUSLINE_FILE_NAME, route.busLineFilePath);
-    rai_generateFilePath(route, RAI_ADVERTISMENT_FILE_NAME, route.advertismentFilePath);
+    rai_generateFilePath(route, RAI_ADVERTISEMENT_FILE_NAME, route.advertisementFilePath);
     return true;
 }

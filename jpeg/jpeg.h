@@ -1,19 +1,23 @@
-#ifndef JPEG_H
+//! @file
+//! @brief Заголовок библиотеки работы со сжатыми изображениями JPEG
+
+#if defined JPEG_H
+#endinput
+#endif
 #define JPEG_H
-// заголовок библиотеки работы со сжатыми изображениями JPEG
 
 #define JPEG_SEGMENT_MARKER_PREFIX 0xFF
 #define JPEG_SEGMENT_MARKER_PREFIX_SIZE 1
 #define JPEG_SEGMENT_MARKER_ID_SIZE 1
 #define JPEG_SEGMENT_MARKER_SIZE (JPEG_SEGMENT_MARKER_PREFIX_SIZE + JPEG_SEGMENT_MARKER_ID_SIZE)
 
-#define JPEG_SEGMENT_SOI_ID 0xD8 // Start of Image
+#define JPEG_SEGMENT_SOI_ID 0xD8 //!< Start of Image
 stock const JPEG_SEGMENT_SOI_MARKER{} = {JPEG_SEGMENT_MARKER_PREFIX, JPEG_SEGMENT_SOI_ID};
 #define JPEG_SEGMENT_SOI_POS 0
 #define JPEG_SEGMENT_SOI_SIZE JPEG_SEGMENT_MARKER_SIZE
 
 #define JPEG_SEGMENT_APP_LEN_SIZE 2
-#define JPEG_SEGMENT_APP_LEN_POS 2 // от начала сегмента, т.е. от ID маркера
+#define JPEG_SEGMENT_APP_LEN_POS 2 //!< позиция от начала сегмента, т.е. от ID маркера
 #define JPEG_SEGMENT_APP_LEN_MIN 2
 #define JPEG_SEGMENT_APP_LEN_MAX 65535
 
@@ -23,10 +27,8 @@ stock const JPEG_SEGMENT_APP0_MARKER{} = {JPEG_SEGMENT_MARKER_PREFIX, JPEG_SEGME
 #define JPEG_SEGMENT_APP1_ID 0xE1
 stock const JPEG_SEGMENT_APP1_MARKER{} = {JPEG_SEGMENT_MARKER_PREFIX, JPEG_SEGMENT_APP1_ID};
 
-#define JPEG_SEGMENT_SOS_ID 0xDA // Start of Scan
+#define JPEG_SEGMENT_SOS_ID 0xDA //!< Start of Scan
 stock const JPEG_SEGMENT_SOS_MARKER{} = {JPEG_SEGMENT_MARKER_PREFIX, JPEG_SEGMENT_SOS_ID};
 
-#define JPEG_SEGMENT_EOI_ID 0xD9 // End of Image
+#define JPEG_SEGMENT_EOI_ID 0xD9 //!< End of Image
 stock const JPEG_SEGMENT_EOI_MARKER{} = {JPEG_SEGMENT_MARKER_PREFIX, JPEG_SEGMENT_EOI_ID};
-
-#endif

@@ -1,7 +1,7 @@
 //! @file
 //! @brief Функции библиотеки массива пользователя
 
-#ifdef USERARRAY_LIB
+#if defined USERARRAY_LIB
 #endinput
 #endif
 #define USERARRAY_LIB
@@ -12,8 +12,12 @@
 #include "..\checkcode\checkcode.h"
 #include "..\checkcode\checkcode.cpp"
 #include "..\gdefines.h"
+#include "..\string\string.h"
+#include "..\string\string.cpp"
+#include "..\numeric\numeric.h"
+#include "..\numeric\numeric.cpp"
 
-stock ustructMakeDescriptor(isNumbers, amount, size)
+stock ustructMakeDescriptor(bool:isNumbers, amount, size)
 {
     if (isNumbers)
     {    
@@ -38,10 +42,10 @@ stock ustructMakeDescriptor(isNumbers, amount, size)
         if (amount < 0)
             amount = 0;
     }
-    return ((isNumbers == 0) << 7) + (isNumbers ? ((amount - 1) << 4) + size : amount);
+    return ((isNumbers ? 0 : 1) << 7) + (isNumbers ? ((amount - 1) << 4) + size : amount);
 }
 
-stock sendFileInUserArray(const fileName{}, &lastFileId)
+stock bool:sendFileInUserArray(const fileName{}, &lastFileId)
 {
     new const fsize = FileSize(fileName);
     if (fsize < 0)
@@ -86,7 +90,7 @@ stock ustructMakeDescriptorStr(strSize)
 
 stock ustructInsertEmpty(userArray{}, userArrayMaxSize, &pos, emptyCount)
 {
-    new groups = (emptyCount / USERARRAY_USTRUCT_DESCR_NUMBERS_MAX) + ((emptyCount % USERARRAY_USTRUCT_DESCR_NUMBERS_MAX) != 0);
+    new const groups = countUsedCells(emptyCount, USERARRAY_USTRUCT_DESCR_NUMBERS_MAX);
     if ((pos < 0) || ((pos + groups) > userArrayMaxSize))
         return 0;
     
@@ -119,7 +123,7 @@ stock userArrayAddPasCounting(userArray{}, userArrayMaxSize, const sensor[USERAR
 stock setTextInUserArray(const text{})
 {
     new userArray{USERARRAY_MAX_SIZE} = {USERARRAY_TEXT_TYPE};
-    new size = USERARRAY_TEXT_TYPE_LEN + insertArrayStr(userArray, USERARRAY_TEXT_PAYLOAD_POS, USERARRAY_MAX_SIZE, text, strLen(text));
+    new size = USERARRAY_TEXT_TYPE_LEN + strncpy(userArray, USERARRAY_MAX_SIZE, text, USERARRAY_TEXT_PAYLOAD_POS);
     TagWriteArray(TAG_USER_ARRAY, size, userArray);
 }
 

@@ -1,7 +1,7 @@
 //! @file
 //! @brief Заголовок библиотеки проверочных кодов (CRC, CS, etc.)
 
-#ifdef CHECKCODE_H
+#if defined CHECKCODE_H
 #endinput
 #endif
 #define CHECKCODE_H
@@ -21,7 +21,6 @@
 //! @param[in] isFinish признак завершения расчета: true - последний проход, false - не последний
 //! @return рассчитанное значение
 forward stock crc(const data{}, dataSize, polyWidth, poly, pos = 0, init = 0, bool:isRevert = false, xorOut = 0, bool:isFinish = true);
-
 //! @}
 
 
@@ -60,7 +59,6 @@ forward stock lrc8(const data{}, dataSize, pos = 0, init = 0x00);
 //! @param[in] init значение инициализации
 //! @param[in] isFinish признак завершения расчета: true - последний проход, false - не последний
 forward stock crc8dallasMaxim(const data{}, dataSize, pos = 0, init = 0xFF, bool:isFinish = true);
-
 //! @}
 
 
@@ -117,7 +115,6 @@ forward stock crc16ccitt(const data{}, dataSize, pos = 0, init = 0xFFFF, bool:is
 //! @param[in] init значение инициализации
 //! @param[in] isFinish признак завершения расчета: true - последний проход, false - не последний
 forward stock crc16buypass(const data{}, dataSize, pos = 0, init = 0x0000, bool:isFinish = true);
-
 //! @}
 
 
@@ -136,5 +133,4 @@ forward stock crc16buypass(const data{}, dataSize, pos = 0, init = 0x0000, bool:
 //! @param[in] init значение инициализации
 //! @param[in] isFinish признак завершения расчета: true - последний проход, false - не последний
 forward stock crc32(const data{}, dataSize, pos = 0, init = 0xFFFFFFFF, bool:isFinish = true);
-
 //! @}

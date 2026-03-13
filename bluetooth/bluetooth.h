@@ -1,10 +1,10 @@
-#ifdef BLUETOOTH_H
+//! @file
+//! @brief Заголовок библиотеки для работы с Bluetooth
+
+#if defined BLUETOOTH_H
 #endinput
 #endif
 #define BLUETOOTH_H
-
-//! @file
-//! @brief Заголовок библиотеки для работы с Bluetooth
 
 #define BLUETOOTH_MAC_SIZE 6
 
@@ -81,31 +81,31 @@ forward stock bluetoothGetAdStruct(const msg[BTMSG], pos, adStruct[BLUETOOTH_ADS
 //! @param[in] nameMaxSize максимальная длина для имени
 //! @param[out] name полученное имя
 //! @return true - успешно, false - ошибка
-forward stock bluetoothGetLocalName(const msg[BTMSG], nameMaxSize, name{});
+forward bool:stock bluetoothGetLocalName(const msg[BTMSG], nameMaxSize, name{});
 
 //! @brief Получить полное имя
 //! @param[in] msg принятое рекламное сообщение
 //! @param[in] nameMaxSize максимальная длина для имени
 //! @param[out] name полученное имя
 //! @return true - успешно, false - ошибка
-forward stock bluetoothGetComplName(const msg[BTMSG], nameMaxSize, name{});
+forward bool:stock bluetoothGetComplName(const msg[BTMSG], nameMaxSize, name{});
 
 //! @brief Получить короткое имя
 //! @param[in] msg принятое рекламное сообщение
 //! @param[in] nameMaxSize максимальная длина для имени
 //! @param[out] name полученное имя
 //! @return true - успешно, false - ошибка
-forward stock bluetoothGetShortlName(const msg[BTMSG], nameMaxSize, name{});
+forward bool:stock bluetoothGetShortName(const msg[BTMSG], nameMaxSize, name{});
 
 //! @brief Получить AD структуру заданного типа из рекламного сообщения
 //! @param[in] msg принятое рекламное сообщение
 //! @param[in] type искомый тип структуры
 //! @param[out] adStruct найденная AD структура
 //! @return true - найдена, false - не найдена
-forward stock bluetoothGetAdStructType(const msg[BTMSG], type, adStruct[BLUETOOTH_ADSTRUCT]);
+forward bool:stock bluetoothGetAdStructType(const msg[BTMSG], type, adStruct[BLUETOOTH_ADSTRUCT]);
 
 //! @brief Получить Company Id из AD Struct
 //! @param[in] adStruct AD Struct c Manufacturer Specific Data
 //! @param[out] result полученный идентификатор
 //! @return true - успешно, false - ошибка
-bluetoothGetCompanyId(const adStruct[BLUETOOTH_ADSTRUCT], &result);
+forward bool:stock bluetoothGetCompanyId(const adStruct[BLUETOOTH_ADSTRUCT], &result);

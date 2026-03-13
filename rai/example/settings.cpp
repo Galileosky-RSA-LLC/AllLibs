@@ -5,7 +5,7 @@
 
 #define INIT_STORAGE_WAIT_MS 10000
 
-#ifdef DEBUG
+#if defined DEBUG
 #define INIT_DIAG_AFTER_RESET_WAIT_MS 10000
 #define DEBUG_INIT_WAIT_MS (INIT_DIAG_AFTER_RESET_WAIT_MS + INIT_STORAGE_WAIT_MS)
 #endif
@@ -30,7 +30,7 @@ stock const DISPLAY_SETTINGS_FILE_PATH{} = "displayname/settings.bin";
 
 main()
 {
-#ifdef DEBUG
+#if defined DEBUG
     Delay(DEBUG_INIT_WAIT_MS);
 #endif
     new advTime[SETTING_SINGLE_DATA];

@@ -1,7 +1,7 @@
 //! @file
 //! @brief Заголовок библиотеки для работы с файлами
 
-#ifdef FILE_H
+#if defined FILE_H
 #endinput
 #endif
 #define FILE_H
@@ -31,7 +31,7 @@ stock const TIME_ZONE_FILE_PATH{} = "time_zone"; //!< файл с текущим
 //! @param[in] src исходное имя файла, должно оканчиваться \0
 //! @param[in] dest требуемое имя файла, должно оканчиваться \0
 //! @return false - ошибка, true - успешно
-forward stock fileRename(const src{}, const dest{});
+forward bool:stock fileRename(const src{}, const dest{});
 
 //! @brief Записать в файл буфер с произвольной позиции
 //! @param[in] fileName имя файла, должно оканчиваться \0
@@ -49,4 +49,4 @@ forward stock fileWriteWrap(const fileName{}, const buf{}, bufSize, fileOffset, 
 //! @param[out] buf буфер для прочитанной строки
 //! @param[in] bufMaxSize предельный размер буфера для прочитанной строки, с учетом спец. символов завершения строки
 //! @return прочитанный размер, включая спец. символы завершения и все промежуточные \0
-forward stock fileReadLine(const fileFullPath{}, buf{}, bufMaxSize, fileOffset)
+forward stock fileReadLine(const fileFullPath{}, buf{}, bufMaxSize, fileOffset);

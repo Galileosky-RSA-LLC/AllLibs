@@ -33,7 +33,7 @@ main()
     storeRouteCurrentData(routeCurData);
 }
 
-getRoute(route[RAI_ROUTE_DATA], routeCurData[ROUTE_CURRENT_DATA])
+bool:getRoute(route[RAI_ROUTE_DATA], routeCurData[ROUTE_CURRENT_DATA])
 {
     if (!raiGetCurrentRoute(route))
         Diagnostics("current route?");
@@ -52,7 +52,7 @@ getRoute(route[RAI_ROUTE_DATA], routeCurData[ROUTE_CURRENT_DATA])
 
     Diagnostics("route=%s", route.name);
     restoreRouteCurrentData(routeCurData);
-    new crc = calcRouteCrc(route.name);
+    new const crc = calcRouteCrc(route.name);
     if (routeCurData.crc != crc)
     {
         Diagnostics("init new route start");
@@ -69,23 +69,23 @@ getRoute(route[RAI_ROUTE_DATA], routeCurData[ROUTE_CURRENT_DATA])
     return true;
 }
 
-checkAndInitDisplays(route[RAI_ROUTE_DATA])
+bool:checkAndInitDisplays(route[RAI_ROUTE_DATA])
 {
-    new isFrontDisplayInited = isDisplayInited(FRONT_DISPLAY_INDEX);
-    new isSideDisplayInited = isDisplayInited(SIDE_DISPLAY_INDEX);
-    new hasFinalStations = false;
+    new const bool:isFrontDisplayInited = isDisplayInited(FRONT_DISPLAY_INDEX);
+    new const bool:isSideDisplayInited = isDisplayInited(SIDE_DISPLAY_INDEX);
+    new bool:hasFinalStations = false;
     if (!isFrontDisplayInited || !isSideDisplayInited)
     {
-        if (hasFinalStations = raiGetFinalStations(route))
+        if ((hasFinalStations = raiGetFinalStations(route)))
             Diagnostics("final stations:\"%s\"-\"%s\"", route.startStation, route.endStation);
         else
             Diagnostics("final stations?");
     }
-    new res = true; // для шаблона - положительный результат, в реальных применениях - сначала отрицательный
+    new bool:res = true; // для шаблона - положительный результат, в реальных применениях - сначала отрицательный
     if (!isFrontDisplayInited)
     {
         Diagnostics("init front display start");
-        // res = ... route.name, route.startStation, route.endStation
+        // res = ... route.name, hasFinalStations, route.startStation, route.endStation
         if (res)
             setDisplayInit(FRONT_DISPLAY_INDEX, true);
         
@@ -94,7 +94,7 @@ checkAndInitDisplays(route[RAI_ROUTE_DATA])
     if (!isSideDisplayInited)
     {
         Diagnostics("init side display start");
-        // res = ... route.name, route.startStation, route.endStation
+        // res = ... route.name, hasFinalStations, route.startStation, route.endStation
         if (res)
             setDisplayInit(FRONT_DISPLAY_INDEX, true);
         
@@ -112,7 +112,7 @@ checkAndInitDisplays(route[RAI_ROUTE_DATA])
     if (!isDisplayInited(SALON_DISPLAY_INDEX))
     {
         Diagnostics("init salon display start");
-        // res = ... route.name, route.startStation, route.endStation
+        // res = ... route.name, hasFinalStations, route.startStation, route.endStation
         Diagnostics("init salon display %s", res ? "done" : "error");
         if (!res)
             return false;
@@ -124,11 +124,11 @@ checkAndInitDisplays(route[RAI_ROUTE_DATA])
 
 outputToSalonDisplay(const route[RAI_ROUTE_DATA], routeCurData[ROUTE_CURRENT_DATA])
 {
-    new res = true; // для шаблона - положительный результат, в реальных применениях - сначала отрицательный
+    new bool:res = true; // для шаблона - положительный результат, в реальных применениях - сначала отрицательный
     
     // если нужно - отобразим время на салонном табло
-    new timeZone = getTimeZone();
-    new unixTime = GetVar(UNIX_TIME);
+    new const timeZone = getTimeZone();
+    new const unixTime = GetVar(UNIX_TIME);
     // res = ... timeZone, unixTime
     if (!res)
         return;
@@ -150,12 +150,12 @@ outputToSalonDisplay(const route[RAI_ROUTE_DATA], routeCurData[ROUTE_CURRENT_DAT
         resetShowTimer(routeCurData);
 }
 
-getCurrentSalonInfo(const route[RAI_ROUTE_DATA], routeCurData[ROUTE_CURRENT_DATA], text{}, textMaxSize)
+bool:getCurrentSalonInfo(const route[RAI_ROUTE_DATA], routeCurData[ROUTE_CURRENT_DATA], text{}, textMaxSize)
 {
     new const currentStationPrefixLength = strLen(CURRENT_STATION_PREFIX);
     new const nextStationPrefixLength = strLen(NEXT_STATION_PREFIX);
     new nextStation{RAI_STRING_LENGTH_MAX_W0};
-    new hasMessage = false;
+    new bool:hasMessage = false;
     if (raiIsAtStation(route, text, RAI_STRING_LENGTH_MAX, nextStation, RAI_STRING_LENGTH_MAX, routeCurData.nextStationFilePos))
     {
         Diagnostics("at station=\"%s\",next=\"%s\"", text, nextStation);
@@ -184,17 +184,17 @@ getCurrentSalonInfo(const route[RAI_ROUTE_DATA], routeCurData[ROUTE_CURRENT_DATA
             for (new i = 0; (i < 2) && !hasMessage; i++)
             {
                 changeShow(routeCurData);
-                if (routeCurData.show == SHOW_ADVERTISMENT)
+                if (routeCurData.show == SHOW_ADVERTISEMENT)
                 {    
-                    routeCurData.currentAdvertismentFilePos = routeCurData.nextAdvertismentFilePos;
+                    routeCurData.currentAdvertisementFilePos = routeCurData.nextAdvertisementFilePos;
                     for (new j = 0; j < 2; j++)
                     {
-                        hasMessage = raiGetAdvertisment(route, routeCurData.currentAdvertismentFilePos, text, RAI_STRING_LENGTH_MAX,
-                                                        routeCurData.nextAdvertismentFilePos);
+                        hasMessage = raiGetAdvertisement(route, routeCurData.currentAdvertisementFilePos, text, RAI_STRING_LENGTH_MAX,
+                                                        routeCurData.nextAdvertisementFilePos);
                         if (hasMessage)
                             break;
 
-                        routeCurData.currentAdvertismentFilePos = 0;
+                        routeCurData.currentAdvertisementFilePos = 0;
                     }
                     Diagnostics(hasMessage ? "adv=\"%s\"" : "adv?", text);
                 }
@@ -211,13 +211,13 @@ getCurrentSalonInfo(const route[RAI_ROUTE_DATA], routeCurData[ROUTE_CURRENT_DATA
 
     if (routeCurData.show == SHOW_CURRENT_STATION)
     {
-        strncpy(text, currentStationPrefixLength, textMaxSize, text, .fromBack = true);
-        insertArrayStr(text, 0, textMaxSize, CURRENT_STATION_PREFIX, currentStationPrefixLength);
+        strncpy(text, textMaxSize, text, currentStationPrefixLength, .fromBack = true);
+        strncpy(text, currentStationPrefixLength, CURRENT_STATION_PREFIX);
     }
     else if (routeCurData.show == SHOW_NEXT_STATION)
     {
-        strncpy(text, nextStationPrefixLength, textMaxSize, routeCurData.isAtStation ? nextStation : text, .fromBack = true);
-        insertArrayStr(text, 0, textMaxSize, NEXT_STATION_PREFIX, nextStationPrefixLength);
+        strncpy(text, textMaxSize, routeCurData.isAtStation ? nextStation : text, nextStationPrefixLength, .fromBack = true);
+        strncpy(text, nextStationPrefixLength, NEXT_STATION_PREFIX);
     }
     Diagnostics("show text=\"%s\"", text);
     return true;

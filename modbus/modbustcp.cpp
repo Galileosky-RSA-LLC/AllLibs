@@ -1,4 +1,4 @@
-#ifndef MODBUSTCP_LIB
+#if !defined MODBUSTCP_LIB
 #define MODBUSTCP_LIB
 //{ ============================================================================
 //{ Библиотека работы с ModBus по TCP/IP =======================================
@@ -191,17 +191,18 @@ modbusTcp_srvConMngGetRequest(trans[MODBUSTCP_TRANSCEIVER_DATA], tcpSrv[MODBUSTC
             if (isHandleChanged)
             {    
                 tcpSrvCmInitConnection(connections[tcpSrv.lastCon], handle);
-                if (tcpSrvCmGetUsedConnections(connections, tcpSrv.maxCons) >= tcpSrv.maxCons)
+                if ((tcpSrv.maxCons > 1) && (tcpSrvCmGetUsedConnections(connections, tcpSrv.maxCons) >= tcpSrv.maxCons))
                 {    
-                    new oldestCon = tcpSrvCmGetOldestConnection(connections, tcpSrv.maxCons);
-                    if ((oldestCon == tcpSrv.gatewayCon) && tcpSrv.conUsedByGateway)
-                    {
-                        new activityTime = connections[oldestCon].activityUptime;
-                        connections[oldestCon].activityUptime = -1;
-                        oldestCon = tcpSrvCmGetOldestConnection(connections, tcpSrv.maxCons);
-                        connections[oldestCon].activityUptime = activityTime;
+                    new bool:isUsedByGateway = tcpSrv.conUsedByGateway;
+                    if (isUsedByGateway)
+                    {    
+                        assert (tcpSrv.gatewayCon >= 0) && (tcpSrv.gatewayCon < TCPSRVCMD_CONNECTIONS_MAX);
+                        connections[conId].activityUptime = GetVar(UPTIME);
                     }
-                    ServerSocketClose(connections[oldestCon].handle);
+                    new oldestCon = tcpSrvCmGetOldestConnection(connections, tcpSrv.maxCons);
+                    assert (oldestCon >= 0) && (oldestCon < TCPSRVCMD_CONNECTIONS_MAX);
+                    if (!isUsedByGateway || (isUsedByGateway && (oldestCon != tcpSrv.gatewayCon)))
+                        ServerSocketClose(connections[oldestCon].handle);
                 }
             }
             res = modbusTcp_srvGetData(trans, handle, diag);
@@ -238,7 +239,7 @@ modbusTcp_srvGetData(trans[MODBUSTCP_TRANSCEIVER_DATA], handle, diag)
     if (diag)
     {
         Diagnostics("rcv %d bts", trans.bufSize);
-        #ifdef DEBUG
+        #if defined DEBUG
         DiagnosticsHex(trans.buf, trans.bufSize);
         #endif
     }
@@ -293,7 +294,7 @@ modbusTcp_isUnitIdOwn(const trans[MODBUSTCP_TRANSCEIVER_DATA])
 //! \return MODBUSSERIAL_OK - успешно, MODBUSTCP_ERROR_TRANSFER - ошибка
 modbusTcp_srvSendData(const trans[MODBUSTCP_TRANSCEIVER_DATA], const tcpSrv[MODBUSTCP_SERVER_DATA], diag)
 {
-    #ifdef DEBUG
+    #if defined DEBUG
     if (diag)
         Diagnostics("mbt_sSd");
     #endif
@@ -302,7 +303,7 @@ modbusTcp_srvSendData(const trans[MODBUSTCP_TRANSCEIVER_DATA], const tcpSrv[MODB
     if (diag)
     {
         Diagnostics("sent %d bts", sent);
-        #ifdef DEBUG
+        #if defined DEBUG
         DiagnosticsHex(trans.buf, sent);
         #endif
     }

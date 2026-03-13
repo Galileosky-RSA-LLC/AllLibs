@@ -1,7 +1,7 @@
 //! @file
 //! @brief Заголовок библиотеки для работы с массивами
 
-#ifdef ARRAY_H
+#if defined ARRAY_H
 #endinput
 #endif
 #define ARRAY_H
@@ -9,7 +9,7 @@
 //! @defgroup general Общие функции
 //! @{
 
-//! @brief Подсчет занятых 32-битных ячеек массива по его актуальной длине в байтах
+//! @brief Подсчет занятых ячеек массива по его актуальной длине в байтах
 forward stock countArrayUsedCells(currentArSizeInBytes);
 
 //! @brief Проверить подмассивы на равенство соответствующих элементов
@@ -19,7 +19,7 @@ forward stock countArrayUsedCells(currentArSizeInBytes);
 //! @param[in] ar2 второй сравниваемый массив
 //! @param[in] ar2start индекс начала подмассива во втором массиве
 //! @param[in] ar2size длина второго сравниваемого массива
-forward stock isArraysEqual(const ar1[], ar1start, ar1size, const ar2[], ar2start, ar2size);
+forward bool:stock isArraysEqual(const ar1[], ar1start, ar1size, const ar2[], ar2start, ar2size);
 
 //! @brief Проверить подмассивы однобайтных элементов на равенство соответствующих элементов
 //! @param[in] ar1 первый сравниваемый массив
@@ -28,7 +28,7 @@ forward stock isArraysEqual(const ar1[], ar1start, ar1size, const ar2[], ar2star
 //! @param[in] ar2 второй сравниваемый массив
 //! @param[in] ar2start индекс начала подмассива во втором массиве
 //! @param[in] ar2size длина второго сравниваемого массива
-forward stock isArraysEqualStr(const ar1{}, ar1start, ar1size, const ar2{}, ar2start, ar2size);
+forward bool:stock isArraysEqualStr(const ar1{}, ar1start, ar1size, const ar2{}, ar2start, ar2size);
 
 //! @brief Вставить подмассив
 //! @param[out] dest целевой массив, в который вставляется
@@ -37,9 +37,9 @@ forward stock isArraysEqualStr(const ar1{}, ar1start, ar1size, const ar2{}, ar2s
 //! @param[in] source вставляемый массив
 //! @param[in] sourceSize размер вставляемого массива
 //! @param[in] sourcePos смещение в вставляемом, с которого начинать вставку
-//! @param[in] fromBack признак необходимости вставки с конца вставляемого (при совпадении вставляемого с целевым)
+//! @param[in] fromBack признак необходимости вставки с конца вставляемого (например, при совпадении вставляемого с целевым)
 //! @return количество вставленных элементов
-forward stock insertArray(dest[], destPos, destSize, const source[], sourceSize, sourcePos = 0, fromBack = false);
+forward stock insertArray(dest[], destPos, destSize, const source[], sourceSize, sourcePos = 0, bool:fromBack = false);
 
 //! @brief Вставить подмассив однобайтных элементов
 //! @param[out] dest целевой массив, в который вставляется
@@ -48,9 +48,9 @@ forward stock insertArray(dest[], destPos, destSize, const source[], sourceSize,
 //! @param[in] source вставляемый массив
 //! @param[in] sourceSize размер вставляемого массива
 //! @param[in] sourcePos смещение в вставляемом, с которого начинать вставку
-//! @param[in] fromBack признак необходимости вставки с конца вставляемого (при совпадении вставляемого с целевым)
+//! @param[in] fromBack признак необходимости вставки с конца вставляемого (например, при совпадении вставляемого с целевым)
 //! @return количество вставленных элементов
-forward stock insertArrayStr(dest{}, destPos, destSize, const source{}, sourceSize, sourcePos = 0, fromBack = false);
+forward stock insertArrayStr(dest{}, destPos, destSize, const source{}, sourceSize, sourcePos = 0, bool:fromBack = false);
 
 //! @brief Заменить определенные значения элементов подмассива на заданное
 //! @param[inout] ar массив
@@ -104,6 +104,12 @@ forward stock removeConsecutiveDuplicatesStr(ar{}, &arSize, value, start = 0);
 //! @defgroup similarElementsOperations Однотипные операции над элементами
 //! @{
 
+//! @brief Суммирование элементов подмассива
+//! @param[in] ar массив
+//! @param[in] arSize размер массива
+//! @param[in] start стартовый индекс
+forward stock arrayPlus(const ar[], arSize, start = 0);
+
 //! @brief Суммирование элементов подмассива 1-байтных элементов
 //! @param[in] ar массив
 //! @param[in] arSize размер массива
@@ -125,8 +131,15 @@ forward stock arrayInvertBitsStr(ar{}, arSize, start = 0);
 //! @brief Очистить подмассив
 //! @details заменить элементы на \0
 //! @param[in] ar массив
-//! @param[in] start позиция начала подмассива
 //! @param[in] arSize размер массива
+//! @param[in] start позиция начала подмассива
+forward stock clearArray(ar[], arSize, start = 0);
+
+//! @brief Очистить подмассив 1-байтных элементов
+//! @details заменить элементы на \0
+//! @param[in] ar массив
+//! @param[in] arSize размер массива
+//! @param[in] start позиция начала подмассива
 forward stock clearArrayStr(ar{}, arSize, start = 0);
 
 //! @brief Инвертировать подмассив
@@ -147,7 +160,7 @@ forward stock invertArrayStr(ar{}, arSize, start = 0);
 //! @param[in] toRight признак необходимости сдвига вправо: true - вправо, false - влево
 //! @param[in] arStart индекс начала подмассива
 //! @param[in] count величина сдвига
-forward stock arrayRingShift(ar[], arSize, toRight, arStart = 0, count = 1);
+forward stock arrayRingShift(ar[], arSize, bool:toRight, arStart = 0, count = 1);
 
 //! @brief Кольцевой сдвиг однобайтных элементов подмассива
 //! @param[in] ar изменяемый массив
@@ -155,7 +168,7 @@ forward stock arrayRingShift(ar[], arSize, toRight, arStart = 0, count = 1);
 //! @param[in] toRight признак необходимости сдвига вправо: true - вправо, false - влево
 //! @param[in] arStart индекс начала подмассива
 //! @param[in] count величина сдвига
-forward stock arrayRingShiftStr(ar{}, arSize, toRight, arStart = 0, count = 1);
+forward stock arrayRingShiftStr(ar{}, arSize, bool:toRight, arStart = 0, count = 1);
 //! @}
 
 //! @defgroup ar2num Преобразование массив <-> число
@@ -170,7 +183,7 @@ forward stock arrayRingShiftStr(ar{}, arSize, toRight, arStart = 0, count = 1);
 //! @param[in] sign наличие знака для 8-, 16- и 24-битного числа: true - знаковое, false - беззнаковое (32-битное число всегда знаковое)
 //! @param[out] num полученное число
 //! @return false - неуспешно (некорректные входные данные), true - успешно
-forward stock array2num(const ar{}, start, arSize, bytes, littleEnd, sign, &num);
+forward bool:stock array2num(const ar{}, start, arSize, bytes, bool:littleEnd, bool:sign, &num);
 
 //! @brief Получить знаковое 8-битное число из массива
 //! @param[in] ar массив
@@ -178,7 +191,7 @@ forward stock array2num(const ar{}, start, arSize, bytes, littleEnd, sign, &num)
 //! @param[in] arSize длина массива
 //! @param[out] num полученное число
 //! @return false - неуспешно (некорректные входные данные), true - успешно
-forward stock array2num8sign(const ar{}, start, arSize, &num);
+forward bool:stock array2num8sign(const ar{}, start, arSize, &num);
 
 //! @brief Получить беззнаковое 8-битное число из массива
 //! @param[in] ar массив
@@ -186,7 +199,7 @@ forward stock array2num8sign(const ar{}, start, arSize, &num);
 //! @param[in] arSize длина массива
 //! @param[out] num полученное число
 //! @return false - неуспешно (некорректные входные данные), true - успешно
-forward stock array2num8unSign(const ar{}, start, arSize, &num);
+forward bool:stock array2num8unSign(const ar{}, start, arSize, &num);
 
 //! @brief Получить знаковое 16-битное littleEndian число из массива
 //! @param[in] ar массив
@@ -194,7 +207,7 @@ forward stock array2num8unSign(const ar{}, start, arSize, &num);
 //! @param[in] arSize длина массива
 //! @param[out] num полученное число
 //! @return false - неуспешно (некорректные входные данные), true - успешно
-forward stock array2num16leSign(const ar{}, start, arSize, &num);
+forward bool:stock array2num16leSign(const ar{}, start, arSize, &num);
 
 //! @brief Получить беззнаковое 16-битное littleEndian число из массива
 //! @param[in] ar массив
@@ -202,7 +215,7 @@ forward stock array2num16leSign(const ar{}, start, arSize, &num);
 //! @param[in] arSize длина массива
 //! @param[out] num полученное число
 //! @return false - неуспешно (некорректные входные данные), true - успешно
-forward stock array2num16leUnSign(const ar{}, start, arSize, &num);
+forward bool:stock array2num16leUnSign(const ar{}, start, arSize, &num);
 
 //! @brief Получить беззнаковое 16-битное BigEndian число из массива
 //! @param[in] ar массив
@@ -210,7 +223,7 @@ forward stock array2num16leUnSign(const ar{}, start, arSize, &num);
 //! @param[in] arSize длина массива
 //! @param[out] num полученное число
 //! @return false - неуспешно (некорректные входные данные), true - успешно
-forward stock array2num16beUnSign(const ar{}, start, arSize, &num);
+forward bool:stock array2num16beUnSign(const ar{}, start, arSize, &num);
 
 //! @brief Получить знаковое 16-битное BigEndian число из массива
 //! @param[in] ar массив
@@ -218,7 +231,7 @@ forward stock array2num16beUnSign(const ar{}, start, arSize, &num);
 //! @param[in] arSize длина массива
 //! @param[out] num полученное число
 //! @return false - неуспешно (некорректные входные данные), true - успешно
-forward stock array2num16beSign(const ar{}, start, arSize, &num);
+forward bool:stock array2num16beSign(const ar{}, start, arSize, &num);
 
 //! @brief Получить знаковое 24-битное littleEndian число из массива
 //! @param[in] ar массив
@@ -226,7 +239,7 @@ forward stock array2num16beSign(const ar{}, start, arSize, &num);
 //! @param[in] arSize длина массива
 //! @param[out] num полученное число
 //! @return false - неуспешно (некорректные входные данные), true - успешно
-forward stock array2num24leSign(const ar{}, start, arSize, &num);
+forward bool:stock array2num24leSign(const ar{}, start, arSize, &num);
 
 //! @brief Получить беззнаковое 24-битное littleEndian число из массива
 //! @param[in] ar массив
@@ -234,7 +247,7 @@ forward stock array2num24leSign(const ar{}, start, arSize, &num);
 //! @param[in] arSize длина массива
 //! @param[out] num полученное число
 //! @return false - неуспешно (некорректные входные данные), true - успешно
-forward stock array2num24leUnSign(const ar{}, start, arSize, &num);
+forward bool:stock array2num24leUnSign(const ar{}, start, arSize, &num);
 
 //! @brief Получить знаковое 24-битное BigEndian число из массива
 //! @param[in] ar массив
@@ -242,7 +255,7 @@ forward stock array2num24leUnSign(const ar{}, start, arSize, &num);
 //! @param[in] arSize длина массива
 //! @param[out] num полученное число
 //! @return false - неуспешно (некорректные входные данные), true - успешно
-forward stock array2num24beSign(const ar{}, start, arSize, &num);
+forward bool:stock array2num24beSign(const ar{}, start, arSize, &num);
 
 //! @brief Получить беззнаковое 24-битное BigEndian число из массива
 //! @param[in] ar массив
@@ -250,7 +263,7 @@ forward stock array2num24beSign(const ar{}, start, arSize, &num);
 //! @param[in] arSize длина массива
 //! @param[out] num полученное число
 //! @return false - неуспешно (некорректные входные данные), true - успешно
-forward stock array2num24beUnSign(const ar{}, start, arSize, &num);
+forward bool:stock array2num24beUnSign(const ar{}, start, arSize, &num);
 
 //! @brief Получить знаковое 32-битное BigEndian число из массива
 //! @param[in] ar массив
@@ -258,7 +271,7 @@ forward stock array2num24beUnSign(const ar{}, start, arSize, &num);
 //! @param[in] arSize длина массива
 //! @param[out] num полученное число
 //! @return false - неуспешно (некорректные входные данные), true - успешно
-forward stock array2num32beSign(const ar{}, start, arSize, &num);
+forward bool:stock array2num32beSign(const ar{}, start, arSize, &num);
 
 //! @brief Получить знаковое 32-битное littleEndian число из массива
 //! @param[in] ar массив
@@ -266,7 +279,7 @@ forward stock array2num32beSign(const ar{}, start, arSize, &num);
 //! @param[in] arSize длина массива
 //! @param[out] num полученное число
 //! @return false - неуспешно (некорректные входные данные), true - успешно
-forward stock array2num32leSign(const ar{}, start, arSize, &num);
+forward bool:stock array2num32leSign(const ar{}, start, arSize, &num);
 
 //! @brief Поместить число в массив
 //! @param[in] num число для конвертации
@@ -276,7 +289,7 @@ forward stock array2num32leSign(const ar{}, start, arSize, &num);
 //! @param[in] start стартовый индекс массива
 //! @param[in] arSize длина массива
 //! @return false - неуспешно (некорректные входные данные), true - успешно
-forward stock num2array(num, bytes, littleEnd, ar{}, start, arSize);
+forward bool:stock num2array(num, bytes, bool:littleEnd, ar{}, start, arSize);
 
 //! @brief Поместить 16-битное число в массив littleEndian
 //! @param[in] num число для конвертации
@@ -284,7 +297,7 @@ forward stock num2array(num, bytes, littleEnd, ar{}, start, arSize);
 //! @param[in] start стартовый индекс массива
 //! @param[in] arSize длина массива
 //! @return false - неуспешно (некорректные входные данные), true - успешно
-forward stock num16bit2arrayLe(num, ar{}, start, arSize);
+forward bool:stock num16bit2arrayLe(num, ar{}, start, arSize);
 
 //! @brief Поместить 16-битное число в массив BigEndian
 //! @param[in] num число для конвертации
@@ -292,7 +305,7 @@ forward stock num16bit2arrayLe(num, ar{}, start, arSize);
 //! @param[in] start стартовый индекс массива
 //! @param[in] arSize длина массива
 //! @return false - неуспешно (некорректные входные данные), true - успешно
-forward stock num16bit2arrayBe(num, ar{}, start, arSize);
+forward bool:stock num16bit2arrayBe(num, ar{}, start, arSize);
 
 //! @brief Поместить 24-битное число в массив littleEndian
 //! @param[in] num число для конвертации
@@ -300,7 +313,7 @@ forward stock num16bit2arrayBe(num, ar{}, start, arSize);
 //! @param[in] start стартовый индекс массива
 //! @param[in] arSize длина массива
 //! @return false - неуспешно (некорректные входные данные), true - успешно
-forward stock num24bit2arrayLe(num, ar{}, start, arSize);
+forward bool:stock num24bit2arrayLe(num, ar{}, start, arSize);
 
 //! @brief Поместить 24-битное число в массив BigEndian
 //! @param[in] num число для конвертации
@@ -308,7 +321,7 @@ forward stock num24bit2arrayLe(num, ar{}, start, arSize);
 //! @param[in] start стартовый индекс массива
 //! @param[in] arSize длина массива
 //! @return false - неуспешно (некорректные входные данные), true - успешно
-forward stock num24bit2arrayBe(num, ar{}, start, arSize);
+forward bool:stock num24bit2arrayBe(num, ar{}, start, arSize);
 
 //! @brief Поместить 32-битное число в массив littleEndian
 //! @param[in] num число для конвертации
@@ -316,7 +329,7 @@ forward stock num24bit2arrayBe(num, ar{}, start, arSize);
 //! @param[in] start стартовый индекс массива
 //! @param[in] arSize длина массива
 //! @return false - неуспешно (некорректные входные данные), true - успешно
-forward stock num32bit2arrayLe(num, ar{}, start, arSize);
+forward bool:stock num32bit2arrayLe(num, ar{}, start, arSize);
 
 //! @brief Поместить 32-битное число в массив BigEndian
 //! @param[in] num число для конвертации
@@ -324,10 +337,10 @@ forward stock num32bit2arrayLe(num, ar{}, start, arSize);
 //! @param[in] start стартовый индекс массива
 //! @param[in] arSize длина массива
 //! @return false - неуспешно (некорректные входные данные), true - успешно
-forward stock num32bit2arrayBe(num, ar{}, start, arSize);
+forward bool:stock num32bit2arrayBe(num, ar{}, start, arSize);
 //! @}
 
-//! @defgroup ar2num Поиск элемента
+//! @defgroup searchElement Поиск элемента
 //! @{
 
 //! @brief Линейный поиск элемента в массиве
@@ -337,7 +350,7 @@ forward stock num32bit2arrayBe(num, ar{}, start, arSize);
 //! @param[in] start индекс начала подмассива
 //! @param[in] fromEnd признак начала поиска с конца: true - с конца подмассива, false - с начала
 //! @return >=0: индекс первого найденного элемента, <0 - не найден
-forward stock searchLinear(const ar[], arSize, element, start = 0, fromEnd = false);
+forward stock searchLinear(const ar[], arSize, element, start = 0, bool:fromEnd = false);
 
 //! @brief Линейный поиск в массиве однобайтных элементов
 //! @param[in] ar массив
@@ -346,7 +359,7 @@ forward stock searchLinear(const ar[], arSize, element, start = 0, fromEnd = fal
 //! @param[in] start индекс начала подмассива
 //! @param[in] fromEnd признак начала поиска с конца: true - с конца подмассива, false - с начала
 //! @return >=0: индекс первого найденного элемента, <0 - не найден
-forward stock searchLinearStr(const ar{}, arSize, element, start = 0, fromEnd = false);
+forward stock searchLinearStr(const ar{}, arSize, element, start = 0, bool:fromEnd = false);
 
 //! @brief Двоичный поиск элемента в массиве
 //! @param[in] ar массив
@@ -451,7 +464,7 @@ forward stock shakerSortStr(ar{}, arSize, start = 0);
 //! @param[in] bit позиция бита относительно начала подмассива
 //! @param[out] value значение бита при успешном возврате
 //! @return false - неуспешно (ошибка входных данных), true - успешно
-forward stock getBitFromArray(const ar{}, start, arSize, bit, &value);
+forward bool:stock getBitFromArray(const ar{}, start, arSize, bit, &bool:value);
 
 //! @brief Установить значение бита в подмассиве
 //! @param[inout] ar массив
@@ -460,7 +473,7 @@ forward stock getBitFromArray(const ar{}, start, arSize, bit, &value);
 //! @param[in] bit позиция бита относительно начала подмассива
 //! @param[in] value устанавливаемое значение бита
 //! @return false - неуспешно (ошибка входных данных), true - успешно
-forward stock setBitInArray(ar{}, start, arSize, bit, value);
+forward bool:stock setBitInArray(ar{}, start, arSize, bit, bool:value);
 //! @}
 
 //! @defgroup globVarsStore Хранение в глобальных переменных
@@ -476,8 +489,8 @@ forward stock setBitInArray(ar{}, start, arSize, bit, value);
 //! \param[in] dataInSizeVarAddr адрес глобальной переменной с текущим размером исходных данных
 //! \param[in] dataOutPos позиция вставки в массив выходных данных
 //! \return количество вставленных байт
-forward stock getArrayFromGlobalVars(const dataInVarAddresses[], dataInVarAddressesSize, dataOut{}, dataOutMaxSize, useDataInSize = false, dataInSizeVarAddr = 0,
-                            dataOutPos = 0);
+forward stock getArrayFromGlobalVars(const dataInVarAddresses[], dataInVarAddressesSize, dataOut{}, dataOutMaxSize, bool:useDataInSize = false,
+                                    dataInSizeVarAddr = 0, dataOutPos = 0);
 
 //! Записать массив в глобальные переменные
 //! \param[in] dataOutVarAddresses адреса глобальных переменных для хранения массива
@@ -489,6 +502,6 @@ forward stock getArrayFromGlobalVars(const dataInVarAddresses[], dataInVarAddres
 //! \param[in] dataOutActualSizeVarAddr адрес глобальной переменной с актуальной длиной массива данных
 //! \param[in] dataInPos позиция начала записываемых данных
 //! \return количество записанных байт
-forward stock setArrayToGlobalVars(const dataOutVarAddresses[], dataOutVarAddressesSize, const dataIn{}, dataInSize, useDataOutSize = false,
-                            dataOutActualSizeVarAddr = 0, dataInPos = 0);
+forward stock setArrayToGlobalVars(const dataOutVarAddresses[], dataOutVarAddressesSize, const dataIn{}, dataInSize, bool:useDataOutSize = false,
+                                    dataOutActualSizeVarAddr = 0, dataInPos = 0);
 //! @}

@@ -1,21 +1,24 @@
-# Тест для библиотеки TPMS
+# Тест библиотеки TPMS
 
 ## Полезные команды
 
-// получить параметры шины    
-TPMSLIBTEST 1,wheelId
+// Инициализировать все шины значениями по умолчанию
+`TPMSLIBTEST 1`
 
-// получить параметры всех шин    
-TPMSLIBTEST 2
+// получить параметры шины  
+`TPMSLIBTEST 2,wheelId`
 
-// установить параметры шины    
-TPMSLIBTEST 3,wheelId,pres,temp,online,ok,reason
+// получить параметры всех шин  
+`TPMSLIBTEST 3`
 
-// записать тег шины    
-TPMSLIBTEST 4,wheelId,savePoint
+// установить параметры шины  
+`TPMSLIBTEST 4,wheelId,pres,temp,isOnline,isOk,reason`
 
-// записать тег всех шин    
-TPMSLIBTEST 5,savePoint
+// записать тег шины  
+`TPMSLIBTEST 5,wheelId,needSavePoint`
 
-// очистить тег всех шин    
-TPMSLIBTEST 6,savePoint
+// записать тег всех шин  
+`TPMSLIBTEST 6,needSavePoint`
+
+// очистить тег всех шин  
+`TPMSLIBTEST 7,needSavePoint`

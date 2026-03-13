@@ -1,10 +1,10 @@
-#ifdef CRYPT_H
+//! @file
+//! @brief Заголовок библиотеки шифрования
+
+#if defined CRYPT_H
 #endinput
 #endif
 #define CRYPT_H
-
-//! @file
-//! @brief Заголовок библиотеки шифрования
 
 #include "..\numeric\numeric.h"
 
