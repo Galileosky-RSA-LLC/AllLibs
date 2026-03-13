@@ -44,18 +44,18 @@ stock initRouteCurrentData(routeCrc, routeCurrentData[ROUTE_CURRENT_DATA])
     routeCurrentData.crc = routeCrc;
     routeCurrentData.isAtStation = false;
     routeCurrentData.nextStationFilePos = 0;
-    routeCurrentData.currentAdvertismentFilePos = 0;
-    routeCurrentData.nextAdvertismentFilePos = 0;
+    routeCurrentData.currentAdvertisementFilePos = 0;
+    routeCurrentData.nextAdvertisementFilePos = 0;
     routeCurrentData.show = SHOW_UNKNOWN;
 }
 
 stock restoreRouteCurrentData(routeCurrentData[ROUTE_CURRENT_DATA])
 {
     routeCurrentData.crc = GetVar(gRouteCrc);
-    routeCurrentData.isAtStation = GetVar(gIsAtStation);
+    routeCurrentData.isAtStation = GetVar(gIsAtStation) != 0;
     routeCurrentData.nextStationFilePos = GetVar(gNextStationFilePos);
-    routeCurrentData.currentAdvertismentFilePos = GetVar(gCurrentAdvertismentFilePos);
-    routeCurrentData.nextAdvertismentFilePos = GetVar(gNextAdvertismentFilePos);
+    routeCurrentData.currentAdvertisementFilePos = GetVar(gCurrentAdvertisementFilePos);
+    routeCurrentData.nextAdvertisementFilePos = GetVar(gNextAdvertisementFilePos);
     routeCurrentData.show = GetVar(gShow);
     routeCurrentData.showStartUptime = GetVar(gShowStartUptime);
 }
@@ -65,8 +65,8 @@ stock storeRouteCurrentData(const routeCurrentData[ROUTE_CURRENT_DATA])
     SetVar(gRouteCrc, routeCurrentData.crc);
     SetVar(gIsAtStation, routeCurrentData.isAtStation);
     SetVar(gNextStationFilePos, routeCurrentData.nextStationFilePos);
-    SetVar(gCurrentAdvertismentFilePos, routeCurrentData.currentAdvertismentFilePos);
-    SetVar(gNextAdvertismentFilePos, routeCurrentData.nextAdvertismentFilePos);
+    SetVar(gCurrentAdvertisementFilePos, routeCurrentData.currentAdvertisementFilePos);
+    SetVar(gNextAdvertisementFilePos, routeCurrentData.nextAdvertisementFilePos);
     SetVar(gShow, routeCurrentData.show);
     SetVar(gShowStartUptime, routeCurrentData.showStartUptime);
 }
@@ -96,7 +96,7 @@ stock changeShow(routeCurrentData[ROUTE_CURRENT_DATA])
     routeCurrentData.show = routeCurrentData.show == SHOW_UNKNOWN
                             ? (routeCurrentData.isAtStation ? SHOW_CURRENT_STATION : SHOW_NEXT_STATION)
                             : (routeCurrentData.show == SHOW_NEXT_STATION
-                                ? (routeCurrentData.isAtStation ? SHOW_CURRENT_STATION : SHOW_ADVERTISMENT)
+                                ? (routeCurrentData.isAtStation ? SHOW_CURRENT_STATION : SHOW_ADVERTISEMENT)
                                 : SHOW_NEXT_STATION);
 }
 

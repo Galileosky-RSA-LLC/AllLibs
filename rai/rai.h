@@ -14,14 +14,14 @@
 stock const RAI_CURRENT_ROUTE_FILE_PATH{} = "route_name";
 stock const RAI_FINAL_STATIONS_FILE_NAME{} = "stations.txt";
 stock const RAI_BUSLINE_FILE_NAME{} = "BusLine.txt";
-stock const RAI_ADVERTISMENT_FILE_NAME{} = "advertisment.txt";
+stock const RAI_ADVERTISEMENT_FILE_NAME{} = "advertisment.txt";
 stock const RAI_AUDIO_FILE_NAME{} = "route.wav";
 
 #define RAI_ROUTE_DATA [\
     .name{RAI_FILE_PATH_LENGTH_MAX_W0},\
     .busLineFilePath{RAI_FILE_PATH_LENGTH_MAX_W0},\
     .finalStationsFilePath{RAI_FILE_PATH_LENGTH_MAX_W0},\
-    .advertismentFilePath{RAI_FILE_PATH_LENGTH_MAX_W0},\
+    .advertisementFilePath{RAI_FILE_PATH_LENGTH_MAX_W0},\
     .audioFilePath{RAI_FILE_PATH_LENGTH_MAX_W0},\
     .startStation{RAI_STRING_LENGTH_MAX_W0},\
     .endStation{RAI_STRING_LENGTH_MAX_W0},\
@@ -74,11 +74,11 @@ forward bool:stock raiGetNextStation(const route[RAI_ROUTE_DATA], filePos, stati
 //! @note Предварительно необходимо получить имя и пути маршрута raiGetCurrentRoute()
 //! @param[in] route структура маршрута
 //! @param[in] filePos смещение сообщения в файле
-//! @param[out] advertisment сообщение
-//! @param[in] advertismentMaxSize предельная длина сообщения
+//! @param[out] advertisement сообщение
+//! @param[in] advertisementMaxSize предельная длина сообщения
 //! @param[out] nextPos позиция следующего сообщения, если найдено текущее
 //! @return true - успешно, false - ошибка
-forward bool:stock raiGetAdvertisment(const route[RAI_ROUTE_DATA], filePos, advertisment{}, advertismentMaxSize, &nextPos);
+forward bool:stock raiGetAdvertisement(const route[RAI_ROUTE_DATA], filePos, advertisement{}, advertisementMaxSize, &nextPos);
 
 //! @brief Установить название маршрута в тег массива пользователя
 //! @note Предварительно необходимо получить имя и пути маршрута raiGetCurrentRoute()

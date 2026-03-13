@@ -184,17 +184,17 @@ bool:getCurrentSalonInfo(const route[RAI_ROUTE_DATA], routeCurData[ROUTE_CURRENT
             for (new i = 0; (i < 2) && !hasMessage; i++)
             {
                 changeShow(routeCurData);
-                if (routeCurData.show == SHOW_ADVERTISMENT)
+                if (routeCurData.show == SHOW_ADVERTISEMENT)
                 {    
-                    routeCurData.currentAdvertismentFilePos = routeCurData.nextAdvertismentFilePos;
+                    routeCurData.currentAdvertisementFilePos = routeCurData.nextAdvertisementFilePos;
                     for (new j = 0; j < 2; j++)
                     {
-                        hasMessage = raiGetAdvertisment(route, routeCurData.currentAdvertismentFilePos, text, RAI_STRING_LENGTH_MAX,
-                                                        routeCurData.nextAdvertismentFilePos);
+                        hasMessage = raiGetAdvertisement(route, routeCurData.currentAdvertisementFilePos, text, RAI_STRING_LENGTH_MAX,
+                                                        routeCurData.nextAdvertisementFilePos);
                         if (hasMessage)
                             break;
 
-                        routeCurData.currentAdvertismentFilePos = 0;
+                        routeCurData.currentAdvertisementFilePos = 0;
                     }
                     Diagnostics(hasMessage ? "adv=\"%s\"" : "adv?", text);
                 }

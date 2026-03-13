@@ -143,10 +143,10 @@ stock bool:raiIsAtStation(const route[RAI_ROUTE_DATA], currentStation{}, current
     return false;
 }
 
-stock bool:raiGetAdvertisment(const route[RAI_ROUTE_DATA], filePos, advertisment{}, advertismentMaxSize, &nextPos)
+stock bool:raiGetAdvertisement(const route[RAI_ROUTE_DATA], filePos, advertisement{}, advertisementMaxSize, &nextPos)
 {
-    new const readSize = fileReadLine(route.advertismentFilePath, advertisment, advertismentMaxSize, filePos);
-    if (!readSize || !advertisment{0})
+    new const readSize = fileReadLine(route.advertisementFilePath, advertisement, advertisementMaxSize, filePos);
+    if (!readSize || !advertisement{0})
         return false;
 
     nextPos = filePos + readSize;
@@ -200,6 +200,6 @@ stock bool:rai_getFilePaths(route[RAI_ROUTE_DATA])
     
     rai_generateFilePath(route, RAI_AUDIO_FILE_NAME, route.audioFilePath);
     rai_generateFilePath(route, RAI_BUSLINE_FILE_NAME, route.busLineFilePath);
-    rai_generateFilePath(route, RAI_ADVERTISMENT_FILE_NAME, route.advertismentFilePath);
+    rai_generateFilePath(route, RAI_ADVERTISEMENT_FILE_NAME, route.advertisementFilePath);
     return true;
 }

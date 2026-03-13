@@ -19,15 +19,15 @@
 #define SHOW_UNKNOWN 0
 #define SHOW_CURRENT_STATION 1
 #define SHOW_NEXT_STATION 2
-#define SHOW_ADVERTISMENT 3
+#define SHOW_ADVERTISEMENT 3
 //! @}
 
 #define ROUTE_CURRENT_DATA [\
     .crc,\
-    .isAtStation,\
+    bool:.isAtStation,\
     .nextStationFilePos,\
-    .currentAdvertismentFilePos,\
-    .nextAdvertismentFilePos,\
+    .currentAdvertisementFilePos,\
+    .nextAdvertisementFilePos,\
     .show,\
     .showStartUptime,\
 ]
